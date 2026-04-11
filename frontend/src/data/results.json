@@ -1,0 +1,2627 @@
+[
+  {
+    "id": 1,
+    "roll": "4001",
+    "className": "class-4",
+    "studentName": "Yusuf Mahmud",
+    "grade": "A-",
+    "remarks": "Steady progress, keep practicing daily.",
+    "subjectResults": [
+      {
+        "subject": "Quran",
+        "marks": 59,
+        "grade": "B"
+      },
+      {
+        "subject": "Arabic",
+        "marks": 64,
+        "grade": "A-"
+      },
+      {
+        "subject": "Hadith",
+        "marks": 69,
+        "grade": "A-"
+      },
+      {
+        "subject": "Fiqh",
+        "marks": 74,
+        "grade": "A"
+      },
+      {
+        "subject": "General Studies",
+        "marks": 79,
+        "grade": "A"
+      }
+    ]
+  },
+  {
+    "id": 2,
+    "roll": "4002",
+    "className": "class-4",
+    "studentName": "Ibrahim Hossain",
+    "grade": "A",
+    "remarks": "Strong overall performance.",
+    "subjectResults": [
+      {
+        "subject": "Quran",
+        "marks": 66,
+        "grade": "A-"
+      },
+      {
+        "subject": "Arabic",
+        "marks": 71,
+        "grade": "A"
+      },
+      {
+        "subject": "Hadith",
+        "marks": 76,
+        "grade": "A"
+      },
+      {
+        "subject": "Fiqh",
+        "marks": 81,
+        "grade": "A+"
+      },
+      {
+        "subject": "General Studies",
+        "marks": 86,
+        "grade": "A+"
+      }
+    ]
+  },
+  {
+    "id": 3,
+    "roll": "4003",
+    "className": "class-4",
+    "studentName": "Musa Islam",
+    "grade": "A+",
+    "remarks": "Strong overall performance.",
+    "subjectResults": [
+      {
+        "subject": "Quran",
+        "marks": 73,
+        "grade": "A"
+      },
+      {
+        "subject": "Arabic",
+        "marks": 78,
+        "grade": "A"
+      },
+      {
+        "subject": "Hadith",
+        "marks": 83,
+        "grade": "A+"
+      },
+      {
+        "subject": "Fiqh",
+        "marks": 88,
+        "grade": "A+"
+      },
+      {
+        "subject": "General Studies",
+        "marks": 93,
+        "grade": "A+"
+      }
+    ]
+  },
+  {
+    "id": 4,
+    "roll": "4004",
+    "className": "class-4",
+    "studentName": "Hasan Siddiq",
+    "grade": "A",
+    "remarks": "Strong overall performance.",
+    "subjectResults": [
+      {
+        "subject": "Quran",
+        "marks": 80,
+        "grade": "A+"
+      },
+      {
+        "subject": "Arabic",
+        "marks": 85,
+        "grade": "A+"
+      },
+      {
+        "subject": "Hadith",
+        "marks": 90,
+        "grade": "A+"
+      },
+      {
+        "subject": "Fiqh",
+        "marks": 52,
+        "grade": "B"
+      },
+      {
+        "subject": "General Studies",
+        "marks": 57,
+        "grade": "B"
+      }
+    ]
+  },
+  {
+    "id": 5,
+    "roll": "4005",
+    "className": "class-4",
+    "studentName": "Husain Rafi",
+    "grade": "A",
+    "remarks": "Strong overall performance.",
+    "subjectResults": [
+      {
+        "subject": "Quran",
+        "marks": 87,
+        "grade": "A+"
+      },
+      {
+        "subject": "Arabic",
+        "marks": 92,
+        "grade": "A+"
+      },
+      {
+        "subject": "Hadith",
+        "marks": 54,
+        "grade": "B"
+      },
+      {
+        "subject": "Fiqh",
+        "marks": 59,
+        "grade": "B"
+      },
+      {
+        "subject": "General Studies",
+        "marks": 64,
+        "grade": "A-"
+      }
+    ]
+  },
+  {
+    "id": 6,
+    "roll": "4006",
+    "className": "class-4",
+    "studentName": "Umar Noor",
+    "grade": "A",
+    "remarks": "Strong overall performance.",
+    "subjectResults": [
+      {
+        "subject": "Quran",
+        "marks": 94,
+        "grade": "A+"
+      },
+      {
+        "subject": "Arabic",
+        "marks": 56,
+        "grade": "B"
+      },
+      {
+        "subject": "Hadith",
+        "marks": 61,
+        "grade": "A-"
+      },
+      {
+        "subject": "Fiqh",
+        "marks": 66,
+        "grade": "A-"
+      },
+      {
+        "subject": "General Studies",
+        "marks": 71,
+        "grade": "A"
+      }
+    ]
+  },
+  {
+    "id": 7,
+    "roll": "4007",
+    "className": "class-4",
+    "studentName": "Ali Salman",
+    "grade": "A-",
+    "remarks": "Steady progress, keep practicing daily.",
+    "subjectResults": [
+      {
+        "subject": "Quran",
+        "marks": 58,
+        "grade": "B"
+      },
+      {
+        "subject": "Arabic",
+        "marks": 63,
+        "grade": "A-"
+      },
+      {
+        "subject": "Hadith",
+        "marks": 68,
+        "grade": "A-"
+      },
+      {
+        "subject": "Fiqh",
+        "marks": 73,
+        "grade": "A"
+      },
+      {
+        "subject": "General Studies",
+        "marks": 78,
+        "grade": "A"
+      }
+    ]
+  },
+  {
+    "id": 8,
+    "roll": "4008",
+    "className": "class-4",
+    "studentName": "Bilal Rahman",
+    "grade": "A",
+    "remarks": "Strong overall performance.",
+    "subjectResults": [
+      {
+        "subject": "Quran",
+        "marks": 65,
+        "grade": "A-"
+      },
+      {
+        "subject": "Arabic",
+        "marks": 70,
+        "grade": "A"
+      },
+      {
+        "subject": "Hadith",
+        "marks": 75,
+        "grade": "A"
+      },
+      {
+        "subject": "Fiqh",
+        "marks": 80,
+        "grade": "A+"
+      },
+      {
+        "subject": "General Studies",
+        "marks": 85,
+        "grade": "A+"
+      }
+    ]
+  },
+  {
+    "id": 9,
+    "roll": "4009",
+    "className": "class-4",
+    "studentName": "Saad Farhan",
+    "grade": "A+",
+    "remarks": "Strong overall performance.",
+    "subjectResults": [
+      {
+        "subject": "Quran",
+        "marks": 72,
+        "grade": "A"
+      },
+      {
+        "subject": "Arabic",
+        "marks": 77,
+        "grade": "A"
+      },
+      {
+        "subject": "Hadith",
+        "marks": 82,
+        "grade": "A+"
+      },
+      {
+        "subject": "Fiqh",
+        "marks": 87,
+        "grade": "A+"
+      },
+      {
+        "subject": "General Studies",
+        "marks": 92,
+        "grade": "A+"
+      }
+    ]
+  },
+  {
+    "id": 10,
+    "roll": "4010",
+    "className": "class-4",
+    "studentName": "Khalid Ahmed",
+    "grade": "A+",
+    "remarks": "Strong overall performance.",
+    "subjectResults": [
+      {
+        "subject": "Quran",
+        "marks": 79,
+        "grade": "A"
+      },
+      {
+        "subject": "Arabic",
+        "marks": 84,
+        "grade": "A+"
+      },
+      {
+        "subject": "Hadith",
+        "marks": 89,
+        "grade": "A+"
+      },
+      {
+        "subject": "Fiqh",
+        "marks": 94,
+        "grade": "A+"
+      },
+      {
+        "subject": "General Studies",
+        "marks": 56,
+        "grade": "B"
+      }
+    ]
+  },
+  {
+    "id": 11,
+    "roll": "4011",
+    "className": "class-4",
+    "studentName": "Ayman Anwar",
+    "grade": "A",
+    "remarks": "Strong overall performance.",
+    "subjectResults": [
+      {
+        "subject": "Quran",
+        "marks": 86,
+        "grade": "A+"
+      },
+      {
+        "subject": "Arabic",
+        "marks": 91,
+        "grade": "A+"
+      },
+      {
+        "subject": "Hadith",
+        "marks": 53,
+        "grade": "B"
+      },
+      {
+        "subject": "Fiqh",
+        "marks": 58,
+        "grade": "B"
+      },
+      {
+        "subject": "General Studies",
+        "marks": 63,
+        "grade": "A-"
+      }
+    ]
+  },
+  {
+    "id": 12,
+    "roll": "4012",
+    "className": "class-4",
+    "studentName": "Hamza Kader",
+    "grade": "A-",
+    "remarks": "Steady progress, keep practicing daily.",
+    "subjectResults": [
+      {
+        "subject": "Quran",
+        "marks": 93,
+        "grade": "A+"
+      },
+      {
+        "subject": "Arabic",
+        "marks": 55,
+        "grade": "B"
+      },
+      {
+        "subject": "Hadith",
+        "marks": 60,
+        "grade": "A-"
+      },
+      {
+        "subject": "Fiqh",
+        "marks": 65,
+        "grade": "A-"
+      },
+      {
+        "subject": "General Studies",
+        "marks": 70,
+        "grade": "A"
+      }
+    ]
+  },
+  {
+    "id": 13,
+    "roll": "4013",
+    "className": "class-4",
+    "studentName": "Rayhan Tariq",
+    "grade": "A-",
+    "remarks": "Steady progress, keep practicing daily.",
+    "subjectResults": [
+      {
+        "subject": "Quran",
+        "marks": 57,
+        "grade": "B"
+      },
+      {
+        "subject": "Arabic",
+        "marks": 62,
+        "grade": "A-"
+      },
+      {
+        "subject": "Hadith",
+        "marks": 67,
+        "grade": "A-"
+      },
+      {
+        "subject": "Fiqh",
+        "marks": 72,
+        "grade": "A"
+      },
+      {
+        "subject": "General Studies",
+        "marks": 77,
+        "grade": "A"
+      }
+    ]
+  },
+  {
+    "id": 14,
+    "roll": "4014",
+    "className": "class-4",
+    "studentName": "Naeem Zaman",
+    "grade": "A",
+    "remarks": "Strong overall performance.",
+    "subjectResults": [
+      {
+        "subject": "Quran",
+        "marks": 64,
+        "grade": "A-"
+      },
+      {
+        "subject": "Arabic",
+        "marks": 69,
+        "grade": "A-"
+      },
+      {
+        "subject": "Hadith",
+        "marks": 74,
+        "grade": "A"
+      },
+      {
+        "subject": "Fiqh",
+        "marks": 79,
+        "grade": "A"
+      },
+      {
+        "subject": "General Studies",
+        "marks": 84,
+        "grade": "A+"
+      }
+    ]
+  },
+  {
+    "id": 15,
+    "roll": "4015",
+    "className": "class-4",
+    "studentName": "Abdullah Karim",
+    "grade": "A+",
+    "remarks": "Strong overall performance.",
+    "subjectResults": [
+      {
+        "subject": "Quran",
+        "marks": 71,
+        "grade": "A"
+      },
+      {
+        "subject": "Arabic",
+        "marks": 76,
+        "grade": "A"
+      },
+      {
+        "subject": "Hadith",
+        "marks": 81,
+        "grade": "A+"
+      },
+      {
+        "subject": "Fiqh",
+        "marks": 86,
+        "grade": "A+"
+      },
+      {
+        "subject": "General Studies",
+        "marks": 91,
+        "grade": "A+"
+      }
+    ]
+  },
+  {
+    "id": 16,
+    "roll": "5001",
+    "className": "class-5",
+    "studentName": "Ibrahim Farhan",
+    "grade": "A",
+    "remarks": "Strong overall performance.",
+    "subjectResults": [
+      {
+        "subject": "Quran",
+        "marks": 68,
+        "grade": "A-"
+      },
+      {
+        "subject": "Arabic",
+        "marks": 73,
+        "grade": "A"
+      },
+      {
+        "subject": "Hadith",
+        "marks": 78,
+        "grade": "A"
+      },
+      {
+        "subject": "Fiqh",
+        "marks": 83,
+        "grade": "A+"
+      },
+      {
+        "subject": "General Studies",
+        "marks": 88,
+        "grade": "A+"
+      }
+    ]
+  },
+  {
+    "id": 17,
+    "roll": "5002",
+    "className": "class-5",
+    "studentName": "Musa Ahmed",
+    "grade": "A",
+    "remarks": "Strong overall performance.",
+    "subjectResults": [
+      {
+        "subject": "Quran",
+        "marks": 75,
+        "grade": "A"
+      },
+      {
+        "subject": "Arabic",
+        "marks": 80,
+        "grade": "A+"
+      },
+      {
+        "subject": "Hadith",
+        "marks": 85,
+        "grade": "A+"
+      },
+      {
+        "subject": "Fiqh",
+        "marks": 90,
+        "grade": "A+"
+      },
+      {
+        "subject": "General Studies",
+        "marks": 52,
+        "grade": "B"
+      }
+    ]
+  },
+  {
+    "id": 18,
+    "roll": "5003",
+    "className": "class-5",
+    "studentName": "Hasan Anwar",
+    "grade": "A",
+    "remarks": "Strong overall performance.",
+    "subjectResults": [
+      {
+        "subject": "Quran",
+        "marks": 82,
+        "grade": "A+"
+      },
+      {
+        "subject": "Arabic",
+        "marks": 87,
+        "grade": "A+"
+      },
+      {
+        "subject": "Hadith",
+        "marks": 92,
+        "grade": "A+"
+      },
+      {
+        "subject": "Fiqh",
+        "marks": 54,
+        "grade": "B"
+      },
+      {
+        "subject": "General Studies",
+        "marks": 59,
+        "grade": "B"
+      }
+    ]
+  },
+  {
+    "id": 19,
+    "roll": "5004",
+    "className": "class-5",
+    "studentName": "Husain Kader",
+    "grade": "A",
+    "remarks": "Strong overall performance.",
+    "subjectResults": [
+      {
+        "subject": "Quran",
+        "marks": 89,
+        "grade": "A+"
+      },
+      {
+        "subject": "Arabic",
+        "marks": 94,
+        "grade": "A+"
+      },
+      {
+        "subject": "Hadith",
+        "marks": 56,
+        "grade": "B"
+      },
+      {
+        "subject": "Fiqh",
+        "marks": 61,
+        "grade": "A-"
+      },
+      {
+        "subject": "General Studies",
+        "marks": 66,
+        "grade": "A-"
+      }
+    ]
+  },
+  {
+    "id": 20,
+    "roll": "5005",
+    "className": "class-5",
+    "studentName": "Umar Tariq",
+    "grade": "A-",
+    "remarks": "Steady progress, keep practicing daily.",
+    "subjectResults": [
+      {
+        "subject": "Quran",
+        "marks": 53,
+        "grade": "B"
+      },
+      {
+        "subject": "Arabic",
+        "marks": 58,
+        "grade": "B"
+      },
+      {
+        "subject": "Hadith",
+        "marks": 63,
+        "grade": "A-"
+      },
+      {
+        "subject": "Fiqh",
+        "marks": 68,
+        "grade": "A-"
+      },
+      {
+        "subject": "General Studies",
+        "marks": 73,
+        "grade": "A"
+      }
+    ]
+  },
+  {
+    "id": 21,
+    "roll": "5006",
+    "className": "class-5",
+    "studentName": "Ali Zaman",
+    "grade": "A",
+    "remarks": "Strong overall performance.",
+    "subjectResults": [
+      {
+        "subject": "Quran",
+        "marks": 60,
+        "grade": "A-"
+      },
+      {
+        "subject": "Arabic",
+        "marks": 65,
+        "grade": "A-"
+      },
+      {
+        "subject": "Hadith",
+        "marks": 70,
+        "grade": "A"
+      },
+      {
+        "subject": "Fiqh",
+        "marks": 75,
+        "grade": "A"
+      },
+      {
+        "subject": "General Studies",
+        "marks": 80,
+        "grade": "A+"
+      }
+    ]
+  },
+  {
+    "id": 22,
+    "roll": "5007",
+    "className": "class-5",
+    "studentName": "Bilal Karim",
+    "grade": "A",
+    "remarks": "Strong overall performance.",
+    "subjectResults": [
+      {
+        "subject": "Quran",
+        "marks": 67,
+        "grade": "A-"
+      },
+      {
+        "subject": "Arabic",
+        "marks": 72,
+        "grade": "A"
+      },
+      {
+        "subject": "Hadith",
+        "marks": 77,
+        "grade": "A"
+      },
+      {
+        "subject": "Fiqh",
+        "marks": 82,
+        "grade": "A+"
+      },
+      {
+        "subject": "General Studies",
+        "marks": 87,
+        "grade": "A+"
+      }
+    ]
+  },
+  {
+    "id": 23,
+    "roll": "5008",
+    "className": "class-5",
+    "studentName": "Saad Mahmud",
+    "grade": "A+",
+    "remarks": "Strong overall performance.",
+    "subjectResults": [
+      {
+        "subject": "Quran",
+        "marks": 74,
+        "grade": "A"
+      },
+      {
+        "subject": "Arabic",
+        "marks": 79,
+        "grade": "A"
+      },
+      {
+        "subject": "Hadith",
+        "marks": 84,
+        "grade": "A+"
+      },
+      {
+        "subject": "Fiqh",
+        "marks": 89,
+        "grade": "A+"
+      },
+      {
+        "subject": "General Studies",
+        "marks": 94,
+        "grade": "A+"
+      }
+    ]
+  },
+  {
+    "id": 24,
+    "roll": "5009",
+    "className": "class-5",
+    "studentName": "Khalid Hossain",
+    "grade": "A",
+    "remarks": "Strong overall performance.",
+    "subjectResults": [
+      {
+        "subject": "Quran",
+        "marks": 81,
+        "grade": "A+"
+      },
+      {
+        "subject": "Arabic",
+        "marks": 86,
+        "grade": "A+"
+      },
+      {
+        "subject": "Hadith",
+        "marks": 91,
+        "grade": "A+"
+      },
+      {
+        "subject": "Fiqh",
+        "marks": 53,
+        "grade": "B"
+      },
+      {
+        "subject": "General Studies",
+        "marks": 58,
+        "grade": "B"
+      }
+    ]
+  },
+  {
+    "id": 25,
+    "roll": "5010",
+    "className": "class-5",
+    "studentName": "Ayman Islam",
+    "grade": "A",
+    "remarks": "Strong overall performance.",
+    "subjectResults": [
+      {
+        "subject": "Quran",
+        "marks": 88,
+        "grade": "A+"
+      },
+      {
+        "subject": "Arabic",
+        "marks": 93,
+        "grade": "A+"
+      },
+      {
+        "subject": "Hadith",
+        "marks": 55,
+        "grade": "B"
+      },
+      {
+        "subject": "Fiqh",
+        "marks": 60,
+        "grade": "A-"
+      },
+      {
+        "subject": "General Studies",
+        "marks": 65,
+        "grade": "A-"
+      }
+    ]
+  },
+  {
+    "id": 26,
+    "roll": "5011",
+    "className": "class-5",
+    "studentName": "Hamza Siddiq",
+    "grade": "A-",
+    "remarks": "Steady progress, keep practicing daily.",
+    "subjectResults": [
+      {
+        "subject": "Quran",
+        "marks": 52,
+        "grade": "B"
+      },
+      {
+        "subject": "Arabic",
+        "marks": 57,
+        "grade": "B"
+      },
+      {
+        "subject": "Hadith",
+        "marks": 62,
+        "grade": "A-"
+      },
+      {
+        "subject": "Fiqh",
+        "marks": 67,
+        "grade": "A-"
+      },
+      {
+        "subject": "General Studies",
+        "marks": 72,
+        "grade": "A"
+      }
+    ]
+  },
+  {
+    "id": 27,
+    "roll": "5012",
+    "className": "class-5",
+    "studentName": "Rayhan Rafi",
+    "grade": "A-",
+    "remarks": "Steady progress, keep practicing daily.",
+    "subjectResults": [
+      {
+        "subject": "Quran",
+        "marks": 59,
+        "grade": "B"
+      },
+      {
+        "subject": "Arabic",
+        "marks": 64,
+        "grade": "A-"
+      },
+      {
+        "subject": "Hadith",
+        "marks": 69,
+        "grade": "A-"
+      },
+      {
+        "subject": "Fiqh",
+        "marks": 74,
+        "grade": "A"
+      },
+      {
+        "subject": "General Studies",
+        "marks": 79,
+        "grade": "A"
+      }
+    ]
+  },
+  {
+    "id": 28,
+    "roll": "5013",
+    "className": "class-5",
+    "studentName": "Naeem Noor",
+    "grade": "A",
+    "remarks": "Strong overall performance.",
+    "subjectResults": [
+      {
+        "subject": "Quran",
+        "marks": 66,
+        "grade": "A-"
+      },
+      {
+        "subject": "Arabic",
+        "marks": 71,
+        "grade": "A"
+      },
+      {
+        "subject": "Hadith",
+        "marks": 76,
+        "grade": "A"
+      },
+      {
+        "subject": "Fiqh",
+        "marks": 81,
+        "grade": "A+"
+      },
+      {
+        "subject": "General Studies",
+        "marks": 86,
+        "grade": "A+"
+      }
+    ]
+  },
+  {
+    "id": 29,
+    "roll": "5014",
+    "className": "class-5",
+    "studentName": "Abdullah Salman",
+    "grade": "A+",
+    "remarks": "Strong overall performance.",
+    "subjectResults": [
+      {
+        "subject": "Quran",
+        "marks": 73,
+        "grade": "A"
+      },
+      {
+        "subject": "Arabic",
+        "marks": 78,
+        "grade": "A"
+      },
+      {
+        "subject": "Hadith",
+        "marks": 83,
+        "grade": "A+"
+      },
+      {
+        "subject": "Fiqh",
+        "marks": 88,
+        "grade": "A+"
+      },
+      {
+        "subject": "General Studies",
+        "marks": 93,
+        "grade": "A+"
+      }
+    ]
+  },
+  {
+    "id": 30,
+    "roll": "5015",
+    "className": "class-5",
+    "studentName": "Yusuf Rahman",
+    "grade": "A",
+    "remarks": "Strong overall performance.",
+    "subjectResults": [
+      {
+        "subject": "Quran",
+        "marks": 80,
+        "grade": "A+"
+      },
+      {
+        "subject": "Arabic",
+        "marks": 85,
+        "grade": "A+"
+      },
+      {
+        "subject": "Hadith",
+        "marks": 90,
+        "grade": "A+"
+      },
+      {
+        "subject": "Fiqh",
+        "marks": 52,
+        "grade": "B"
+      },
+      {
+        "subject": "General Studies",
+        "marks": 57,
+        "grade": "B"
+      }
+    ]
+  },
+  {
+    "id": 31,
+    "roll": "6001",
+    "className": "class-6",
+    "studentName": "Musa Hossain",
+    "grade": "A",
+    "remarks": "Strong overall performance.",
+    "subjectResults": [
+      {
+        "subject": "Quran",
+        "marks": 77,
+        "grade": "A"
+      },
+      {
+        "subject": "Arabic",
+        "marks": 82,
+        "grade": "A+"
+      },
+      {
+        "subject": "Hadith",
+        "marks": 87,
+        "grade": "A+"
+      },
+      {
+        "subject": "Fiqh",
+        "marks": 92,
+        "grade": "A+"
+      },
+      {
+        "subject": "General Studies",
+        "marks": 54,
+        "grade": "B"
+      }
+    ]
+  },
+  {
+    "id": 32,
+    "roll": "6002",
+    "className": "class-6",
+    "studentName": "Hasan Islam",
+    "grade": "A",
+    "remarks": "Strong overall performance.",
+    "subjectResults": [
+      {
+        "subject": "Quran",
+        "marks": 84,
+        "grade": "A+"
+      },
+      {
+        "subject": "Arabic",
+        "marks": 89,
+        "grade": "A+"
+      },
+      {
+        "subject": "Hadith",
+        "marks": 94,
+        "grade": "A+"
+      },
+      {
+        "subject": "Fiqh",
+        "marks": 56,
+        "grade": "B"
+      },
+      {
+        "subject": "General Studies",
+        "marks": 61,
+        "grade": "A-"
+      }
+    ]
+  },
+  {
+    "id": 33,
+    "roll": "6003",
+    "className": "class-6",
+    "studentName": "Husain Siddiq",
+    "grade": "A-",
+    "remarks": "Steady progress, keep practicing daily.",
+    "subjectResults": [
+      {
+        "subject": "Quran",
+        "marks": 91,
+        "grade": "A+"
+      },
+      {
+        "subject": "Arabic",
+        "marks": 53,
+        "grade": "B"
+      },
+      {
+        "subject": "Hadith",
+        "marks": 58,
+        "grade": "B"
+      },
+      {
+        "subject": "Fiqh",
+        "marks": 63,
+        "grade": "A-"
+      },
+      {
+        "subject": "General Studies",
+        "marks": 68,
+        "grade": "A-"
+      }
+    ]
+  },
+  {
+    "id": 34,
+    "roll": "6004",
+    "className": "class-6",
+    "studentName": "Umar Rafi",
+    "grade": "A-",
+    "remarks": "Steady progress, keep practicing daily.",
+    "subjectResults": [
+      {
+        "subject": "Quran",
+        "marks": 55,
+        "grade": "B"
+      },
+      {
+        "subject": "Arabic",
+        "marks": 60,
+        "grade": "A-"
+      },
+      {
+        "subject": "Hadith",
+        "marks": 65,
+        "grade": "A-"
+      },
+      {
+        "subject": "Fiqh",
+        "marks": 70,
+        "grade": "A"
+      },
+      {
+        "subject": "General Studies",
+        "marks": 75,
+        "grade": "A"
+      }
+    ]
+  },
+  {
+    "id": 35,
+    "roll": "6005",
+    "className": "class-6",
+    "studentName": "Ali Noor",
+    "grade": "A",
+    "remarks": "Strong overall performance.",
+    "subjectResults": [
+      {
+        "subject": "Quran",
+        "marks": 62,
+        "grade": "A-"
+      },
+      {
+        "subject": "Arabic",
+        "marks": 67,
+        "grade": "A-"
+      },
+      {
+        "subject": "Hadith",
+        "marks": 72,
+        "grade": "A"
+      },
+      {
+        "subject": "Fiqh",
+        "marks": 77,
+        "grade": "A"
+      },
+      {
+        "subject": "General Studies",
+        "marks": 82,
+        "grade": "A+"
+      }
+    ]
+  },
+  {
+    "id": 36,
+    "roll": "6006",
+    "className": "class-6",
+    "studentName": "Bilal Salman",
+    "grade": "A",
+    "remarks": "Strong overall performance.",
+    "subjectResults": [
+      {
+        "subject": "Quran",
+        "marks": 69,
+        "grade": "A-"
+      },
+      {
+        "subject": "Arabic",
+        "marks": 74,
+        "grade": "A"
+      },
+      {
+        "subject": "Hadith",
+        "marks": 79,
+        "grade": "A"
+      },
+      {
+        "subject": "Fiqh",
+        "marks": 84,
+        "grade": "A+"
+      },
+      {
+        "subject": "General Studies",
+        "marks": 89,
+        "grade": "A+"
+      }
+    ]
+  },
+  {
+    "id": 37,
+    "roll": "6007",
+    "className": "class-6",
+    "studentName": "Saad Rahman",
+    "grade": "A",
+    "remarks": "Strong overall performance.",
+    "subjectResults": [
+      {
+        "subject": "Quran",
+        "marks": 76,
+        "grade": "A"
+      },
+      {
+        "subject": "Arabic",
+        "marks": 81,
+        "grade": "A+"
+      },
+      {
+        "subject": "Hadith",
+        "marks": 86,
+        "grade": "A+"
+      },
+      {
+        "subject": "Fiqh",
+        "marks": 91,
+        "grade": "A+"
+      },
+      {
+        "subject": "General Studies",
+        "marks": 53,
+        "grade": "B"
+      }
+    ]
+  },
+  {
+    "id": 38,
+    "roll": "6008",
+    "className": "class-6",
+    "studentName": "Khalid Farhan",
+    "grade": "A",
+    "remarks": "Strong overall performance.",
+    "subjectResults": [
+      {
+        "subject": "Quran",
+        "marks": 83,
+        "grade": "A+"
+      },
+      {
+        "subject": "Arabic",
+        "marks": 88,
+        "grade": "A+"
+      },
+      {
+        "subject": "Hadith",
+        "marks": 93,
+        "grade": "A+"
+      },
+      {
+        "subject": "Fiqh",
+        "marks": 55,
+        "grade": "B"
+      },
+      {
+        "subject": "General Studies",
+        "marks": 60,
+        "grade": "A-"
+      }
+    ]
+  },
+  {
+    "id": 39,
+    "roll": "6009",
+    "className": "class-6",
+    "studentName": "Ayman Ahmed",
+    "grade": "A-",
+    "remarks": "Steady progress, keep practicing daily.",
+    "subjectResults": [
+      {
+        "subject": "Quran",
+        "marks": 90,
+        "grade": "A+"
+      },
+      {
+        "subject": "Arabic",
+        "marks": 52,
+        "grade": "B"
+      },
+      {
+        "subject": "Hadith",
+        "marks": 57,
+        "grade": "B"
+      },
+      {
+        "subject": "Fiqh",
+        "marks": 62,
+        "grade": "A-"
+      },
+      {
+        "subject": "General Studies",
+        "marks": 67,
+        "grade": "A-"
+      }
+    ]
+  },
+  {
+    "id": 40,
+    "roll": "6010",
+    "className": "class-6",
+    "studentName": "Hamza Anwar",
+    "grade": "A-",
+    "remarks": "Steady progress, keep practicing daily.",
+    "subjectResults": [
+      {
+        "subject": "Quran",
+        "marks": 54,
+        "grade": "B"
+      },
+      {
+        "subject": "Arabic",
+        "marks": 59,
+        "grade": "B"
+      },
+      {
+        "subject": "Hadith",
+        "marks": 64,
+        "grade": "A-"
+      },
+      {
+        "subject": "Fiqh",
+        "marks": 69,
+        "grade": "A-"
+      },
+      {
+        "subject": "General Studies",
+        "marks": 74,
+        "grade": "A"
+      }
+    ]
+  },
+  {
+    "id": 41,
+    "roll": "6011",
+    "className": "class-6",
+    "studentName": "Rayhan Kader",
+    "grade": "A",
+    "remarks": "Strong overall performance.",
+    "subjectResults": [
+      {
+        "subject": "Quran",
+        "marks": 61,
+        "grade": "A-"
+      },
+      {
+        "subject": "Arabic",
+        "marks": 66,
+        "grade": "A-"
+      },
+      {
+        "subject": "Hadith",
+        "marks": 71,
+        "grade": "A"
+      },
+      {
+        "subject": "Fiqh",
+        "marks": 76,
+        "grade": "A"
+      },
+      {
+        "subject": "General Studies",
+        "marks": 81,
+        "grade": "A+"
+      }
+    ]
+  },
+  {
+    "id": 42,
+    "roll": "6012",
+    "className": "class-6",
+    "studentName": "Naeem Tariq",
+    "grade": "A",
+    "remarks": "Strong overall performance.",
+    "subjectResults": [
+      {
+        "subject": "Quran",
+        "marks": 68,
+        "grade": "A-"
+      },
+      {
+        "subject": "Arabic",
+        "marks": 73,
+        "grade": "A"
+      },
+      {
+        "subject": "Hadith",
+        "marks": 78,
+        "grade": "A"
+      },
+      {
+        "subject": "Fiqh",
+        "marks": 83,
+        "grade": "A+"
+      },
+      {
+        "subject": "General Studies",
+        "marks": 88,
+        "grade": "A+"
+      }
+    ]
+  },
+  {
+    "id": 43,
+    "roll": "6013",
+    "className": "class-6",
+    "studentName": "Abdullah Zaman",
+    "grade": "A",
+    "remarks": "Strong overall performance.",
+    "subjectResults": [
+      {
+        "subject": "Quran",
+        "marks": 75,
+        "grade": "A"
+      },
+      {
+        "subject": "Arabic",
+        "marks": 80,
+        "grade": "A+"
+      },
+      {
+        "subject": "Hadith",
+        "marks": 85,
+        "grade": "A+"
+      },
+      {
+        "subject": "Fiqh",
+        "marks": 90,
+        "grade": "A+"
+      },
+      {
+        "subject": "General Studies",
+        "marks": 52,
+        "grade": "B"
+      }
+    ]
+  },
+  {
+    "id": 44,
+    "roll": "6014",
+    "className": "class-6",
+    "studentName": "Yusuf Karim",
+    "grade": "A",
+    "remarks": "Strong overall performance.",
+    "subjectResults": [
+      {
+        "subject": "Quran",
+        "marks": 82,
+        "grade": "A+"
+      },
+      {
+        "subject": "Arabic",
+        "marks": 87,
+        "grade": "A+"
+      },
+      {
+        "subject": "Hadith",
+        "marks": 92,
+        "grade": "A+"
+      },
+      {
+        "subject": "Fiqh",
+        "marks": 54,
+        "grade": "B"
+      },
+      {
+        "subject": "General Studies",
+        "marks": 59,
+        "grade": "B"
+      }
+    ]
+  },
+  {
+    "id": 45,
+    "roll": "6015",
+    "className": "class-6",
+    "studentName": "Ibrahim Mahmud",
+    "grade": "A",
+    "remarks": "Strong overall performance.",
+    "subjectResults": [
+      {
+        "subject": "Quran",
+        "marks": 89,
+        "grade": "A+"
+      },
+      {
+        "subject": "Arabic",
+        "marks": 94,
+        "grade": "A+"
+      },
+      {
+        "subject": "Hadith",
+        "marks": 56,
+        "grade": "B"
+      },
+      {
+        "subject": "Fiqh",
+        "marks": 61,
+        "grade": "A-"
+      },
+      {
+        "subject": "General Studies",
+        "marks": 66,
+        "grade": "A-"
+      }
+    ]
+  },
+  {
+    "id": 46,
+    "roll": "7001",
+    "className": "class-7",
+    "studentName": "Hasan Ahmed",
+    "grade": "A",
+    "remarks": "Strong overall performance.",
+    "subjectResults": [
+      {
+        "subject": "Quran",
+        "marks": 86,
+        "grade": "A+"
+      },
+      {
+        "subject": "Arabic",
+        "marks": 91,
+        "grade": "A+"
+      },
+      {
+        "subject": "Hadith",
+        "marks": 53,
+        "grade": "B"
+      },
+      {
+        "subject": "Fiqh",
+        "marks": 58,
+        "grade": "B"
+      },
+      {
+        "subject": "General Studies",
+        "marks": 63,
+        "grade": "A-"
+      }
+    ]
+  },
+  {
+    "id": 47,
+    "roll": "7002",
+    "className": "class-7",
+    "studentName": "Husain Anwar",
+    "grade": "A-",
+    "remarks": "Steady progress, keep practicing daily.",
+    "subjectResults": [
+      {
+        "subject": "Quran",
+        "marks": 93,
+        "grade": "A+"
+      },
+      {
+        "subject": "Arabic",
+        "marks": 55,
+        "grade": "B"
+      },
+      {
+        "subject": "Hadith",
+        "marks": 60,
+        "grade": "A-"
+      },
+      {
+        "subject": "Fiqh",
+        "marks": 65,
+        "grade": "A-"
+      },
+      {
+        "subject": "General Studies",
+        "marks": 70,
+        "grade": "A"
+      }
+    ]
+  },
+  {
+    "id": 48,
+    "roll": "7003",
+    "className": "class-7",
+    "studentName": "Umar Kader",
+    "grade": "A-",
+    "remarks": "Steady progress, keep practicing daily.",
+    "subjectResults": [
+      {
+        "subject": "Quran",
+        "marks": 57,
+        "grade": "B"
+      },
+      {
+        "subject": "Arabic",
+        "marks": 62,
+        "grade": "A-"
+      },
+      {
+        "subject": "Hadith",
+        "marks": 67,
+        "grade": "A-"
+      },
+      {
+        "subject": "Fiqh",
+        "marks": 72,
+        "grade": "A"
+      },
+      {
+        "subject": "General Studies",
+        "marks": 77,
+        "grade": "A"
+      }
+    ]
+  },
+  {
+    "id": 49,
+    "roll": "7004",
+    "className": "class-7",
+    "studentName": "Ali Tariq",
+    "grade": "A",
+    "remarks": "Strong overall performance.",
+    "subjectResults": [
+      {
+        "subject": "Quran",
+        "marks": 64,
+        "grade": "A-"
+      },
+      {
+        "subject": "Arabic",
+        "marks": 69,
+        "grade": "A-"
+      },
+      {
+        "subject": "Hadith",
+        "marks": 74,
+        "grade": "A"
+      },
+      {
+        "subject": "Fiqh",
+        "marks": 79,
+        "grade": "A"
+      },
+      {
+        "subject": "General Studies",
+        "marks": 84,
+        "grade": "A+"
+      }
+    ]
+  },
+  {
+    "id": 50,
+    "roll": "7005",
+    "className": "class-7",
+    "studentName": "Bilal Zaman",
+    "grade": "A+",
+    "remarks": "Strong overall performance.",
+    "subjectResults": [
+      {
+        "subject": "Quran",
+        "marks": 71,
+        "grade": "A"
+      },
+      {
+        "subject": "Arabic",
+        "marks": 76,
+        "grade": "A"
+      },
+      {
+        "subject": "Hadith",
+        "marks": 81,
+        "grade": "A+"
+      },
+      {
+        "subject": "Fiqh",
+        "marks": 86,
+        "grade": "A+"
+      },
+      {
+        "subject": "General Studies",
+        "marks": 91,
+        "grade": "A+"
+      }
+    ]
+  },
+  {
+    "id": 51,
+    "roll": "7006",
+    "className": "class-7",
+    "studentName": "Saad Karim",
+    "grade": "A",
+    "remarks": "Strong overall performance.",
+    "subjectResults": [
+      {
+        "subject": "Quran",
+        "marks": 78,
+        "grade": "A"
+      },
+      {
+        "subject": "Arabic",
+        "marks": 83,
+        "grade": "A+"
+      },
+      {
+        "subject": "Hadith",
+        "marks": 88,
+        "grade": "A+"
+      },
+      {
+        "subject": "Fiqh",
+        "marks": 93,
+        "grade": "A+"
+      },
+      {
+        "subject": "General Studies",
+        "marks": 55,
+        "grade": "B"
+      }
+    ]
+  },
+  {
+    "id": 52,
+    "roll": "7007",
+    "className": "class-7",
+    "studentName": "Khalid Mahmud",
+    "grade": "A-",
+    "remarks": "Steady progress, keep practicing daily.",
+    "subjectResults": [
+      {
+        "subject": "Quran",
+        "marks": 85,
+        "grade": "A+"
+      },
+      {
+        "subject": "Arabic",
+        "marks": 90,
+        "grade": "A+"
+      },
+      {
+        "subject": "Hadith",
+        "marks": 52,
+        "grade": "B"
+      },
+      {
+        "subject": "Fiqh",
+        "marks": 57,
+        "grade": "B"
+      },
+      {
+        "subject": "General Studies",
+        "marks": 62,
+        "grade": "A-"
+      }
+    ]
+  },
+  {
+    "id": 53,
+    "roll": "7008",
+    "className": "class-7",
+    "studentName": "Ayman Hossain",
+    "grade": "A-",
+    "remarks": "Steady progress, keep practicing daily.",
+    "subjectResults": [
+      {
+        "subject": "Quran",
+        "marks": 92,
+        "grade": "A+"
+      },
+      {
+        "subject": "Arabic",
+        "marks": 54,
+        "grade": "B"
+      },
+      {
+        "subject": "Hadith",
+        "marks": 59,
+        "grade": "B"
+      },
+      {
+        "subject": "Fiqh",
+        "marks": 64,
+        "grade": "A-"
+      },
+      {
+        "subject": "General Studies",
+        "marks": 69,
+        "grade": "A-"
+      }
+    ]
+  },
+  {
+    "id": 54,
+    "roll": "7009",
+    "className": "class-7",
+    "studentName": "Hamza Islam",
+    "grade": "A-",
+    "remarks": "Steady progress, keep practicing daily.",
+    "subjectResults": [
+      {
+        "subject": "Quran",
+        "marks": 56,
+        "grade": "B"
+      },
+      {
+        "subject": "Arabic",
+        "marks": 61,
+        "grade": "A-"
+      },
+      {
+        "subject": "Hadith",
+        "marks": 66,
+        "grade": "A-"
+      },
+      {
+        "subject": "Fiqh",
+        "marks": 71,
+        "grade": "A"
+      },
+      {
+        "subject": "General Studies",
+        "marks": 76,
+        "grade": "A"
+      }
+    ]
+  },
+  {
+    "id": 55,
+    "roll": "7010",
+    "className": "class-7",
+    "studentName": "Rayhan Siddiq",
+    "grade": "A",
+    "remarks": "Strong overall performance.",
+    "subjectResults": [
+      {
+        "subject": "Quran",
+        "marks": 63,
+        "grade": "A-"
+      },
+      {
+        "subject": "Arabic",
+        "marks": 68,
+        "grade": "A-"
+      },
+      {
+        "subject": "Hadith",
+        "marks": 73,
+        "grade": "A"
+      },
+      {
+        "subject": "Fiqh",
+        "marks": 78,
+        "grade": "A"
+      },
+      {
+        "subject": "General Studies",
+        "marks": 83,
+        "grade": "A+"
+      }
+    ]
+  },
+  {
+    "id": 56,
+    "roll": "7011",
+    "className": "class-7",
+    "studentName": "Naeem Rafi",
+    "grade": "A+",
+    "remarks": "Strong overall performance.",
+    "subjectResults": [
+      {
+        "subject": "Quran",
+        "marks": 70,
+        "grade": "A"
+      },
+      {
+        "subject": "Arabic",
+        "marks": 75,
+        "grade": "A"
+      },
+      {
+        "subject": "Hadith",
+        "marks": 80,
+        "grade": "A+"
+      },
+      {
+        "subject": "Fiqh",
+        "marks": 85,
+        "grade": "A+"
+      },
+      {
+        "subject": "General Studies",
+        "marks": 90,
+        "grade": "A+"
+      }
+    ]
+  },
+  {
+    "id": 57,
+    "roll": "7012",
+    "className": "class-7",
+    "studentName": "Abdullah Noor",
+    "grade": "A",
+    "remarks": "Strong overall performance.",
+    "subjectResults": [
+      {
+        "subject": "Quran",
+        "marks": 77,
+        "grade": "A"
+      },
+      {
+        "subject": "Arabic",
+        "marks": 82,
+        "grade": "A+"
+      },
+      {
+        "subject": "Hadith",
+        "marks": 87,
+        "grade": "A+"
+      },
+      {
+        "subject": "Fiqh",
+        "marks": 92,
+        "grade": "A+"
+      },
+      {
+        "subject": "General Studies",
+        "marks": 54,
+        "grade": "B"
+      }
+    ]
+  },
+  {
+    "id": 58,
+    "roll": "7013",
+    "className": "class-7",
+    "studentName": "Yusuf Salman",
+    "grade": "A",
+    "remarks": "Strong overall performance.",
+    "subjectResults": [
+      {
+        "subject": "Quran",
+        "marks": 84,
+        "grade": "A+"
+      },
+      {
+        "subject": "Arabic",
+        "marks": 89,
+        "grade": "A+"
+      },
+      {
+        "subject": "Hadith",
+        "marks": 94,
+        "grade": "A+"
+      },
+      {
+        "subject": "Fiqh",
+        "marks": 56,
+        "grade": "B"
+      },
+      {
+        "subject": "General Studies",
+        "marks": 61,
+        "grade": "A-"
+      }
+    ]
+  },
+  {
+    "id": 59,
+    "roll": "7014",
+    "className": "class-7",
+    "studentName": "Ibrahim Rahman",
+    "grade": "A-",
+    "remarks": "Steady progress, keep practicing daily.",
+    "subjectResults": [
+      {
+        "subject": "Quran",
+        "marks": 91,
+        "grade": "A+"
+      },
+      {
+        "subject": "Arabic",
+        "marks": 53,
+        "grade": "B"
+      },
+      {
+        "subject": "Hadith",
+        "marks": 58,
+        "grade": "B"
+      },
+      {
+        "subject": "Fiqh",
+        "marks": 63,
+        "grade": "A-"
+      },
+      {
+        "subject": "General Studies",
+        "marks": 68,
+        "grade": "A-"
+      }
+    ]
+  },
+  {
+    "id": 60,
+    "roll": "7015",
+    "className": "class-7",
+    "studentName": "Musa Farhan",
+    "grade": "A-",
+    "remarks": "Steady progress, keep practicing daily.",
+    "subjectResults": [
+      {
+        "subject": "Quran",
+        "marks": 55,
+        "grade": "B"
+      },
+      {
+        "subject": "Arabic",
+        "marks": 60,
+        "grade": "A-"
+      },
+      {
+        "subject": "Hadith",
+        "marks": 65,
+        "grade": "A-"
+      },
+      {
+        "subject": "Fiqh",
+        "marks": 70,
+        "grade": "A"
+      },
+      {
+        "subject": "General Studies",
+        "marks": 75,
+        "grade": "A"
+      }
+    ]
+  },
+  {
+    "id": 61,
+    "roll": "8001",
+    "className": "class-8",
+    "studentName": "Husain Islam",
+    "grade": "A-",
+    "remarks": "Steady progress, keep practicing daily.",
+    "subjectResults": [
+      {
+        "subject": "Quran",
+        "marks": 52,
+        "grade": "B"
+      },
+      {
+        "subject": "Arabic",
+        "marks": 57,
+        "grade": "B"
+      },
+      {
+        "subject": "Hadith",
+        "marks": 62,
+        "grade": "A-"
+      },
+      {
+        "subject": "Fiqh",
+        "marks": 67,
+        "grade": "A-"
+      },
+      {
+        "subject": "General Studies",
+        "marks": 72,
+        "grade": "A"
+      }
+    ]
+  },
+  {
+    "id": 62,
+    "roll": "8002",
+    "className": "class-8",
+    "studentName": "Umar Siddiq",
+    "grade": "A-",
+    "remarks": "Steady progress, keep practicing daily.",
+    "subjectResults": [
+      {
+        "subject": "Quran",
+        "marks": 59,
+        "grade": "B"
+      },
+      {
+        "subject": "Arabic",
+        "marks": 64,
+        "grade": "A-"
+      },
+      {
+        "subject": "Hadith",
+        "marks": 69,
+        "grade": "A-"
+      },
+      {
+        "subject": "Fiqh",
+        "marks": 74,
+        "grade": "A"
+      },
+      {
+        "subject": "General Studies",
+        "marks": 79,
+        "grade": "A"
+      }
+    ]
+  },
+  {
+    "id": 63,
+    "roll": "8003",
+    "className": "class-8",
+    "studentName": "Ali Rafi",
+    "grade": "A",
+    "remarks": "Strong overall performance.",
+    "subjectResults": [
+      {
+        "subject": "Quran",
+        "marks": 66,
+        "grade": "A-"
+      },
+      {
+        "subject": "Arabic",
+        "marks": 71,
+        "grade": "A"
+      },
+      {
+        "subject": "Hadith",
+        "marks": 76,
+        "grade": "A"
+      },
+      {
+        "subject": "Fiqh",
+        "marks": 81,
+        "grade": "A+"
+      },
+      {
+        "subject": "General Studies",
+        "marks": 86,
+        "grade": "A+"
+      }
+    ]
+  },
+  {
+    "id": 64,
+    "roll": "8004",
+    "className": "class-8",
+    "studentName": "Bilal Noor",
+    "grade": "A+",
+    "remarks": "Strong overall performance.",
+    "subjectResults": [
+      {
+        "subject": "Quran",
+        "marks": 73,
+        "grade": "A"
+      },
+      {
+        "subject": "Arabic",
+        "marks": 78,
+        "grade": "A"
+      },
+      {
+        "subject": "Hadith",
+        "marks": 83,
+        "grade": "A+"
+      },
+      {
+        "subject": "Fiqh",
+        "marks": 88,
+        "grade": "A+"
+      },
+      {
+        "subject": "General Studies",
+        "marks": 93,
+        "grade": "A+"
+      }
+    ]
+  },
+  {
+    "id": 65,
+    "roll": "8005",
+    "className": "class-8",
+    "studentName": "Saad Salman",
+    "grade": "A",
+    "remarks": "Strong overall performance.",
+    "subjectResults": [
+      {
+        "subject": "Quran",
+        "marks": 80,
+        "grade": "A+"
+      },
+      {
+        "subject": "Arabic",
+        "marks": 85,
+        "grade": "A+"
+      },
+      {
+        "subject": "Hadith",
+        "marks": 90,
+        "grade": "A+"
+      },
+      {
+        "subject": "Fiqh",
+        "marks": 52,
+        "grade": "B"
+      },
+      {
+        "subject": "General Studies",
+        "marks": 57,
+        "grade": "B"
+      }
+    ]
+  },
+  {
+    "id": 66,
+    "roll": "8006",
+    "className": "class-8",
+    "studentName": "Khalid Rahman",
+    "grade": "A",
+    "remarks": "Strong overall performance.",
+    "subjectResults": [
+      {
+        "subject": "Quran",
+        "marks": 87,
+        "grade": "A+"
+      },
+      {
+        "subject": "Arabic",
+        "marks": 92,
+        "grade": "A+"
+      },
+      {
+        "subject": "Hadith",
+        "marks": 54,
+        "grade": "B"
+      },
+      {
+        "subject": "Fiqh",
+        "marks": 59,
+        "grade": "B"
+      },
+      {
+        "subject": "General Studies",
+        "marks": 64,
+        "grade": "A-"
+      }
+    ]
+  },
+  {
+    "id": 67,
+    "roll": "8007",
+    "className": "class-8",
+    "studentName": "Ayman Farhan",
+    "grade": "A",
+    "remarks": "Strong overall performance.",
+    "subjectResults": [
+      {
+        "subject": "Quran",
+        "marks": 94,
+        "grade": "A+"
+      },
+      {
+        "subject": "Arabic",
+        "marks": 56,
+        "grade": "B"
+      },
+      {
+        "subject": "Hadith",
+        "marks": 61,
+        "grade": "A-"
+      },
+      {
+        "subject": "Fiqh",
+        "marks": 66,
+        "grade": "A-"
+      },
+      {
+        "subject": "General Studies",
+        "marks": 71,
+        "grade": "A"
+      }
+    ]
+  },
+  {
+    "id": 68,
+    "roll": "8008",
+    "className": "class-8",
+    "studentName": "Hamza Ahmed",
+    "grade": "A-",
+    "remarks": "Steady progress, keep practicing daily.",
+    "subjectResults": [
+      {
+        "subject": "Quran",
+        "marks": 58,
+        "grade": "B"
+      },
+      {
+        "subject": "Arabic",
+        "marks": 63,
+        "grade": "A-"
+      },
+      {
+        "subject": "Hadith",
+        "marks": 68,
+        "grade": "A-"
+      },
+      {
+        "subject": "Fiqh",
+        "marks": 73,
+        "grade": "A"
+      },
+      {
+        "subject": "General Studies",
+        "marks": 78,
+        "grade": "A"
+      }
+    ]
+  },
+  {
+    "id": 69,
+    "roll": "8009",
+    "className": "class-8",
+    "studentName": "Rayhan Anwar",
+    "grade": "A",
+    "remarks": "Strong overall performance.",
+    "subjectResults": [
+      {
+        "subject": "Quran",
+        "marks": 65,
+        "grade": "A-"
+      },
+      {
+        "subject": "Arabic",
+        "marks": 70,
+        "grade": "A"
+      },
+      {
+        "subject": "Hadith",
+        "marks": 75,
+        "grade": "A"
+      },
+      {
+        "subject": "Fiqh",
+        "marks": 80,
+        "grade": "A+"
+      },
+      {
+        "subject": "General Studies",
+        "marks": 85,
+        "grade": "A+"
+      }
+    ]
+  },
+  {
+    "id": 70,
+    "roll": "8010",
+    "className": "class-8",
+    "studentName": "Naeem Kader",
+    "grade": "A+",
+    "remarks": "Strong overall performance.",
+    "subjectResults": [
+      {
+        "subject": "Quran",
+        "marks": 72,
+        "grade": "A"
+      },
+      {
+        "subject": "Arabic",
+        "marks": 77,
+        "grade": "A"
+      },
+      {
+        "subject": "Hadith",
+        "marks": 82,
+        "grade": "A+"
+      },
+      {
+        "subject": "Fiqh",
+        "marks": 87,
+        "grade": "A+"
+      },
+      {
+        "subject": "General Studies",
+        "marks": 92,
+        "grade": "A+"
+      }
+    ]
+  },
+  {
+    "id": 71,
+    "roll": "8011",
+    "className": "class-8",
+    "studentName": "Abdullah Tariq",
+    "grade": "A+",
+    "remarks": "Strong overall performance.",
+    "subjectResults": [
+      {
+        "subject": "Quran",
+        "marks": 79,
+        "grade": "A"
+      },
+      {
+        "subject": "Arabic",
+        "marks": 84,
+        "grade": "A+"
+      },
+      {
+        "subject": "Hadith",
+        "marks": 89,
+        "grade": "A+"
+      },
+      {
+        "subject": "Fiqh",
+        "marks": 94,
+        "grade": "A+"
+      },
+      {
+        "subject": "General Studies",
+        "marks": 56,
+        "grade": "B"
+      }
+    ]
+  },
+  {
+    "id": 72,
+    "roll": "8012",
+    "className": "class-8",
+    "studentName": "Yusuf Zaman",
+    "grade": "A",
+    "remarks": "Strong overall performance.",
+    "subjectResults": [
+      {
+        "subject": "Quran",
+        "marks": 86,
+        "grade": "A+"
+      },
+      {
+        "subject": "Arabic",
+        "marks": 91,
+        "grade": "A+"
+      },
+      {
+        "subject": "Hadith",
+        "marks": 53,
+        "grade": "B"
+      },
+      {
+        "subject": "Fiqh",
+        "marks": 58,
+        "grade": "B"
+      },
+      {
+        "subject": "General Studies",
+        "marks": 63,
+        "grade": "A-"
+      }
+    ]
+  },
+  {
+    "id": 73,
+    "roll": "8013",
+    "className": "class-8",
+    "studentName": "Ibrahim Karim",
+    "grade": "A-",
+    "remarks": "Steady progress, keep practicing daily.",
+    "subjectResults": [
+      {
+        "subject": "Quran",
+        "marks": 93,
+        "grade": "A+"
+      },
+      {
+        "subject": "Arabic",
+        "marks": 55,
+        "grade": "B"
+      },
+      {
+        "subject": "Hadith",
+        "marks": 60,
+        "grade": "A-"
+      },
+      {
+        "subject": "Fiqh",
+        "marks": 65,
+        "grade": "A-"
+      },
+      {
+        "subject": "General Studies",
+        "marks": 70,
+        "grade": "A"
+      }
+    ]
+  },
+  {
+    "id": 74,
+    "roll": "8014",
+    "className": "class-8",
+    "studentName": "Musa Mahmud",
+    "grade": "A-",
+    "remarks": "Steady progress, keep practicing daily.",
+    "subjectResults": [
+      {
+        "subject": "Quran",
+        "marks": 57,
+        "grade": "B"
+      },
+      {
+        "subject": "Arabic",
+        "marks": 62,
+        "grade": "A-"
+      },
+      {
+        "subject": "Hadith",
+        "marks": 67,
+        "grade": "A-"
+      },
+      {
+        "subject": "Fiqh",
+        "marks": 72,
+        "grade": "A"
+      },
+      {
+        "subject": "General Studies",
+        "marks": 77,
+        "grade": "A"
+      }
+    ]
+  },
+  {
+    "id": 75,
+    "roll": "8015",
+    "className": "class-8",
+    "studentName": "Hasan Hossain",
+    "grade": "A",
+    "remarks": "Strong overall performance.",
+    "subjectResults": [
+      {
+        "subject": "Quran",
+        "marks": 64,
+        "grade": "A-"
+      },
+      {
+        "subject": "Arabic",
+        "marks": 69,
+        "grade": "A-"
+      },
+      {
+        "subject": "Hadith",
+        "marks": 74,
+        "grade": "A"
+      },
+      {
+        "subject": "Fiqh",
+        "marks": 79,
+        "grade": "A"
+      },
+      {
+        "subject": "General Studies",
+        "marks": 84,
+        "grade": "A+"
+      }
+    ]
+  }
+]

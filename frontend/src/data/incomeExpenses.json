@@ -1,0 +1,23 @@
+[
+  {
+    "id": 1,
+    "type": "income",
+    "title": "Monthly Tuition Collection",
+    "amount": 54000,
+    "date": "05 April 2026"
+  },
+  {
+    "id": 2,
+    "type": "expense",
+    "title": "Student Meal Program",
+    "amount": 18500,
+    "date": "07 April 2026"
+  },
+  {
+    "id": 3,
+    "type": "expense",
+    "title": "Library Book Purchase",
+    "amount": 9200,
+    "date": "10 April 2026"
+  }
+]
