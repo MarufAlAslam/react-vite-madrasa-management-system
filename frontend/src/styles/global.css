@@ -770,18 +770,26 @@ button {
 	position: fixed;
 	inset: 0;
 	z-index: 50;
-	display: grid;
-	place-items: center;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 	background: rgba(6, 15, 8, 0.62);
 	padding: 16px;
 }
 
 .modal-panel {
+	position: relative;
+	top: auto;
+	left: auto;
+	transform: none;
 	width: min(560px, 100%);
+	max-height: min(82vh, 760px);
+	overflow-y: auto;
 	background: #fff;
 	border-radius: 16px;
 	border: 1px solid #d4e2d1;
 	padding: 18px;
+	z-index: 51;
 }
 
 .image-modal img {

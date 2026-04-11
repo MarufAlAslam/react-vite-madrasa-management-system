@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { useData } from '../context/DataContext'
 
 function NoticePage() {
@@ -57,18 +58,20 @@ function NoticePage() {
         </div>
       </section>
 
-      {expandedNotice && (
-        <div className="modal-backdrop" onClick={() => setExpandedNotice(null)}>
-          <article className="modal-panel" onClick={(event) => event.stopPropagation()}>
-            <p className="notice-date">{expandedNotice.date}</p>
-            <h3>{expandedNotice.title}</h3>
-            <p>{expandedNotice.full}</p>
-            <button type="button" onClick={() => setExpandedNotice(null)}>
-              Close
-            </button>
-          </article>
-        </div>
-      )}
+      {expandedNotice &&
+        createPortal(
+          <div className="modal-backdrop" onClick={() => setExpandedNotice(null)}>
+            <article className="modal-panel" onClick={(event) => event.stopPropagation()}>
+              <p className="notice-date">{expandedNotice.date}</p>
+              <h3>{expandedNotice.title}</h3>
+              <p>{expandedNotice.full}</p>
+              <button type="button" onClick={() => setExpandedNotice(null)}>
+                Close
+              </button>
+            </article>
+          </div>,
+          document.body,
+        )}
     </div>
   )
 }

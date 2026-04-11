@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { createPortal } from 'react-dom'
 import { useData } from '../context/DataContext'
 
 function GalleryPage() {
@@ -31,17 +32,19 @@ function GalleryPage() {
         )}
       </section>
 
-      {selectedImage && (
-        <div className="modal-backdrop" onClick={() => setSelectedImage(null)}>
-          <article className="modal-panel image-modal" onClick={(event) => event.stopPropagation()}>
-            <img src={selectedImage.image} alt={selectedImage.title} />
-            <h3>{selectedImage.title}</h3>
-            <button type="button" onClick={() => setSelectedImage(null)}>
-              Close
-            </button>
-          </article>
-        </div>
-      )}
+      {selectedImage &&
+        createPortal(
+          <div className="modal-backdrop" onClick={() => setSelectedImage(null)}>
+            <article className="modal-panel image-modal" onClick={(event) => event.stopPropagation()}>
+              <img src={selectedImage.image} alt={selectedImage.title} />
+              <h3>{selectedImage.title}</h3>
+              <button type="button" onClick={() => setSelectedImage(null)}>
+                Close
+              </button>
+            </article>
+          </div>,
+          document.body,
+        )}
     </div>
   )
 }
