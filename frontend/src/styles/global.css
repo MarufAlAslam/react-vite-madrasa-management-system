@@ -54,10 +54,54 @@ body {
 		repeating-linear-gradient(45deg, rgba(255, 255, 255, 0.04) 0 14px, transparent 14px 28px);
 }
 
+.burger-btn {
+	display: none;
+	position: absolute;
+	top: 50%;
+	right: clamp(14px, 2.5vw, 28px);
+	transform: translateY(-50%);
+	width: 44px;
+	height: 44px;
+	border-radius: 12px;
+	border: 1px solid rgba(255, 255, 255, 0.35);
+	background: rgba(0, 0, 0, 0.2);
+	padding: 9px 8px;
+	z-index: 80;
+}
+
+.burger-btn span {
+	display: block;
+	width: 100%;
+	height: 2.5px;
+	border-radius: 99px;
+	background: #fff;
+	transition: transform 260ms ease, opacity 180ms ease;
+}
+
+.burger-btn span + span {
+	margin-top: 6px;
+}
+
+.burger-btn.open span:nth-child(1) {
+	transform: translateY(8.5px) rotate(45deg);
+}
+
+.burger-btn.open span:nth-child(2) {
+	opacity: 0;
+}
+
+.burger-btn.open span:nth-child(3) {
+	transform: translateY(-8.5px) rotate(-45deg);
+}
+
 .brand-block {
 	display: flex;
 	gap: 14px;
 	align-items: center;
+}
+
+.brand-block.logo-only {
+	min-height: 72px;
 }
 
 .logo-mark {
@@ -73,6 +117,12 @@ body {
 	font-weight: 800;
 }
 
+.logo-mark.logo-large {
+	width: 64px;
+	height: 64px;
+	font-size: 1.8rem;
+}
+
 .top-header h1 {
 	margin: 0;
 	font-family: 'Spectral', Georgia, serif;
@@ -86,6 +136,10 @@ body {
 	font-size: 0.9rem;
 }
 
+.brand-copy {
+	display: block;
+}
+
 .main-nav {
 	padding: 12px clamp(14px, 2.5vw, 28px);
 	display: flex;
@@ -94,6 +148,14 @@ body {
 	align-items: center;
 	background: linear-gradient(180deg, #f7f8f3, #fcfcf7);
 	border-bottom: 1px solid #e4eadf;
+}
+
+.nav-links {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 10px;
+	align-items: center;
+	width: 100%;
 }
 
 .main-nav a,
@@ -126,9 +188,65 @@ body {
 	margin-left: auto;
 }
 
+.mobile-nav-backdrop {
+	position: fixed;
+	inset: 0;
+	background: rgba(7, 20, 10, 0.45);
+	z-index: 60;
+	backdrop-filter: blur(2px);
+}
+
 main {
 	padding: clamp(16px, 2.7vw, 30px);
 	min-height: 65vh;
+}
+
+.site-footer {
+	padding: 24px clamp(16px, 2.7vw, 30px) 16px;
+	border-top: 1px solid #d9e7d5;
+	background: linear-gradient(180deg, #f4f8f1, #edf4e9);
+}
+
+.footer-grid {
+	display: grid;
+	grid-template-columns: 1.2fr 1fr 1fr;
+	gap: 14px;
+}
+
+.site-footer h3 {
+	margin: 0 0 8px;
+	font-size: 1rem;
+	color: var(--green-900);
+}
+
+.site-footer p {
+	margin: 0 0 6px;
+	font-size: 0.92rem;
+	color: #334033;
+}
+
+.footer-links {
+	display: grid;
+	gap: 6px;
+}
+
+.footer-links a {
+	color: var(--green-800);
+	text-decoration: none;
+	font-weight: 700;
+	font-size: 0.92rem;
+}
+
+.footer-links a:hover {
+	text-decoration: underline;
+}
+
+.footer-bottom {
+	margin-top: 10px;
+	padding-top: 10px;
+	border-top: 1px dashed #cfe0ca;
+	font-size: 0.82rem;
+	color: #536352;
 }
 
 .page-stack {
@@ -288,6 +406,23 @@ main {
 	grid-template-columns: repeat(5, minmax(0, 1fr));
 }
 
+.mobile-next-prayer {
+	display: none;
+}
+
+.next-prayer-card {
+	text-align: center;
+}
+
+.next-prayer-label {
+	margin: 0;
+	font-size: 0.75rem;
+	font-weight: 800;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	color: var(--green-700);
+}
+
 .prayer-card {
 	text-align: center;
 }
@@ -422,7 +557,8 @@ button {
 	border: 0;
 	padding: 0;
 	border-radius: 14px;
-	min-height: 145px;
+	height: 182px;
+	min-height: 182px;
 	overflow: hidden;
 	position: relative;
 	cursor: pointer;
@@ -671,6 +807,10 @@ button {
 		grid-template-columns: 1fr;
 	}
 
+	.footer-grid {
+		grid-template-columns: 1fr;
+	}
+
 	.prayer-grid {
 		grid-template-columns: repeat(2, minmax(0, 1fr));
 	}
@@ -682,9 +822,68 @@ button {
 	.notice-row-card {
 		flex-direction: column;
 	}
+
+	.gallery-card {
+		height: 156px;
+		min-height: 156px;
+	}
 }
 
 @media (max-width: 560px) {
+	.top-header {
+		padding: 14px 16px;
+	}
+
+	.brand-block.logo-only {
+		min-height: 60px;
+	}
+
+	.brand-copy {
+		display: none;
+	}
+
+	.logo-mark.logo-large {
+		width: 56px;
+		height: 56px;
+		font-size: 1.6rem;
+	}
+
+	.burger-btn {
+		display: block;
+	}
+
+	.main-nav {
+		position: fixed;
+		top: 72px;
+		right: 10px;
+		width: min(82vw, 300px);
+		max-height: calc(100dvh - 88px);
+		z-index: 75;
+		padding: 14px;
+		border: 1px solid #dce7d7;
+		border-radius: 20px;
+		background: linear-gradient(180deg, #f7faf4, #fdfefb);
+		overflow-y: auto;
+		transform: translateY(-10px) scale(0.96);
+		transform-origin: top right;
+		opacity: 0;
+		pointer-events: none;
+		transition: transform 260ms ease, opacity 220ms ease;
+		box-shadow: 0 16px 40px rgba(0, 0, 0, 0.2);
+	}
+
+	.main-nav.is-open {
+		transform: translateY(0) scale(1);
+		opacity: 1;
+		pointer-events: auto;
+	}
+
+	.nav-links {
+		flex-direction: column;
+		align-items: stretch;
+		gap: 8px;
+	}
+
 	.hero-actions {
 		flex-direction: column;
 		align-items: stretch;
@@ -694,8 +893,12 @@ button {
 		grid-template-columns: 1fr;
 	}
 
-	.main-nav {
-		gap: 8px;
+	.desktop-prayer-grid {
+		display: none;
+	}
+
+	.mobile-next-prayer {
+		display: block;
 	}
 
 	.main-nav a,

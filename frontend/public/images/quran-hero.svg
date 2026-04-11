@@ -1,0 +1,41 @@
+<svg width="1400" height="900" viewBox="0 0 1400 900" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="1400" y1="0" x2="0" y2="900" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F7FAF5"/>
+      <stop offset="1" stop-color="#E8F2E2"/>
+    </linearGradient>
+    <linearGradient id="book" x1="320" y1="220" x2="980" y2="760" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0B5D1E"/>
+      <stop offset="1" stop-color="#1E7A32"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="420" y1="170" x2="920" y2="820" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F6E5A6"/>
+      <stop offset="1" stop-color="#C8A951"/>
+    </linearGradient>
+  </defs>
+  <rect width="1400" height="900" rx="52" fill="url(#bg)"/>
+  <circle cx="1180" cy="170" r="140" fill="#C8A951" fill-opacity="0.14"/>
+  <circle cx="260" cy="740" r="180" fill="#0B5D1E" fill-opacity="0.08"/>
+  <path d="M260 610C360 510 484 474 650 474C816 474 940 510 1040 610V736H260V610Z" fill="url(#gold)" fill-opacity="0.42"/>
+  <rect x="360" y="214" width="684" height="486" rx="30" fill="#FFFFFF" fill-opacity="0.7" stroke="#D9E7D5" stroke-width="6"/>
+  <path d="M445 272C446 254 462 240 481 240H734C772 240 806 255 832 282V638C808 610 776 594 743 594H481C462 594 446 580 445 562V272Z" fill="url(#book)"/>
+  <path d="M956 272C955 254 939 240 920 240H667C629 240 595 255 569 282V638C593 610 625 594 658 594H920C939 594 955 580 956 562V272Z" fill="#145427"/>
+  <path d="M694 250V593" stroke="#F4F5F1" stroke-width="6" stroke-linecap="round" opacity="0.65"/>
+  <path d="M503 310H616" stroke="#F7E7AF" stroke-width="10" stroke-linecap="round"/>
+  <path d="M503 348H620" stroke="#F7E7AF" stroke-width="10" stroke-linecap="round"/>
+  <path d="M503 386H601" stroke="#F7E7AF" stroke-width="10" stroke-linecap="round"/>
+  <path d="M793 310H907" stroke="#F7E7AF" stroke-width="10" stroke-linecap="round"/>
+  <path d="M788 348H905" stroke="#F7E7AF" stroke-width="10" stroke-linecap="round"/>
+  <path d="M808 386H906" stroke="#F7E7AF" stroke-width="10" stroke-linecap="round"/>
+  <path d="M480 468H614" stroke="#E9D99A" stroke-width="8" stroke-linecap="round" opacity="0.85"/>
+  <path d="M792 468H925" stroke="#E9D99A" stroke-width="8" stroke-linecap="round" opacity="0.85"/>
+  <circle cx="700" cy="432" r="76" fill="#C8A951" fill-opacity="0.18"/>
+  <circle cx="700" cy="432" r="50" fill="#C8A951" fill-opacity="0.26"/>
+  <path d="M700 389L709.9 417.1H739.6L715.8 434.9L725.7 463L700 445.2L674.3 463L684.2 434.9L660.4 417.1H690.1L700 389Z" fill="#C8A951"/>
+  <path d="M1080 270C1110 284 1130 312 1130 345C1130 389 1095 424 1051 424H1018C997 424 981 441 981 462V507" stroke="#0B5D1E" stroke-width="18" stroke-linecap="round" stroke-linejoin="round" opacity="0.75"/>
+  <path d="M1095 510C1116 510 1133 527 1133 548C1133 569 1116 586 1095 586C1074 586 1057 569 1057 548C1057 527 1074 510 1095 510Z" fill="#C8A951" fill-opacity="0.9"/>
+  <path d="M200 190C252 160 318 148 386 148" stroke="#0B5D1E" stroke-width="10" stroke-linecap="round" opacity="0.12"/>
+  <path d="M202 222C260 188 326 176 400 176" stroke="#C8A951" stroke-width="8" stroke-linecap="round" opacity="0.18"/>
+  <text x="700" y="760" text-anchor="middle" font-family="Georgia, serif" font-size="42" fill="#234026" font-weight="700">Darul Noor Madrasa</text>
+  <text x="700" y="806" text-anchor="middle" font-family="Arial, sans-serif" font-size="24" fill="#5E6A58">Quran • Character • Community</text>
+</svg>

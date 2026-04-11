@@ -1,3 +1,4 @@
+import { useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { useData } from '../context/DataContext'
 
@@ -30,6 +31,26 @@ const prayerTimes = [
 function HomePage() {
   const { notices, loading } = useData()
 
+  const nextPrayer = useMemo(() => {
+    const toMinutes = (timeText) => {
+      const [clock, period] = timeText.split(' ')
+      const [hourText, minuteText] = clock.split(':')
+      let hour = Number(hourText)
+      const minute = Number(minuteText)
+
+      if (period === 'PM' && hour !== 12) hour += 12
+      if (period === 'AM' && hour === 12) hour = 0
+
+      return hour * 60 + minute
+    }
+
+    const now = new Date()
+    const currentMinutes = now.getHours() * 60 + now.getMinutes()
+    const withMinutes = prayerTimes.map((item) => ({ ...item, totalMinutes: toMinutes(item.time) }))
+
+    return withMinutes.find((item) => item.totalMinutes > currentMinutes) || withMinutes[0]
+  }, [])
+
   return (
     <div className="page-stack">
       <section className="panel">
@@ -39,13 +60,22 @@ function HomePage() {
             <h2>Prayer Timings</h2>
           </div>
         </div>
-        <div className="prayer-grid">
+
+        <div className="prayer-grid desktop-prayer-grid">
           {prayerTimes.map((item) => (
             <div className="prayer-card" key={item.name}>
               <h3>{item.name}</h3>
               <p>{item.time}</p>
             </div>
           ))}
+        </div>
+
+        <div className="mobile-next-prayer">
+          <article className="prayer-card next-prayer-card">
+            <p className="next-prayer-label">Upcoming Salah</p>
+            <h3>{nextPrayer.name}</h3>
+            <p>{nextPrayer.time}</p>
+          </article>
         </div>
       </section>
 
@@ -68,8 +98,8 @@ function HomePage() {
         </div>
         <div className="hero-image-wrap">
           <img
-            src="https://images.unsplash.com/photo-1542816417-0983678cbb7e?auto=format&fit=crop&w=1400&q=80"
-            alt="Students reciting Quran"
+            src="/images/quran-hero.svg"
+            alt="Holy Quran open for recitation"
           />
         </div>
       </section>

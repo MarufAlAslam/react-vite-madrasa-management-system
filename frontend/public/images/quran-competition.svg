@@ -1,0 +1,33 @@
+<svg width="1200" height="800" viewBox="0 0 1200 800" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1200" y2="800" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F7FAF4"/>
+      <stop offset="1" stop-color="#E8F2E2"/>
+    </linearGradient>
+    <linearGradient id="panel" x1="240" y1="120" x2="960" y2="680" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0B5D1E"/>
+      <stop offset="1" stop-color="#1E7A32"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="420" y1="220" x2="780" y2="600" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F7E7AF"/>
+      <stop offset="1" stop-color="#C8A951"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="800" rx="44" fill="url(#bg)"/>
+  <circle cx="1020" cy="150" r="120" fill="#C8A951" fill-opacity="0.12"/>
+  <circle cx="180" cy="650" r="150" fill="#0B5D1E" fill-opacity="0.08"/>
+  <rect x="170" y="120" width="860" height="560" rx="38" fill="#FFFFFF" fill-opacity="0.72" stroke="#D9E7D5" stroke-width="6"/>
+  <path d="M290 255C360 210 452 185 600 185C748 185 840 210 910 255V552C850 508 762 485 600 485C438 485 350 508 290 552V255Z" fill="url(#panel)"/>
+  <path d="M338 282C394 253 473 240 600 240C727 240 806 253 862 282V512C809 481 732 462 600 462C468 462 391 481 338 512V282Z" fill="#145427"/>
+  <path d="M600 292L613.4 333.8H657.4L621.9 359.6L635.4 401.4L600 375.6L564.6 401.4L578.1 359.6L542.6 333.8H586.6L600 292Z" fill="#C8A951"/>
+  <path d="M392 335H500" stroke="#EADFA4" stroke-width="10" stroke-linecap="round"/>
+  <path d="M392 374H498" stroke="#EADFA4" stroke-width="10" stroke-linecap="round"/>
+  <path d="M392 413H482" stroke="#EADFA4" stroke-width="10" stroke-linecap="round"/>
+  <path d="M700 335H808" stroke="#EADFA4" stroke-width="10" stroke-linecap="round"/>
+  <path d="M702 374H808" stroke="#EADFA4" stroke-width="10" stroke-linecap="round"/>
+  <path d="M718 413H808" stroke="#EADFA4" stroke-width="10" stroke-linecap="round"/>
+  <circle cx="600" cy="386" r="88" fill="url(#gold)" fill-opacity="0.18"/>
+  <path d="M885 238C930 268 960 318 960 372C960 450 896 514 818 514H768" stroke="#0B5D1E" stroke-width="16" stroke-linecap="round" stroke-linejoin="round" opacity="0.75"/>
+  <path d="M938 501C958 501 974 517 974 537C974 557 958 573 938 573C918 573 902 557 902 537C902 517 918 501 938 501Z" fill="#C8A951" fill-opacity="0.92"/>
+  <text x="600" y="680" text-anchor="middle" font-family="Georgia, serif" font-size="40" fill="#274331" font-weight="700">Quran Recitation Competition</text>
+</svg>
