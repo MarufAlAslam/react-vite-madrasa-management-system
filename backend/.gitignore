@@ -1,7 +1,5 @@
 node_modules
 .env
 .env.example
-uploads/teachers/*
-uploads/students/*
-!uploads/teachers/.gitkeep
-!uploads/students/.gitkeep
+.vercel
+.env*

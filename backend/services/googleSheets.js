@@ -48,7 +48,7 @@ async function appendRow(sheetName, columns, record) {
   await sheets.spreadsheets.values.append({
     spreadsheetId: process.env.GOOGLE_SHEET_ID,
     range: `${sheetName}!A:${String.fromCharCode(64 + columns.length)}`,
-    valueInputOption: 'USER_ENTERED',
+    valueInputOption: 'RAW',
     insertDataOption: 'INSERT_ROWS',
     requestBody: { values: [values] },
   })

@@ -1,7 +1,7 @@
 import { Router } from 'express'
 import crypto from 'node:crypto'
-import fs from 'node:fs/promises'
 import { addStudent, getStudents } from '../services/googleSheets.js'
+import { deletePhoto, uploadPhoto } from '../services/blobStorage.js'
 import { uploadStudentPhoto } from '../middleware/upload.js'
 
 const router = Router()
@@ -30,33 +30,32 @@ router.get('/', async (req, res) => {
 })
 
 router.post('/', uploadStudentPhoto.single('photo'), async (req, res) => {
-  async function fail(status, message) {
-    if (req.file) {
-      await fs.unlink(req.file.path).catch(() => {})
-    }
-    res.status(status).json({ error: message })
+  const { className, name, parentsNames, dob, contact } = req.body
+
+  if (!req.file) {
+    res.status(400).json({ error: 'photo is required' })
+    return
+  }
+
+  if (!className || !name || !parentsNames || !dob || !contact) {
+    res.status(400).json({ error: 'className, name, parentsNames, dob, and contact are required' })
+    return
+  }
+
+  if (!CLASSES.includes(className)) {
+    res.status(400).json({ error: `className must be one of: ${CLASSES.join(', ')}` })
+    return
+  }
+
+  let photoUrl
+  try {
+    photoUrl = await uploadPhoto('students', req.file)
+  } catch (error) {
+    res.status(500).json({ error: `Photo upload failed: ${error.message}` })
+    return
   }
 
   try {
-    const { className, name, parentsNames, dob, contact } = req.body
-
-    if (!req.file) {
-      await fail(400, 'photo is required')
-      return
-    }
-
-    if (!className || !name || !parentsNames || !dob || !contact) {
-      await fail(400, 'className, name, parentsNames, dob, and contact are required')
-      return
-    }
-
-    if (!CLASSES.includes(className)) {
-      await fail(400, `className must be one of: ${CLASSES.join(', ')}`)
-      return
-    }
-
-    const photoUrl = `${req.protocol}://${req.get('host')}/uploads/students/${req.file.filename}`
-
     const record = {
       id: crypto.randomUUID(),
       className,
@@ -71,7 +70,8 @@ router.post('/', uploadStudentPhoto.single('photo'), async (req, res) => {
     await addStudent(record)
     res.status(201).json(record)
   } catch (error) {
-    await fail(500, error.message)
+    await deletePhoto(photoUrl)
+    res.status(500).json({ error: error.message })
   }
 })
 

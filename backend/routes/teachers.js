@@ -1,7 +1,7 @@
 import { Router } from 'express'
 import crypto from 'node:crypto'
-import fs from 'node:fs/promises'
 import { addTeacher, getTeachers } from '../services/googleSheets.js'
+import { deletePhoto, uploadPhoto } from '../services/blobStorage.js'
 import { uploadTeacherPhoto } from '../middleware/upload.js'
 
 const router = Router()
@@ -25,33 +25,32 @@ router.get('/', async (req, res) => {
 })
 
 router.post('/', uploadTeacherPhoto.single('photo'), async (req, res) => {
-  async function fail(status, message) {
-    if (req.file) {
-      await fs.unlink(req.file.path).catch(() => {})
-    }
-    res.status(status).json({ error: message })
+  const { name, designation, subject, indexNo, phone } = req.body
+
+  if (!req.file) {
+    res.status(400).json({ error: 'photo is required' })
+    return
+  }
+
+  if (!name || !designation || !subject || !indexNo || !phone) {
+    res.status(400).json({ error: 'name, designation, subject, indexNo, and phone are required' })
+    return
+  }
+
+  if (!DESIGNATIONS.includes(designation)) {
+    res.status(400).json({ error: `designation must be one of: ${DESIGNATIONS.join(', ')}` })
+    return
+  }
+
+  let photoUrl
+  try {
+    photoUrl = await uploadPhoto('teachers', req.file)
+  } catch (error) {
+    res.status(500).json({ error: `Photo upload failed: ${error.message}` })
+    return
   }
 
   try {
-    const { name, designation, subject, indexNo, phone } = req.body
-
-    if (!req.file) {
-      await fail(400, 'photo is required')
-      return
-    }
-
-    if (!name || !designation || !subject || !indexNo || !phone) {
-      await fail(400, 'name, designation, subject, indexNo, and phone are required')
-      return
-    }
-
-    if (!DESIGNATIONS.includes(designation)) {
-      await fail(400, `designation must be one of: ${DESIGNATIONS.join(', ')}`)
-      return
-    }
-
-    const photoUrl = `${req.protocol}://${req.get('host')}/uploads/teachers/${req.file.filename}`
-
     const record = {
       id: crypto.randomUUID(),
       name,
@@ -66,7 +65,8 @@ router.post('/', uploadTeacherPhoto.single('photo'), async (req, res) => {
     await addTeacher(record)
     res.status(201).json(record)
   } catch (error) {
-    await fail(500, error.message)
+    await deletePhoto(photoUrl)
+    res.status(500).json({ error: error.message })
   }
 })
 
