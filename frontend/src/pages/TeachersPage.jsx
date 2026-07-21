@@ -10,16 +10,19 @@ function TeachersPage() {
         <h2>Faculty Directory</h2>
 
         {loading && <div className="empty-state">Loading teachers...</div>}
+        {!loading && teachers.length === 0 && (
+          <div className="empty-state">No teachers added yet.</div>
+        )}
 
-        {!loading && (
+        {!loading && teachers.length > 0 && (
           <div className="teachers-grid">
             {teachers.map((teacher) => (
               <article key={teacher.id} className="teacher-card">
-                <img src={teacher.photo} alt={teacher.name} />
+                <img src={teacher.photoUrl} alt={teacher.name} />
                 <h3>{teacher.name}</h3>
-                <p className="subject-pill">{teacher.subject}</p>
+                <p className="subject-pill">{teacher.designation}</p>
+                <p>{teacher.subject}</p>
                 <p>{teacher.phone}</p>
-                <p>{teacher.email}</p>
               </article>
             ))}
           </div>

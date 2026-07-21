@@ -1,125 +1,84 @@
-import { useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { useData } from '../context/DataContext'
+import HeroCarousel from '../components/common/HeroCarousel'
 
 const programs = [
   {
     id: 1,
-    title: 'Hifz Program',
-    text: 'A structured memorization track with daily revision supervision and tajweed correction.',
+    title: 'Dakhil',
+    text: 'Secondary-level education (equivalent to SSC) under the Bangladesh Madrasah Education Board.',
   },
   {
     id: 2,
-    title: 'Alim Curriculum',
-    text: 'Core Islamic sciences including tafsir, hadith, fiqh, usul, and Arabic grammar.',
+    title: 'Alim',
+    text: 'Higher secondary-level education (equivalent to HSC) in Science, Business Studies, and Humanities.',
   },
   {
     id: 3,
-    title: 'Maktab Foundation',
-    text: 'Weekend and evening learning for young students with adab and aqeedah focus.',
+    title: 'Fazil',
+    text: 'Degree-level Islamic higher education, the institution’s namesake and highest offered program.',
   },
 ]
 
-const prayerTimes = [
-  { name: 'Fajr', time: '4:37 AM' },
-  { name: 'Dhuhr', time: '12:07 PM' },
-  { name: 'Asr', time: '4:38 PM' },
-  { name: 'Maghrib', time: '6:19 PM' },
-  { name: 'Isha', time: '7:34 PM' },
+const instituteFacts = [
+  { label: 'Founded', value: '1935' },
+  { label: 'EIIN', value: '101165' },
+  { label: 'Students', value: '1,481' },
+  { label: 'Teachers', value: '28' },
 ]
 
 function HomePage() {
   const { notices, loading } = useData()
 
-  const nextPrayer = useMemo(() => {
-    const toMinutes = (timeText) => {
-      const [clock, period] = timeText.split(' ')
-      const [hourText, minuteText] = clock.split(':')
-      let hour = Number(hourText)
-      const minute = Number(minuteText)
-
-      if (period === 'PM' && hour !== 12) hour += 12
-      if (period === 'AM' && hour === 12) hour = 0
-
-      return hour * 60 + minute
-    }
-
-    const now = new Date()
-    const currentMinutes = now.getHours() * 60 + now.getMinutes()
-    const withMinutes = prayerTimes.map((item) => ({ ...item, totalMinutes: toMinutes(item.time) }))
-
-    return withMinutes.find((item) => item.totalMinutes > currentMinutes) || withMinutes[0]
-  }, [])
-
   return (
     <div className="page-stack">
-      <section className="panel">
-        <div className="panel-headline-row">
-          <div>
-            <p className="section-eyebrow">Daily Salah</p>
-            <h2>Prayer Timings</h2>
-          </div>
-        </div>
-
-        <div className="prayer-grid desktop-prayer-grid">
-          {prayerTimes.map((item) => (
-            <div className="prayer-card" key={item.name}>
-              <h3>{item.name}</h3>
-              <p>{item.time}</p>
-            </div>
-          ))}
-        </div>
-
-        <div className="mobile-next-prayer">
-          <article className="prayer-card next-prayer-card">
-            <p className="next-prayer-label">Upcoming Salah</p>
-            <h3>{nextPrayer.name}</h3>
-            <p>{nextPrayer.time}</p>
-          </article>
-        </div>
-      </section>
-
       <section className="panel hero-panel">
         <div>
-          <p className="section-eyebrow">Welcome to Darul Noor</p>
-          <h2 className="hero-title">A Center for Quran, Character, and Community Service</h2>
+          <p className="section-eyebrow">Welcome to Moulovirhat H. Fazil Madrasah</p>
+          <h2 className="hero-title">Serving Islamic Education in Bhola Since 1935</h2>
           <p>
-            Our madrasa blends traditional Islamic scholarship with disciplined modern learning so students grow
-            in ilm, akhlaq, and leadership.
+            A government-recognized Fazil-level madrasah in Bhola, Barisal, offering Dakhil, Alim, and Fazil
+            education across Science, Business Studies, and Humanities.
           </p>
           <div className="hero-actions">
-            <Link className="cta-btn" to="/result">
-              Check Results
-            </Link>
-            <Link className="ghost-link" to="/notice">
+            <Link className="cta-btn" to="/notice">
               View Notices
+            </Link>
+            <Link className="ghost-link" to="/gallery">
+              View Gallery
             </Link>
           </div>
         </div>
         <div className="hero-image-wrap">
-          <img
-            src="/images/quran-hero.svg"
-            alt="Holy Quran open for recitation"
-          />
+          <HeroCarousel />
         </div>
       </section>
 
       <section className="panel about-panel">
         <div className="about-image-wrap">
-          <img
-            src="https://images.unsplash.com/photo-1584551246679-0daf3d275d0f?auto=format&fit=crop&w=1400&q=80"
-            alt="Islamic architecture"
-          />
+          <img src="/images/img-4.jpg" alt="Moulovirhat H. Fazil Madrasah campus" />
         </div>
         <article>
-          <p className="section-eyebrow">About Our Madrasa</p>
-          <h2>Balanced Tarbiyah and Academic Excellence</h2>
+          <p className="section-eyebrow">About Our Madrasah</p>
+          <h2>Established 1935, Recognized 1953</h2>
           <p>
-            Darul Noor Madrasa is committed to nurturing students with deep Islamic values, strong discipline,
-            and meaningful social responsibility. We maintain a learning environment rooted in sunnah, respect,
-            and educational quality.
+            Moulovirhat H. Fazil Madrasah (EIIN: 101165) is a government-recognized Fazil-level madrasah located
+            in Bhola, Barisal Division. Founded on 1 March 1935 and officially recognized on 5 August 1953, the
+            institution operates under the Bangladesh Madrasah Education Board with Bangla-medium, day-shift
+            instruction across Science, Business Studies, and Humanities.
           </p>
         </article>
+      </section>
+
+      <section className="panel">
+        <div className="stats-grid">
+          {instituteFacts.map((fact) => (
+            <div className="stat-card" key={fact.label}>
+              <p>{fact.label}</p>
+              <h3>{fact.value}</h3>
+            </div>
+          ))}
+        </div>
       </section>
 
       <section className="panel">
@@ -159,6 +118,9 @@ function HomePage() {
               </article>
             ))}
           {loading && <div className="empty-state">Loading notices...</div>}
+          {!loading && notices.length === 0 && (
+            <div className="empty-state">No notices published yet.</div>
+          )}
         </div>
       </section>
     </div>

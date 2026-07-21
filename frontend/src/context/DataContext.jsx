@@ -1,18 +1,18 @@
 import { createContext, useContext, useEffect, useMemo, useState } from 'react'
 import {
+  createTeacher as createTeacherBackend,
+  createStudent as createStudentBackend,
+  getTeachers as getTeachersBackend,
+  getStudents as getStudentsBackend,
+} from '../services/backendApi'
+import {
   createGalleryItem,
   createIncomeExpense,
   createNotice,
-  createResultRecord,
-  createTeacher,
   deleteGalleryItem,
   getIncomeExpenses,
   getGallery,
   getNotices,
-  getResultByRollClass,
-  getResults,
-  getTeachers,
-  updateResultRecord,
   updateGalleryItem,
 } from '../services/mockApi'
 
@@ -22,25 +22,32 @@ export function DataProvider({ children }) {
   const [loading, setLoading] = useState(true)
   const [notices, setNotices] = useState([])
   const [teachers, setTeachers] = useState([])
+  const [students, setStudents] = useState([])
   const [gallery, setGallery] = useState([])
-  const [results, setResults] = useState([])
   const [incomeExpenses, setIncomeExpenses] = useState([])
+  const [backendError, setBackendError] = useState(null)
 
   useEffect(() => {
     async function loadAll() {
       setLoading(true)
-      const [noticeData, teacherData, galleryData, resultData, incomeExpenseData] = await Promise.all([
+      const [noticeData, galleryData, incomeExpenseData] = await Promise.all([
         getNotices(),
-        getTeachers(),
         getGallery(),
-        getResults(),
         getIncomeExpenses(),
       ])
       setNotices(noticeData)
-      setTeachers(teacherData)
       setGallery(galleryData)
-      setResults(resultData)
       setIncomeExpenses(incomeExpenseData)
+
+      try {
+        const [teacherData, studentData] = await Promise.all([getTeachersBackend(), getStudentsBackend()])
+        setTeachers(teacherData)
+        setStudents(studentData)
+        setBackendError(null)
+      } catch (error) {
+        setBackendError(error.message)
+      }
+
       setLoading(false)
     }
 
@@ -53,13 +60,15 @@ export function DataProvider({ children }) {
     return created
   }
 
-  async function searchResult(roll, className) {
-    return getResultByRollClass(roll, className)
+  async function addTeacher(formData) {
+    const created = await createTeacherBackend(formData)
+    setTeachers((prev) => [created, ...prev])
+    return created
   }
 
-  async function addTeacher(newTeacher) {
-    const created = await createTeacher(newTeacher)
-    setTeachers((prev) => [created, ...prev])
+  async function addStudent(formData) {
+    const created = await createStudentBackend(formData)
+    setStudents((prev) => [created, ...prev])
     return created
   }
 
@@ -82,20 +91,6 @@ export function DataProvider({ children }) {
     setGallery((prev) => prev.filter((item) => item.id !== id))
   }
 
-  async function addResultRecord(newResult) {
-    const created = await createResultRecord(newResult)
-    setResults((prev) => [created, ...prev])
-    return created
-  }
-
-  async function editResultRecord(id, payload) {
-    const updated = await updateResultRecord(id, payload)
-    if (updated) {
-      setResults((prev) => prev.map((result) => (result.id === id ? updated : result)))
-    }
-    return updated
-  }
-
   async function addIncomeExpense(newEntry) {
     const created = await createIncomeExpense(newEntry)
     setIncomeExpenses((prev) => [created, ...prev])
@@ -107,20 +102,19 @@ export function DataProvider({ children }) {
       loading,
       notices,
       teachers,
+      students,
       gallery,
-      results,
       incomeExpenses,
+      backendError,
       addNotice,
       addTeacher,
+      addStudent,
       addGalleryItem,
       editGalleryItem,
       removeGalleryItem,
-      addResultRecord,
-      editResultRecord,
       addIncomeExpense,
-      searchResult,
     }),
-    [loading, notices, teachers, gallery, results, incomeExpenses],
+    [loading, notices, teachers, students, gallery, incomeExpenses, backendError],
   )
 
   return <DataContext.Provider value={value}>{children}</DataContext.Provider>

@@ -8,6 +8,7 @@ function MainLayout() {
   const [menuOpen, setMenuOpen] = useState(false)
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMenuOpen(false)
   }, [location.pathname])
 
@@ -15,11 +16,9 @@ function MainLayout() {
     <div className="app-shell">
       <header className="top-header">
         <div className="brand-block logo-only">
-          <div className="logo-mark logo-large" aria-hidden="true">
-            M
-          </div>
+          <img className="logo-mark logo-large" src="/images/logo.jpg" alt="Moulovirhat H. Fazil Madrasah logo" />
           <div className="brand-copy">
-            <h1>Darul Noor Madrasa</h1>
+            <h1>Moulovirhat H. Fazil Madrasah</h1>
             <p className="tagline">Islamic education with discipline, character, and service.</p>
           </div>
         </div>
@@ -45,7 +44,6 @@ function MainLayout() {
           <NavLink to="/notice">Notification</NavLink>
           <NavLink to="/gallery">Gallery</NavLink>
           <NavLink to="/teachers">Teachers</NavLink>
-          <NavLink to="/result">Result</NavLink>
           {isAuthenticated ? (
             <NavLink to="/admin/dashboard" className="nav-right">
               Admin Panel
@@ -67,8 +65,9 @@ function MainLayout() {
       <footer className="site-footer">
         <div className="footer-grid">
           <section>
-            <h3>Darul Noor</h3>
-            <p>Islamic education with discipline, character, and community service.</p>
+            <h3>Moulovirhat H. Fazil Madrasah</h3>
+            <p>EIIN: 101165 &middot; Established 1935</p>
+            <p>Bhola, Barisal Division, Bangladesh</p>
           </section>
 
           <section>
@@ -76,17 +75,17 @@ function MainLayout() {
             <div className="footer-links">
               <NavLink to="/notice">Notifications</NavLink>
               <NavLink to="/gallery">Gallery</NavLink>
-              <NavLink to="/result">Results</NavLink>
+              <NavLink to="/teachers">Teachers</NavLink>
             </div>
           </section>
 
           <section>
             <h3>Contact</h3>
-            <p>Email: info@darulnoor.local</p>
-            <p>Phone: +880 1700-000000</p>
+            <p>Email: mhfm1935@yahoo.com</p>
+            <p>Phone: +880 1771-656565</p>
           </section>
         </div>
-        <p className="footer-bottom">© {new Date().getFullYear()} Darul Noor Madrasa. All rights reserved.</p>
+        <p className="footer-bottom">© {new Date().getFullYear()} Moulovirhat H. Fazil Madrasah. All rights reserved.</p>
       </footer>
     </div>
   )

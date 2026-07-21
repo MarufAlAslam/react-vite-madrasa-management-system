@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useMemo, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { useData } from '../context/DataContext'
@@ -7,24 +7,50 @@ const tabs = [
   { id: 'dashboard', label: 'Dashboard' },
   { id: 'income-expenses', label: 'Income & Expenses' },
   { id: 'add-teacher', label: 'Add Teacher' },
+  { id: 'add-student', label: 'Add Student' },
   { id: 'update-gallery', label: 'Update Gallery' },
-  { id: 'update-results', label: 'Update Results' },
   { id: 'logout', label: 'Log Out' },
 ]
+
+const DESIGNATIONS = [
+  'Assistant Teacher',
+  'Senior Assistant Teacher',
+  'Lecturer',
+  'Assistant Professor',
+  'Vice Principal',
+  'Principal',
+]
+
+const CLASSES = [
+  'Class 6',
+  'Class 7',
+  'Class 8',
+  'Class 9',
+  'Class 10',
+  'Alim 1st Year',
+  'Alim 2nd Year',
+  'Fazil 1st Year',
+  'Fazil 2nd Year',
+  'Kamil 1st Year',
+  'Kamil 2nd Year',
+]
+
+const emptyTeacherForm = { name: '', designation: '', subject: '', indexNo: '', phone: '' }
+const emptyStudentForm = { className: '', name: '', parentsNames: '', dob: '', contact: '' }
 
 function AdminDashboardPage() {
   const {
     notices,
     teachers,
+    students,
     gallery,
-    results,
     incomeExpenses,
+    backendError,
     addTeacher,
+    addStudent,
     addGalleryItem,
     editGalleryItem,
     removeGalleryItem,
-    addResultRecord,
-    editResultRecord,
     addIncomeExpense,
   } = useData()
   const { logout } = useAuth()
@@ -32,34 +58,31 @@ function AdminDashboardPage() {
 
   const [activeTab, setActiveTab] = useState('dashboard')
 
-  const [teacherForm, setTeacherForm] = useState({
-    name: '',
-    subject: '',
-    phone: '',
-    email: '',
-    photo: '',
-  })
+  const [teacherForm, setTeacherForm] = useState(emptyTeacherForm)
+  const [teacherPhoto, setTeacherPhoto] = useState(null)
+  const [teacherFormError, setTeacherFormError] = useState(null)
+  const [teacherSubmitting, setTeacherSubmitting] = useState(false)
+  const teacherPhotoInputRef = useRef(null)
+
+  const [studentForm, setStudentForm] = useState(emptyStudentForm)
+  const [studentPhoto, setStudentPhoto] = useState(null)
+  const [studentFormError, setStudentFormError] = useState(null)
+  const [studentSubmitting, setStudentSubmitting] = useState(false)
+  const studentPhotoInputRef = useRef(null)
+
   const [galleryForm, setGalleryForm] = useState({ title: '', image: '' })
-  const [resultForm, setResultForm] = useState({
-    roll: '',
-    className: '',
-    studentName: '',
-    grade: '',
-    remarks: '',
-  })
   const [financeForm, setFinanceForm] = useState({ type: 'income', title: '', amount: '' })
   const [galleryEdits, setGalleryEdits] = useState({})
   const [financeFilter, setFinanceFilter] = useState('all')
-  const [resultEdits, setResultEdits] = useState({})
 
   const stats = useMemo(
     () => [
       { label: 'Total Notices', value: notices.length },
       { label: 'Teachers', value: teachers.length },
+      { label: 'Students', value: students.length },
       { label: 'Gallery Items', value: gallery.length },
-      { label: 'Result Records', value: results.length },
     ],
-    [notices.length, teachers.length, gallery.length, results.length],
+    [notices.length, teachers.length, students.length, gallery.length],
   )
 
   const financeSummary = useMemo(() => {
@@ -80,8 +103,56 @@ function AdminDashboardPage() {
 
   async function handleTeacherSubmit(event) {
     event.preventDefault()
-    await addTeacher(teacherForm)
-    setTeacherForm({ name: '', subject: '', phone: '', email: '', photo: '' })
+
+    if (!teacherPhoto) {
+      setTeacherFormError('Please choose a photo to upload.')
+      return
+    }
+
+    setTeacherSubmitting(true)
+    setTeacherFormError(null)
+
+    try {
+      const formData = new FormData()
+      Object.entries(teacherForm).forEach(([key, value]) => formData.append(key, value))
+      formData.append('photo', teacherPhoto)
+
+      await addTeacher(formData)
+      setTeacherForm(emptyTeacherForm)
+      setTeacherPhoto(null)
+      if (teacherPhotoInputRef.current) teacherPhotoInputRef.current.value = ''
+    } catch (error) {
+      setTeacherFormError(error.message)
+    } finally {
+      setTeacherSubmitting(false)
+    }
+  }
+
+  async function handleStudentSubmit(event) {
+    event.preventDefault()
+
+    if (!studentPhoto) {
+      setStudentFormError('Please choose a photo to upload.')
+      return
+    }
+
+    setStudentSubmitting(true)
+    setStudentFormError(null)
+
+    try {
+      const formData = new FormData()
+      Object.entries(studentForm).forEach(([key, value]) => formData.append(key, value))
+      formData.append('photo', studentPhoto)
+
+      await addStudent(formData)
+      setStudentForm(emptyStudentForm)
+      setStudentPhoto(null)
+      if (studentPhotoInputRef.current) studentPhotoInputRef.current.value = ''
+    } catch (error) {
+      setStudentFormError(error.message)
+    } finally {
+      setStudentSubmitting(false)
+    }
   }
 
   async function handleGallerySubmit(event) {
@@ -113,41 +184,6 @@ function AdminDashboardPage() {
       delete next[id]
       return next
     })
-  }
-
-  async function handleResultSubmit(event) {
-    event.preventDefault()
-    const subjectRows = [
-      { subject: 'Quran', marks: 76, grade: 'A' },
-      { subject: 'Arabic', marks: 72, grade: 'A' },
-      { subject: 'Hadith', marks: 74, grade: 'A' },
-      { subject: 'Fiqh', marks: 70, grade: 'A-' },
-      { subject: 'General Studies', marks: 68, grade: 'A-' },
-    ]
-
-    await addResultRecord({ ...resultForm, subjectResults: subjectRows })
-    setResultForm({ roll: '', className: '', studentName: '', grade: '', remarks: '' })
-  }
-
-  function handleResultFieldChange(id, field, value, currentResult) {
-    setResultEdits((prev) => ({
-      ...prev,
-      [id]: {
-        studentName: prev[id]?.studentName ?? currentResult.studentName,
-        grade: prev[id]?.grade ?? currentResult.grade,
-        remarks: prev[id]?.remarks ?? currentResult.remarks,
-        [field]: value,
-      },
-    }))
-  }
-
-  async function handleResultUpdate(id, currentResult) {
-    const payload = resultEdits[id] || {
-      studentName: currentResult.studentName,
-      grade: currentResult.grade,
-      remarks: currentResult.remarks,
-    }
-    await editResultRecord(id, payload)
   }
 
   async function handleFinanceSubmit(event) {
@@ -299,6 +335,10 @@ function AdminDashboardPage() {
           <p className="section-eyebrow">Add Teacher</p>
           <h2>Faculty Management</h2>
 
+          {backendError && (
+            <p className="error-text">Could not reach the data server: {backendError}</p>
+          )}
+
           <form className="admin-form" onSubmit={handleTeacherSubmit}>
             <input
               type="text"
@@ -307,6 +347,18 @@ function AdminDashboardPage() {
               onChange={(event) => setTeacherForm((prev) => ({ ...prev, name: event.target.value }))}
               required
             />
+            <select
+              value={teacherForm.designation}
+              onChange={(event) => setTeacherForm((prev) => ({ ...prev, designation: event.target.value }))}
+              required
+            >
+              <option value="">Select designation</option>
+              {DESIGNATIONS.map((designation) => (
+                <option key={designation} value={designation}>
+                  {designation}
+                </option>
+              ))}
+            </select>
             <input
               type="text"
               placeholder="Subject"
@@ -316,36 +368,124 @@ function AdminDashboardPage() {
             />
             <input
               type="text"
-              placeholder="Phone"
+              placeholder="Index No."
+              value={teacherForm.indexNo}
+              onChange={(event) => setTeacherForm((prev) => ({ ...prev, indexNo: event.target.value }))}
+              required
+            />
+            <input
+              type="text"
+              placeholder="Contact number"
               value={teacherForm.phone}
               onChange={(event) => setTeacherForm((prev) => ({ ...prev, phone: event.target.value }))}
               required
             />
-            <input
-              type="email"
-              placeholder="Email"
-              value={teacherForm.email}
-              onChange={(event) => setTeacherForm((prev) => ({ ...prev, email: event.target.value }))}
-              required
-            />
-            <input
-              type="url"
-              placeholder="Photo URL"
-              value={teacherForm.photo}
-              onChange={(event) => setTeacherForm((prev) => ({ ...prev, photo: event.target.value }))}
-              required
-            />
-            <button type="submit">Add Teacher</button>
+            <label className="file-input-label">
+              <span>Photo</span>
+              <input
+                type="file"
+                accept="image/jpeg,image/png,image/webp"
+                ref={teacherPhotoInputRef}
+                onChange={(event) => setTeacherPhoto(event.target.files[0] || null)}
+                required
+              />
+            </label>
+            {teacherFormError && <p className="error-text">{teacherFormError}</p>}
+            <button type="submit" disabled={teacherSubmitting}>
+              {teacherSubmitting ? 'Adding...' : 'Add Teacher'}
+            </button>
           </form>
 
           <div className="teachers-grid admin-list-gap">
             {teachers.slice(0, 4).map((teacher) => (
               <article key={teacher.id} className="teacher-card">
-                <img src={teacher.photo} alt={teacher.name} />
+                <img src={teacher.photoUrl} alt={teacher.name} />
                 <h3>{teacher.name}</h3>
-                <p className="subject-pill">{teacher.subject}</p>
+                <p className="subject-pill">{teacher.designation}</p>
+                <p>{teacher.subject}</p>
                 <p>{teacher.phone}</p>
-                <p>{teacher.email}</p>
+              </article>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {activeTab === 'add-student' && (
+        <section className="panel">
+          <p className="section-eyebrow">Add Student</p>
+          <h2>Student Admission</h2>
+
+          {backendError && (
+            <p className="error-text">Could not reach the data server: {backendError}</p>
+          )}
+
+          <form className="admin-form" onSubmit={handleStudentSubmit}>
+            <select
+              value={studentForm.className}
+              onChange={(event) => setStudentForm((prev) => ({ ...prev, className: event.target.value }))}
+              required
+            >
+              <option value="">Select class</option>
+              {CLASSES.map((className) => (
+                <option key={className} value={className}>
+                  {className}
+                </option>
+              ))}
+            </select>
+            <input
+              type="text"
+              placeholder="Student name"
+              value={studentForm.name}
+              onChange={(event) => setStudentForm((prev) => ({ ...prev, name: event.target.value }))}
+              required
+            />
+            <input
+              type="text"
+              placeholder="Parents' names"
+              value={studentForm.parentsNames}
+              onChange={(event) => setStudentForm((prev) => ({ ...prev, parentsNames: event.target.value }))}
+              required
+            />
+            <label className="file-input-label">
+              <span>Date of birth</span>
+              <input
+                type="date"
+                value={studentForm.dob}
+                onChange={(event) => setStudentForm((prev) => ({ ...prev, dob: event.target.value }))}
+                required
+              />
+            </label>
+            <input
+              type="text"
+              placeholder="Contact number"
+              value={studentForm.contact}
+              onChange={(event) => setStudentForm((prev) => ({ ...prev, contact: event.target.value }))}
+              required
+            />
+            <label className="file-input-label">
+              <span>Photo</span>
+              <input
+                type="file"
+                accept="image/jpeg,image/png,image/webp"
+                ref={studentPhotoInputRef}
+                onChange={(event) => setStudentPhoto(event.target.files[0] || null)}
+                required
+              />
+            </label>
+            {studentFormError && <p className="error-text">{studentFormError}</p>}
+            <button type="submit" disabled={studentSubmitting}>
+              {studentSubmitting ? 'Adding...' : 'Add Student'}
+            </button>
+          </form>
+
+          <div className="teachers-grid admin-list-gap">
+            {students.slice(0, 4).map((student) => (
+              <article key={student.id} className="teacher-card">
+                <img src={student.photoUrl} alt={student.name} />
+                <h3>{student.name}</h3>
+                <p className="subject-pill">{student.className}</p>
+                <p>{student.parentsNames}</p>
+                <p>{student.contact}</p>
               </article>
             ))}
           </div>
@@ -407,97 +547,6 @@ function AdminDashboardPage() {
         </section>
       )}
 
-      {activeTab === 'update-results' && (
-        <section className="panel">
-          <p className="section-eyebrow">Update Results</p>
-          <h2>Result Manager</h2>
-
-          <form className="admin-form" onSubmit={handleResultSubmit}>
-            <input
-              type="text"
-              placeholder="Roll"
-              value={resultForm.roll}
-              onChange={(event) => setResultForm((prev) => ({ ...prev, roll: event.target.value }))}
-              required
-            />
-            <select
-              value={resultForm.className}
-              onChange={(event) => setResultForm((prev) => ({ ...prev, className: event.target.value }))}
-              required
-            >
-              <option value="">Select Class</option>
-              <option value="class-4">Class 4</option>
-              <option value="class-5">Class 5</option>
-              <option value="class-6">Class 6</option>
-              <option value="class-7">Class 7</option>
-              <option value="class-8">Class 8</option>
-            </select>
-            <input
-              type="text"
-              placeholder="Student name"
-              value={resultForm.studentName}
-              onChange={(event) => setResultForm((prev) => ({ ...prev, studentName: event.target.value }))}
-              required
-            />
-            <input
-              type="text"
-              placeholder="Grade"
-              value={resultForm.grade}
-              onChange={(event) => setResultForm((prev) => ({ ...prev, grade: event.target.value }))}
-              required
-            />
-            <textarea
-              placeholder="Remarks"
-              rows={4}
-              value={resultForm.remarks}
-              onChange={(event) => setResultForm((prev) => ({ ...prev, remarks: event.target.value }))}
-              required
-            />
-            <button type="submit">Save Result</button>
-          </form>
-
-          <div className="notice-vertical-list admin-list-gap">
-            {results.slice(0, 6).map((result) => (
-              <article key={result.id} className="notice-row-card">
-                <div>
-                  <p className="notice-date">Roll {result.roll}</p>
-                  <input
-                    type="text"
-                    value={resultEdits[result.id]?.studentName || result.studentName}
-                    onChange={(event) =>
-                      handleResultFieldChange(result.id, 'studentName', event.target.value, result)
-                    }
-                    className="inline-edit-input"
-                    aria-label="Edit student name"
-                  />
-                  <p>
-                    {result.className.toUpperCase()} - Grade {result.grade}
-                  </p>
-                  <input
-                    type="text"
-                    value={resultEdits[result.id]?.grade || result.grade}
-                    onChange={(event) => handleResultFieldChange(result.id, 'grade', event.target.value, result)}
-                    className="inline-edit-input"
-                    aria-label="Edit grade"
-                  />
-                  <textarea
-                    rows={2}
-                    value={resultEdits[result.id]?.remarks || result.remarks}
-                    onChange={(event) =>
-                      handleResultFieldChange(result.id, 'remarks', event.target.value, result)
-                    }
-                    className="inline-edit-input"
-                    aria-label="Edit remarks"
-                  />
-                  <button type="button" onClick={() => handleResultUpdate(result.id, result)}>
-                    Save Edit
-                  </button>
-                </div>
-              </article>
-            ))}
-          </div>
-        </section>
-      )}
     </div>
   )
 }

@@ -115,6 +115,8 @@ body {
 	color: var(--gold-500);
 	font-size: 1.55rem;
 	font-weight: 800;
+	object-fit: cover;
+	flex-shrink: 0;
 }
 
 .logo-mark.logo-large {
@@ -320,8 +322,10 @@ main {
 
 .hero-image-wrap,
 .about-image-wrap {
+	position: relative;
 	border-radius: 14px;
 	overflow: hidden;
+	height: 340px;
 	max-height: 340px;
 }
 
@@ -330,6 +334,53 @@ main {
 	width: 100%;
 	height: 100%;
 	object-fit: cover;
+}
+
+.hero-carousel {
+	position: relative;
+	width: 100%;
+	height: 100%;
+	min-height: 260px;
+}
+
+.hero-carousel-slide {
+	position: absolute;
+	inset: 0;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	opacity: 0;
+	transition: opacity 900ms ease;
+}
+
+.hero-carousel-slide.is-active {
+	opacity: 1;
+}
+
+.hero-carousel-dots {
+	position: absolute;
+	left: 0;
+	right: 0;
+	bottom: 12px;
+	display: flex;
+	justify-content: center;
+	gap: 8px;
+	z-index: 1;
+}
+
+.hero-carousel-dot {
+	width: 9px;
+	height: 9px;
+	border-radius: 999px;
+	border: none;
+	background: rgba(255, 255, 255, 0.55);
+	cursor: pointer;
+	padding: 0;
+}
+
+.hero-carousel-dot.is-active {
+	background: #fff;
+	transform: scale(1.2);
 }
 
 .hero-actions {
@@ -342,7 +393,6 @@ main {
 .cta-btn,
 .notice-row-card button,
 .modal-panel button,
-.result-search button,
 .login-form button,
 .admin-form button {
 	border: 0;
@@ -358,7 +408,6 @@ main {
 .cta-btn:hover,
 .notice-row-card button:hover,
 .modal-panel button:hover,
-.result-search button:hover,
 .login-form button:hover,
 .admin-form button:hover {
 	filter: brightness(1.08);
@@ -462,8 +511,6 @@ button {
 }
 
 .search-wrap input,
-.result-search input,
-.result-search select,
 .login-form input,
 .admin-form input,
 .admin-form select,
@@ -477,8 +524,6 @@ button {
 }
 
 .search-wrap input:focus,
-.result-search input:focus,
-.result-search select:focus,
 .login-form input:focus,
 .admin-form input:focus,
 .admin-form select:focus,
@@ -621,50 +666,8 @@ button {
 	place-items: center;
 }
 
-.result-panel,
 .login-panel {
 	width: min(680px, 100%);
-}
-
-.result-search {
-	display: grid;
-	grid-template-columns: 1fr 1fr auto;
-	gap: 10px;
-}
-
-.export-btn {
-	margin-top: 10px;
-}
-
-.result-preview {
-	margin-top: 14px;
-	border: 1px solid #d5e4d1;
-	border-radius: 12px;
-	padding: 14px;
-	background: #f5faf2;
-}
-
-.result-table {
-	width: 100%;
-	border-collapse: collapse;
-	margin-top: 12px;
-	font-size: 0.92rem;
-}
-
-.result-table th,
-.result-table td {
-	border: 1px solid #d2e1cf;
-	padding: 8px 10px;
-	text-align: left;
-}
-
-.result-table thead th {
-	background: #ebf3e8;
-	font-weight: 800;
-}
-
-.result-preview.not-found {
-	color: #505f4e;
 }
 
 .helper-text {
@@ -682,6 +685,18 @@ button {
 .login-form label {
 	font-size: 0.88rem;
 	font-weight: 700;
+}
+
+.file-input-label {
+	display: grid;
+	gap: 6px;
+	font-size: 0.88rem;
+	font-weight: 700;
+	color: var(--green-900);
+}
+
+.file-input-label input {
+	font-weight: 400;
 }
 
 .error-text {
@@ -816,14 +831,6 @@ button {
 	}
 
 	.footer-grid {
-		grid-template-columns: 1fr;
-	}
-
-	.prayer-grid {
-		grid-template-columns: repeat(2, minmax(0, 1fr));
-	}
-
-	.result-search {
 		grid-template-columns: 1fr;
 	}
 

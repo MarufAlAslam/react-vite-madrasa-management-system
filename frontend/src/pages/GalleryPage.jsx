@@ -13,8 +13,11 @@ function GalleryPage() {
         <h2>Islamic Campus Moments</h2>
 
         {loading && <div className="empty-state">Loading gallery...</div>}
+        {!loading && gallery.length === 0 && (
+          <div className="empty-state">No gallery photos added yet.</div>
+        )}
 
-        {!loading && (
+        {!loading && gallery.length > 0 && (
           <div className="gallery-grid">
             {gallery.map((item) => (
               <button
