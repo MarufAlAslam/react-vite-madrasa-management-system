@@ -27,7 +27,7 @@ function GalleryPage() {
                 onClick={() => setSelectedImage(item)}
                 aria-label={`Open ${item.title}`}
               >
-                <img src={item.image} alt={item.title} loading="lazy" />
+                <img src={item.photoUrl} alt={item.title} loading="lazy" />
                 <span>{item.title}</span>
               </button>
             ))}
@@ -39,7 +39,7 @@ function GalleryPage() {
         createPortal(
           <div className="modal-backdrop" onClick={() => setSelectedImage(null)}>
             <article className="modal-panel image-modal" onClick={(event) => event.stopPropagation()}>
-              <img src={selectedImage.image} alt={selectedImage.title} />
+              <img src={selectedImage.photoUrl} alt={selectedImage.title} />
               <h3>{selectedImage.title}</h3>
               <button type="button" onClick={() => setSelectedImage(null)}>
                 Close

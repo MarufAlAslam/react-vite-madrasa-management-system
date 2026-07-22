@@ -44,6 +44,7 @@ function MainLayout() {
           <NavLink to="/notice">Notification</NavLink>
           <NavLink to="/gallery">Gallery</NavLink>
           <NavLink to="/teachers">Teachers</NavLink>
+          <NavLink to="/students">Students</NavLink>
           {isAuthenticated ? (
             <NavLink to="/admin/dashboard" className="nav-right">
               Admin Panel
@@ -76,6 +77,7 @@ function MainLayout() {
               <NavLink to="/notice">Notifications</NavLink>
               <NavLink to="/gallery">Gallery</NavLink>
               <NavLink to="/teachers">Teachers</NavLink>
+              <NavLink to="/students">Students</NavLink>
             </div>
           </section>
 

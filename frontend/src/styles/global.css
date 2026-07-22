@@ -78,7 +78,7 @@ body {
 	transition: transform 260ms ease, opacity 180ms ease;
 }
 
-.burger-btn span + span {
+.burger-btn span+span {
 	margin-top: 6px;
 }
 
@@ -514,13 +514,18 @@ button {
 .login-form input,
 .admin-form input,
 .admin-form select,
-.admin-form textarea {
+.admin-form textarea,
+#student-class-filter {
 	width: 100%;
 	border-radius: 11px;
 	border: 1px solid #cfddcb;
 	padding: 11px 13px;
 	outline: none;
 	background: #fff;
+}
+
+#student-class-filter {
+	margin: 10px 0 15px 0;
 }
 
 .search-wrap input:focus,
@@ -594,6 +599,14 @@ button {
 	flex-wrap: wrap;
 }
 
+.card-actions {
+	display: flex;
+	gap: 8px;
+	justify-content: center;
+	flex-wrap: wrap;
+	margin-top: 10px;
+}
+
 .danger-btn {
 	background: linear-gradient(120deg, #9f1f1f, #c33636) !important;
 }
@@ -635,7 +648,7 @@ button {
 
 .teachers-grid {
 	display: grid;
-	grid-template-columns: repeat(2, minmax(0, 1fr));
+	grid-template-columns: repeat(3, minmax(0, 1fr));
 	gap: 14px;
 }
 
@@ -697,6 +710,16 @@ button {
 
 .file-input-label input {
 	font-weight: 400;
+}
+
+.edit-preview-photo {
+	width: 140px;
+	height: 140px;
+	border-radius: 50%;
+	object-fit: cover;
+	border: 3px solid var(--gold-500);
+	justify-self: center;
+	margin-bottom: 6px;
 }
 
 .error-text {
@@ -815,6 +838,7 @@ button {
 }
 
 @media (max-width: 960px) {
+
 	.hero-panel,
 	.about-panel,
 	.program-grid,

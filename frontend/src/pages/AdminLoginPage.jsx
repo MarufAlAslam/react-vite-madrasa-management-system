@@ -6,8 +6,8 @@ function AdminLoginPage() {
   const { login } = useAuth()
   const navigate = useNavigate()
   const location = useLocation()
-  const [email, setEmail] = useState('admin@madrasa.local')
-  const [password, setPassword] = useState('admin123')
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState('')
 
@@ -32,8 +32,6 @@ function AdminLoginPage() {
       <section className="panel login-panel">
         <p className="section-eyebrow">Admin Access</p>
         <h2>Login to Admin Panel</h2>
-        <p className="helper-text">Use dummy credentials prefilled in the form for now.</p>
-
         <form className="login-form" onSubmit={handleSubmit}>
           <label htmlFor="admin-email">Email</label>
           <input

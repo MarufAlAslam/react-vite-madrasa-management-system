@@ -1,27 +1,37 @@
-import { createContext, useContext, useMemo, useState } from 'react'
-import { loginAdmin } from '../services/mockApi'
+import { createContext, useCallback, useContext, useMemo, useState } from 'react'
+import { login as loginRequest } from '../services/backendApi'
 
-const AUTH_KEY = 'madrasa-admin-user'
+const AUTH_KEY = 'madrasa-admin-session'
 const AuthContext = createContext(null)
 
 export function AuthProvider({ children }) {
-  const [user, setUser] = useState(() => {
+  const [session, setSession] = useState(() => {
     const stored = localStorage.getItem(AUTH_KEY)
     return stored ? JSON.parse(stored) : null
   })
 
-  async function login(email, password) {
-    const account = await loginAdmin(email, password)
-    setUser(account)
+  const login = useCallback(async (email, password) => {
+    const account = await loginRequest(email, password)
+    setSession(account)
     localStorage.setItem(AUTH_KEY, JSON.stringify(account))
-  }
+  }, [])
 
-  function logout() {
-    setUser(null)
+  const logout = useCallback(() => {
+    setSession(null)
     localStorage.removeItem(AUTH_KEY)
-  }
+  }, [])
 
-  const value = useMemo(() => ({ user, isAuthenticated: Boolean(user), login, logout }), [user])
+  const value = useMemo(
+    () => ({
+      user: session ? { name: session.name, email: session.email, role: session.role } : null,
+      token: session?.token ?? null,
+      isAuthenticated: Boolean(session),
+      isSuperAdmin: session?.role === 'super',
+      login,
+      logout,
+    }),
+    [session, login, logout],
+  )
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
 }
