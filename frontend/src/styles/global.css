@@ -275,6 +275,10 @@ main {
 	margin-top: 14px;
 }
 
+.admin-tabs * {
+	text-decoration: none;
+}
+
 .admin-tab-button {
 	border: 1px solid #cddcc9;
 	background: #f7fbf5;
