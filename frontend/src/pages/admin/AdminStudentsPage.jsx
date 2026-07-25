@@ -1,23 +1,25 @@
 import { useRef, useState } from 'react'
-import { Link } from 'react-router-dom'
-import { useAuth } from '../../context/AuthContext'
 import { useData } from '../../context/DataContext'
 import { CLASSES } from '../../constants/admin'
 
-const emptyStudentForm = { className: '', name: '', parentsNames: '', dob: '', contact: '' }
+const emptyStudentForm = {
+  className: '',
+  name: '',
+  fatherName: '',
+  motherName: '',
+  roll: '',
+  dob: '',
+  contact: '',
+}
 
 function AdminStudentsPage() {
-  const { students, backendError, addStudent, removeStudent } = useData()
-  const { isSuperAdmin } = useAuth()
+  const { backendError, addStudent } = useData()
 
   const [studentForm, setStudentForm] = useState(emptyStudentForm)
   const [studentPhoto, setStudentPhoto] = useState(null)
   const [studentFormError, setStudentFormError] = useState(null)
   const [studentSubmitting, setStudentSubmitting] = useState(false)
   const studentPhotoInputRef = useRef(null)
-
-  const [rowBusy, setRowBusy] = useState({})
-  const [rowError, setRowError] = useState({})
 
   async function handleStudentSubmit(event) {
     event.preventDefault()
@@ -43,20 +45,6 @@ function AdminStudentsPage() {
       setStudentFormError(error.message)
     } finally {
       setStudentSubmitting(false)
-    }
-  }
-
-  async function handleDelete(id) {
-    if (!window.confirm('Delete this student? This cannot be undone.')) return
-
-    setRowBusy((prev) => ({ ...prev, [id]: true }))
-    setRowError((prev) => ({ ...prev, [id]: null }))
-
-    try {
-      await removeStudent(id)
-    } catch (error) {
-      setRowError((prev) => ({ ...prev, [id]: error.message }))
-      setRowBusy((prev) => ({ ...prev, [id]: false }))
     }
   }
 
@@ -89,9 +77,23 @@ function AdminStudentsPage() {
         />
         <input
           type="text"
-          placeholder="Parents' names"
-          value={studentForm.parentsNames}
-          onChange={(event) => setStudentForm((prev) => ({ ...prev, parentsNames: event.target.value }))}
+          placeholder="Father's name"
+          value={studentForm.fatherName}
+          onChange={(event) => setStudentForm((prev) => ({ ...prev, fatherName: event.target.value }))}
+          required
+        />
+        <input
+          type="text"
+          placeholder="Mother's name"
+          value={studentForm.motherName}
+          onChange={(event) => setStudentForm((prev) => ({ ...prev, motherName: event.target.value }))}
+          required
+        />
+        <input
+          type="text"
+          placeholder="Roll number"
+          value={studentForm.roll}
+          onChange={(event) => setStudentForm((prev) => ({ ...prev, roll: event.target.value }))}
           required
         />
         <label className="file-input-label">
@@ -125,37 +127,6 @@ function AdminStudentsPage() {
           {studentSubmitting ? 'Adding...' : 'Add Student'}
         </button>
       </form>
-
-      <div className="teachers-grid admin-list-gap">
-        {students.map((student) => (
-          <article key={student.id} className="teacher-card">
-            <img src={student.photoUrl} alt={student.name} />
-            <h3>{student.name}</h3>
-            <p className="subject-pill">{student.className}</p>
-            <p>{student.parentsNames}</p>
-            <p>{student.contact}</p>
-
-            {isSuperAdmin && (
-              <>
-                <div className="card-actions">
-                  <Link className="cta-btn" to={`/admin/dashboard/students/${student.id}/edit`}>
-                    Edit
-                  </Link>
-                  <button
-                    type="button"
-                    className="cta-btn danger-btn"
-                    disabled={rowBusy[student.id]}
-                    onClick={() => handleDelete(student.id)}
-                  >
-                    {rowBusy[student.id] ? 'Deleting...' : 'Delete'}
-                  </button>
-                </div>
-                {rowError[student.id] && <p className="error-text">{rowError[student.id]}</p>}
-              </>
-            )}
-          </article>
-        ))}
-      </div>
     </section>
   )
 }

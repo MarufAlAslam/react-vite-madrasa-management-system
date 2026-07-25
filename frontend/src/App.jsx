@@ -12,7 +12,9 @@ import AdminFinancePage from './pages/admin/AdminFinancePage'
 import AdminGalleryPage from './pages/admin/AdminGalleryPage'
 import AdminLogsPage from './pages/admin/AdminLogsPage'
 import AdminOverviewPage from './pages/admin/AdminOverviewPage'
+import AdminStudentDetailPage from './pages/admin/AdminStudentDetailPage'
 import AdminStudentEditPage from './pages/admin/AdminStudentEditPage'
+import AdminStudentListPage from './pages/admin/AdminStudentListPage'
 import AdminStudentsPage from './pages/admin/AdminStudentsPage'
 import AdminTeacherEditPage from './pages/admin/AdminTeacherEditPage'
 import AdminTeachersPage from './pages/admin/AdminTeachersPage'
@@ -25,7 +27,7 @@ import TeachersPage from './pages/TeachersPage'
 
 function AdminIndexRedirect() {
   const { isSuperAdmin } = useAuth()
-  return <Navigate to={isSuperAdmin ? '/admin/dashboard/overview' : '/admin/dashboard/teachers'} replace />
+  return <Navigate to={isSuperAdmin ? '/admin/dashboard/overview' : '/admin/dashboard/students'} replace />
 }
 
 function App() {
@@ -49,11 +51,13 @@ function App() {
               }
             >
               <Route index element={<AdminIndexRedirect />} />
-              <Route path="teachers" element={<AdminTeachersPage />} />
               <Route path="students" element={<AdminStudentsPage />} />
+              <Route path="students/list" element={<AdminStudentListPage />} />
+              <Route path="students/:id" element={<AdminStudentDetailPage />} />
               <Route element={<RequireSuperAdmin />}>
                 <Route path="overview" element={<AdminOverviewPage />} />
                 <Route path="finance" element={<AdminFinancePage />} />
+                <Route path="teachers" element={<AdminTeachersPage />} />
                 <Route path="gallery" element={<AdminGalleryPage />} />
                 <Route path="admins" element={<AdminAdminsPage />} />
                 <Route path="logs" element={<AdminLogsPage />} />

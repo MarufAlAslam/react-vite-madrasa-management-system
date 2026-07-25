@@ -244,7 +244,7 @@ main {
 }
 
 .footer-bottom {
-	margin-top: 10px;
+	margin-top: 10px !important;
 	padding-top: 10px;
 	border-top: 1px dashed #cfe0ca;
 	font-size: 0.82rem;
@@ -398,6 +398,7 @@ main {
 .notice-row-card button,
 .modal-panel button,
 .login-form button,
+button,
 .admin-form button {
 	border: 0;
 	border-radius: 10px;
@@ -519,6 +520,7 @@ button {
 .admin-form input,
 .admin-form select,
 .admin-form textarea,
+input,
 #student-class-filter {
 	width: 100%;
 	border-radius: 11px;
@@ -613,6 +615,22 @@ button {
 
 .danger-btn {
 	background: linear-gradient(120deg, #9f1f1f, #c33636) !important;
+}
+
+.card-link {
+	display: block;
+	text-decoration: none;
+	color: inherit;
+	transition: transform 160ms ease, box-shadow 160ms ease;
+}
+
+.card-link:hover {
+	transform: translateY(-3px);
+	box-shadow: 0 10px 22px rgba(11, 93, 30, 0.12);
+}
+
+.promote-panel {
+	margin-top: 20px;
 }
 
 .gallery-card {
@@ -724,6 +742,22 @@ button {
 	border: 3px solid var(--gold-500);
 	justify-self: center;
 	margin-bottom: 6px;
+}
+
+.student-detail-header {
+	display: flex;
+	gap: 20px;
+	align-items: center;
+	margin-bottom: 14px;
+	flex-wrap: wrap;
+}
+
+.student-detail-header .edit-preview-photo {
+	margin-bottom: 0;
+}
+
+.student-detail-header p {
+	margin: 4px 0;
 }
 
 .error-text {

@@ -87,7 +87,7 @@ function MainLayout() {
             <p>Phone: +880 1771-656565</p>
           </section>
         </div>
-        <p className="footer-bottom">© {new Date().getFullYear()} Moulovirhat H. Fazil Madrasah. All rights reserved.</p>
+        <p className="footer-bottom mt-4">© {new Date().getFullYear()} Moulovirhat H. Fazil Madrasah. All rights reserved.</p>
       </footer>
     </div>
   )

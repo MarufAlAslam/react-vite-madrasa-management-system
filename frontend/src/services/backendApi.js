@@ -53,6 +53,22 @@ export async function deleteStudent(id, token) {
   return request(`/api/students/${id}`, { method: 'DELETE' }, token)
 }
 
+export async function promoteStudent(id, toClass, token) {
+  return request(
+    `/api/students/${id}/promote`,
+    { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ toClass }) },
+    token,
+  )
+}
+
+export async function promoteStudentsBulk(fromClass, toClass, token) {
+  return request(
+    '/api/students/promote',
+    { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ fromClass, toClass }) },
+    token,
+  )
+}
+
 export async function getAdmins(token) {
   return request('/api/admins', {}, token)
 }
@@ -95,4 +111,52 @@ export async function createIncomeExpense(payload, token) {
     { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) },
     token,
   )
+}
+
+export async function getPayments(studentId, token) {
+  return request(`/api/payments?studentId=${encodeURIComponent(studentId)}`, {}, token)
+}
+
+export async function createPayment(payload, token) {
+  return request(
+    '/api/payments',
+    { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) },
+    token,
+  )
+}
+
+export async function updatePayment(id, payload, token) {
+  return request(
+    `/api/payments/${id}`,
+    { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) },
+    token,
+  )
+}
+
+export async function deletePayment(id, token) {
+  return request(`/api/payments/${id}`, { method: 'DELETE' }, token)
+}
+
+export async function getResults(studentId, token) {
+  return request(`/api/results?studentId=${encodeURIComponent(studentId)}`, {}, token)
+}
+
+export async function createResult(payload, token) {
+  return request(
+    '/api/results',
+    { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) },
+    token,
+  )
+}
+
+export async function updateResult(id, payload, token) {
+  return request(
+    `/api/results/${id}`,
+    { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) },
+    token,
+  )
+}
+
+export async function deleteResult(id, token) {
+  return request(`/api/results/${id}`, { method: 'DELETE' }, token)
 }

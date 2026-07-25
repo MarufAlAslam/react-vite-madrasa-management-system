@@ -5,7 +5,7 @@ function RequireSuperAdmin() {
   const { isSuperAdmin } = useAuth()
 
   if (!isSuperAdmin) {
-    return <Navigate to="/admin/dashboard/teachers" replace />
+    return <Navigate to="/admin/dashboard/students" replace />
   }
 
   return <Outlet />

@@ -6,13 +6,28 @@ const ADMINS_SHEET = 'Admins'
 const ACTIVITY_LOG_SHEET = 'ActivityLog'
 const GALLERY_SHEET = 'Gallery'
 const FINANCE_SHEET = 'IncomeExpenses'
+const PAYMENTS_SHEET = 'Payments'
+const RESULTS_SHEET = 'Results'
 
 const TEACHER_COLUMNS = ['id', 'name', 'designation', 'subject', 'indexNo', 'phone', 'photoUrl', 'createdAt']
-const STUDENT_COLUMNS = ['id', 'className', 'name', 'parentsNames', 'dob', 'contact', 'photoUrl', 'createdAt']
+const STUDENT_COLUMNS = [
+  'id',
+  'className',
+  'name',
+  'fatherName',
+  'motherName',
+  'roll',
+  'dob',
+  'contact',
+  'photoUrl',
+  'createdAt',
+]
 const ADMIN_COLUMNS = ['email', 'passwordHash', 'name', 'role', 'createdAt']
 const LOG_COLUMNS = ['id', 'timestamp', 'adminEmail', 'adminName', 'action', 'targetType', 'details']
 const GALLERY_COLUMNS = ['id', 'title', 'photoUrl', 'createdAt']
 const FINANCE_COLUMNS = ['id', 'type', 'title', 'amount', 'date']
+const PAYMENT_COLUMNS = ['id', 'studentId', 'title', 'amount', 'date', 'createdAt']
+const RESULT_COLUMNS = ['id', 'studentId', 'examName', 'subject', 'marks', 'grade', 'createdAt']
 
 let sheetsClient = null
 const sheetIdCache = new Map()
@@ -214,6 +229,38 @@ export async function deleteStudent(id) {
   return found.record
 }
 
+export async function promoteStudentsByClass(fromClass, toClass) {
+  const sheets = getSheetsClient()
+  const classColIndex = STUDENT_COLUMNS.indexOf('className')
+
+  const response = await sheets.spreadsheets.values.get({
+    spreadsheetId: process.env.GOOGLE_SHEET_ID,
+    range: `${STUDENTS_SHEET}!A2:${columnLetter(STUDENT_COLUMNS.length)}`,
+  })
+
+  const rows = response.data.values || []
+  const data = []
+
+  rows.forEach((row, index) => {
+    if (row[classColIndex] === fromClass) {
+      const rowNumber = index + 2
+      data.push({
+        range: `${STUDENTS_SHEET}!${columnLetter(classColIndex + 1)}${rowNumber}`,
+        values: [[toClass]],
+      })
+    }
+  })
+
+  if (data.length === 0) return 0
+
+  await sheets.spreadsheets.values.batchUpdate({
+    spreadsheetId: process.env.GOOGLE_SHEET_ID,
+    requestBody: { valueInputOption: 'RAW', data },
+  })
+
+  return data.length
+}
+
 export async function getAdminByEmail(email) {
   const found = await findRowByColumn(ADMINS_SHEET, ADMIN_COLUMNS, 'email', email)
   return found?.record ?? null
@@ -278,6 +325,62 @@ export async function getIncomeExpenses() {
 export async function addIncomeExpense(record) {
   await appendRow(FINANCE_SHEET, FINANCE_COLUMNS, record)
   return record
+}
+
+export async function getPayments(studentId) {
+  const rows = await getRows(PAYMENTS_SHEET, PAYMENT_COLUMNS)
+  const filtered = studentId ? rows.filter((row) => row.studentId === studentId) : rows
+  return filtered.reverse()
+}
+
+export async function addPayment(record) {
+  await appendRow(PAYMENTS_SHEET, PAYMENT_COLUMNS, record)
+  return record
+}
+
+export async function updatePayment(id, patch) {
+  const found = await findRowByColumn(PAYMENTS_SHEET, PAYMENT_COLUMNS, 'id', id)
+  if (!found) return null
+
+  const updated = { ...found.record, ...patch, id }
+  await updateRow(PAYMENTS_SHEET, PAYMENT_COLUMNS, found.rowNumber, updated)
+  return updated
+}
+
+export async function deletePayment(id) {
+  const found = await findRowByColumn(PAYMENTS_SHEET, PAYMENT_COLUMNS, 'id', id)
+  if (!found) return null
+
+  await deleteRow(PAYMENTS_SHEET, found.rowNumber)
+  return found.record
+}
+
+export async function getResults(studentId) {
+  const rows = await getRows(RESULTS_SHEET, RESULT_COLUMNS)
+  const filtered = studentId ? rows.filter((row) => row.studentId === studentId) : rows
+  return filtered.reverse()
+}
+
+export async function addResult(record) {
+  await appendRow(RESULTS_SHEET, RESULT_COLUMNS, record)
+  return record
+}
+
+export async function updateResult(id, patch) {
+  const found = await findRowByColumn(RESULTS_SHEET, RESULT_COLUMNS, 'id', id)
+  if (!found) return null
+
+  const updated = { ...found.record, ...patch, id }
+  await updateRow(RESULTS_SHEET, RESULT_COLUMNS, found.rowNumber, updated)
+  return updated
+}
+
+export async function deleteResult(id) {
+  const found = await findRowByColumn(RESULTS_SHEET, RESULT_COLUMNS, 'id', id)
+  if (!found) return null
+
+  await deleteRow(RESULTS_SHEET, found.rowNumber)
+  return found.record
 }
 
 export { isConfigured }

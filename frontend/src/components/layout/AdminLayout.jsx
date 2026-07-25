@@ -31,11 +31,16 @@ function AdminLayout() {
               Income & Expenses
             </NavLink>
           )}
-          <NavLink to="/admin/dashboard/teachers" className={tabClassName}>
-            Add Teacher
-          </NavLink>
-          <NavLink to="/admin/dashboard/students" className={tabClassName}>
+          {isSuperAdmin && (
+            <NavLink to="/admin/dashboard/teachers" className={tabClassName}>
+              Add Teacher
+            </NavLink>
+          )}
+          <NavLink to="/admin/dashboard/students" end className={tabClassName}>
             Add Student
+          </NavLink>
+          <NavLink to="/admin/dashboard/students/list" className={tabClassName}>
+            Student List
           </NavLink>
           {isSuperAdmin && (
             <NavLink to="/admin/dashboard/gallery" className={tabClassName}>

@@ -7,6 +7,8 @@ import authRouter from './routes/auth.js'
 import galleryRouter from './routes/gallery.js'
 import incomeExpensesRouter from './routes/incomeExpenses.js'
 import logsRouter from './routes/logs.js'
+import paymentsRouter from './routes/payments.js'
+import resultsRouter from './routes/results.js'
 import studentsRouter from './routes/students.js'
 import teachersRouter from './routes/teachers.js'
 
@@ -44,6 +46,8 @@ app.use('/api/admins', adminsRouter)
 app.use('/api/logs', logsRouter)
 app.use('/api/gallery', galleryRouter)
 app.use('/api/income-expenses', incomeExpensesRouter)
+app.use('/api/payments', paymentsRouter)
+app.use('/api/results', resultsRouter)
 
 app.use((error, req, res, next) => {
   if (res.headersSent) {

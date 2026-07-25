@@ -10,6 +10,8 @@ import {
   getGallery as getGalleryBackend,
   getTeachers as getTeachersBackend,
   getStudents as getStudentsBackend,
+  promoteStudent as promoteStudentBackend,
+  promoteStudentsBulk as promoteStudentsBulkBackend,
   updateGalleryItem as updateGalleryItemBackend,
   updateStudent as updateStudentBackend,
   updateTeacher as updateTeacherBackend,
@@ -111,6 +113,26 @@ export function DataProvider({ children }) {
     [token],
   )
 
+  const promoteStudent = useCallback(
+    async (id, toClass) => {
+      const updated = await promoteStudentBackend(id, toClass, token)
+      setStudents((prev) => prev.map((student) => (student.id === id ? updated : student)))
+      return updated
+    },
+    [token],
+  )
+
+  const bulkPromoteStudents = useCallback(
+    async (fromClass, toClass) => {
+      const result = await promoteStudentsBulkBackend(fromClass, toClass, token)
+      setStudents((prev) =>
+        prev.map((student) => (student.className === fromClass ? { ...student, className: toClass } : student)),
+      )
+      return result
+    },
+    [token],
+  )
+
   const addGalleryItem = useCallback(
     async (formData) => {
       const created = await createGalleryItemBackend(formData, token)
@@ -152,6 +174,8 @@ export function DataProvider({ children }) {
       addStudent,
       editStudent,
       removeStudent,
+      promoteStudent,
+      bulkPromoteStudents,
       addGalleryItem,
       editGalleryItem,
       removeGalleryItem,
@@ -170,6 +194,8 @@ export function DataProvider({ children }) {
       addStudent,
       editStudent,
       removeStudent,
+      promoteStudent,
+      bulkPromoteStudents,
       addGalleryItem,
       editGalleryItem,
       removeGalleryItem,

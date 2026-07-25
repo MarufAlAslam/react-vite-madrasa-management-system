@@ -20,3 +20,9 @@ export const CLASSES = [
   'Kamil 1st Year',
   'Kamil 2nd Year',
 ]
+
+export function getNextClass(currentClass) {
+  const index = CLASSES.indexOf(currentClass)
+  if (index === -1 || index === CLASSES.length - 1) return null
+  return CLASSES[index + 1]
+}

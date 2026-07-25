@@ -1,6 +1,5 @@
 import { useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { useAuth } from '../../context/AuthContext'
 import { useData } from '../../context/DataContext'
 import { DESIGNATIONS } from '../../constants/admin'
 
@@ -8,7 +7,6 @@ const emptyTeacherForm = { name: '', designation: '', subject: '', indexNo: '', 
 
 function AdminTeachersPage() {
   const { teachers, backendError, addTeacher, removeTeacher } = useData()
-  const { isSuperAdmin } = useAuth()
 
   const [teacherForm, setTeacherForm] = useState(emptyTeacherForm)
   const [teacherPhoto, setTeacherPhoto] = useState(null)
@@ -133,24 +131,20 @@ function AdminTeachersPage() {
             <p>{teacher.subject}</p>
             <p>{teacher.phone}</p>
 
-            {isSuperAdmin && (
-              <>
-                <div className="card-actions">
-                  <Link className="cta-btn" to={`/admin/dashboard/teachers/${teacher.id}/edit`}>
-                    Edit
-                  </Link>
-                  <button
-                    type="button"
-                    className="cta-btn danger-btn"
-                    disabled={rowBusy[teacher.id]}
-                    onClick={() => handleDelete(teacher.id)}
-                  >
-                    {rowBusy[teacher.id] ? 'Deleting...' : 'Delete'}
-                  </button>
-                </div>
-                {rowError[teacher.id] && <p className="error-text">{rowError[teacher.id]}</p>}
-              </>
-            )}
+            <div className="card-actions">
+              <Link className="cta-btn" to={`/admin/dashboard/teachers/${teacher.id}/edit`}>
+                Edit
+              </Link>
+              <button
+                type="button"
+                className="cta-btn danger-btn"
+                disabled={rowBusy[teacher.id]}
+                onClick={() => handleDelete(teacher.id)}
+              >
+                {rowBusy[teacher.id] ? 'Deleting...' : 'Delete'}
+              </button>
+            </div>
+            {rowError[teacher.id] && <p className="error-text">{rowError[teacher.id]}</p>}
           </article>
         ))}
       </div>

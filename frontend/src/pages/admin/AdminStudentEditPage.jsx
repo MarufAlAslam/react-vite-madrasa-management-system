@@ -15,7 +15,9 @@ function AdminStudentEditPage() {
       ? {
           className: student.className,
           name: student.name,
-          parentsNames: student.parentsNames,
+          fatherName: student.fatherName,
+          motherName: student.motherName,
+          roll: student.roll,
           dob: student.dob,
           contact: student.contact,
         }
@@ -27,7 +29,7 @@ function AdminStudentEditPage() {
   const photoInputRef = useRef(null)
 
   if (!student) {
-    return <Navigate to="/admin/dashboard/students" replace />
+    return <Navigate to="/admin/dashboard/students/list" replace />
   }
 
   async function handleSubmit(event) {
@@ -44,7 +46,7 @@ function AdminStudentEditPage() {
       }
 
       await editStudent(id, formData)
-      navigate('/admin/dashboard/students')
+      navigate(`/admin/dashboard/students/${id}`)
     } catch (submitError) {
       setError(submitError.message)
     } finally {
@@ -80,9 +82,23 @@ function AdminStudentEditPage() {
         />
         <input
           type="text"
-          placeholder="Parents' names"
-          value={form.parentsNames}
-          onChange={(event) => setForm((prev) => ({ ...prev, parentsNames: event.target.value }))}
+          placeholder="Father's name"
+          value={form.fatherName}
+          onChange={(event) => setForm((prev) => ({ ...prev, fatherName: event.target.value }))}
+          required
+        />
+        <input
+          type="text"
+          placeholder="Mother's name"
+          value={form.motherName}
+          onChange={(event) => setForm((prev) => ({ ...prev, motherName: event.target.value }))}
+          required
+        />
+        <input
+          type="text"
+          placeholder="Roll number"
+          value={form.roll}
+          onChange={(event) => setForm((prev) => ({ ...prev, roll: event.target.value }))}
           required
         />
         <label className="file-input-label">
@@ -117,7 +133,7 @@ function AdminStudentEditPage() {
           <button type="submit" disabled={submitting}>
             {submitting ? 'Saving...' : 'Save Changes'}
           </button>
-          <button type="button" className="danger-btn" onClick={() => navigate('/admin/dashboard/students')}>
+          <button type="button" className="danger-btn" onClick={() => navigate(`/admin/dashboard/students/${id}`)}>
             Cancel
           </button>
         </div>

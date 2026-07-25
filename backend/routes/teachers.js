@@ -26,7 +26,7 @@ router.get('/', async (req, res) => {
   }
 })
 
-router.post('/', requireAuth, uploadTeacherPhoto.single('photo'), async (req, res) => {
+router.post('/', requireAuth, requireSuperAdmin, uploadTeacherPhoto.single('photo'), async (req, res) => {
   const { name, designation, subject, indexNo, phone } = req.body
 
   if (!req.file) {

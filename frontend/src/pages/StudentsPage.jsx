@@ -43,7 +43,9 @@ function StudentsPage() {
                 <img src={student.photoUrl} alt={student.name} />
                 <h3>{student.name}</h3>
                 <p className="subject-pill">{student.className}</p>
-                <p>Parents: {student.parentsNames}</p>
+                <p>Roll: {student.roll}</p>
+                <p>Father: {student.fatherName}</p>
+                <p>Mother: {student.motherName}</p>
                 <p>DOB: {student.dob}</p>
                 <p>Contact: {student.contact}</p>
               </article>
