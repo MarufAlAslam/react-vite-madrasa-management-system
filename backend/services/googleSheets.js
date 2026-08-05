@@ -8,8 +8,19 @@ const GALLERY_SHEET = 'Gallery'
 const FINANCE_SHEET = 'IncomeExpenses'
 const PAYMENTS_SHEET = 'Payments'
 const RESULTS_SHEET = 'Results'
+const CLASSES_SHEET = 'Classes'
 
-const TEACHER_COLUMNS = ['id', 'name', 'designation', 'subject', 'indexNo', 'phone', 'photoUrl', 'createdAt']
+const TEACHER_COLUMNS = [
+  'id',
+  'name',
+  'designation',
+  'subject',
+  'indexNo',
+  'phone',
+  'photoUrl',
+  'createdAt',
+  'assignedClasses',
+]
 const STUDENT_COLUMNS = [
   'id',
   'className',
@@ -28,6 +39,7 @@ const GALLERY_COLUMNS = ['id', 'title', 'photoUrl', 'createdAt']
 const FINANCE_COLUMNS = ['id', 'type', 'title', 'amount', 'date']
 const PAYMENT_COLUMNS = ['id', 'studentId', 'title', 'amount', 'date', 'createdAt']
 const RESULT_COLUMNS = ['id', 'studentId', 'examName', 'subject', 'marks', 'grade', 'createdAt']
+const CLASS_COLUMNS = ['className', 'subjects', 'createdAt']
 
 let sheetsClient = null
 const sheetIdCache = new Map()
@@ -167,18 +179,30 @@ async function deleteRow(sheetName, rowNumber) {
   })
 }
 
+function parseTeacherRow(record) {
+  let assignedClasses = []
+  try {
+    assignedClasses = JSON.parse(record.assignedClasses || '[]')
+  } catch {
+    assignedClasses = []
+  }
+  return { ...record, assignedClasses }
+}
+
 export async function getTeachers() {
-  return getRows(TEACHERS_SHEET, TEACHER_COLUMNS)
+  const rows = await getRows(TEACHERS_SHEET, TEACHER_COLUMNS)
+  return rows.map(parseTeacherRow)
 }
 
 export async function getTeacherById(id) {
   const found = await findRowByColumn(TEACHERS_SHEET, TEACHER_COLUMNS, 'id', id)
-  return found?.record ?? null
+  return found ? parseTeacherRow(found.record) : null
 }
 
 export async function addTeacher(record) {
-  await appendRow(TEACHERS_SHEET, TEACHER_COLUMNS, record)
-  return record
+  const stored = { ...record, assignedClasses: JSON.stringify(record.assignedClasses || []) }
+  await appendRow(TEACHERS_SHEET, TEACHER_COLUMNS, stored)
+  return parseTeacherRow(stored)
 }
 
 export async function updateTeacher(id, patch) {
@@ -186,8 +210,11 @@ export async function updateTeacher(id, patch) {
   if (!found) return null
 
   const updated = { ...found.record, ...patch, id }
+  if (patch.assignedClasses !== undefined) {
+    updated.assignedClasses = JSON.stringify(patch.assignedClasses)
+  }
   await updateRow(TEACHERS_SHEET, TEACHER_COLUMNS, found.rowNumber, updated)
-  return updated
+  return parseTeacherRow(updated)
 }
 
 export async function deleteTeacher(id) {
@@ -195,7 +222,7 @@ export async function deleteTeacher(id) {
   if (!found) return null
 
   await deleteRow(TEACHERS_SHEET, found.rowNumber)
-  return found.record
+  return parseTeacherRow(found.record)
 }
 
 export async function getStudents() {
@@ -381,6 +408,49 @@ export async function deleteResult(id) {
 
   await deleteRow(RESULTS_SHEET, found.rowNumber)
   return found.record
+}
+
+function parseClassRow(record) {
+  let subjects = []
+  try {
+    subjects = JSON.parse(record.subjects || '[]')
+  } catch {
+    subjects = []
+  }
+  return { ...record, subjects }
+}
+
+export async function getClasses() {
+  const rows = await getRows(CLASSES_SHEET, CLASS_COLUMNS)
+  return rows.map(parseClassRow)
+}
+
+export async function getClassByName(className) {
+  const found = await findRowByColumn(CLASSES_SHEET, CLASS_COLUMNS, 'className', className)
+  return found ? parseClassRow(found.record) : null
+}
+
+export async function addClass(record) {
+  const stored = { ...record, subjects: JSON.stringify(record.subjects) }
+  await appendRow(CLASSES_SHEET, CLASS_COLUMNS, stored)
+  return parseClassRow(stored)
+}
+
+export async function updateClass(className, subjects) {
+  const found = await findRowByColumn(CLASSES_SHEET, CLASS_COLUMNS, 'className', className)
+  if (!found) return null
+
+  const updated = { ...found.record, subjects: JSON.stringify(subjects) }
+  await updateRow(CLASSES_SHEET, CLASS_COLUMNS, found.rowNumber, updated)
+  return parseClassRow(updated)
+}
+
+export async function deleteClass(className) {
+  const found = await findRowByColumn(CLASSES_SHEET, CLASS_COLUMNS, 'className', className)
+  if (!found) return null
+
+  await deleteRow(CLASSES_SHEET, found.rowNumber)
+  return parseClassRow(found.record)
 }
 
 export { isConfigured }

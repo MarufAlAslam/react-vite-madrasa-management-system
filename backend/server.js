@@ -4,6 +4,7 @@ import express from 'express'
 import { isConfigured } from './services/googleSheets.js'
 import adminsRouter from './routes/admins.js'
 import authRouter from './routes/auth.js'
+import classesRouter from './routes/classes.js'
 import galleryRouter from './routes/gallery.js'
 import incomeExpensesRouter from './routes/incomeExpenses.js'
 import logsRouter from './routes/logs.js'
@@ -40,6 +41,7 @@ app.get('/api/health', (req, res) => {
 })
 
 app.use('/api/auth', authRouter)
+app.use('/api/classes', classesRouter)
 app.use('/api/teachers', teachersRouter)
 app.use('/api/students', studentsRouter)
 app.use('/api/admins', adminsRouter)

@@ -4,6 +4,7 @@ import { requireAuth, requireSuperAdmin } from '../middleware/auth.js'
 import {
   addStudent,
   deleteStudent,
+  getClasses,
   getStudentById,
   getStudents,
   promoteStudentsByClass,
@@ -15,19 +16,10 @@ import { recordActivity } from '../services/activity.js'
 
 const router = Router()
 
-const CLASSES = [
-  'Class 6',
-  'Class 7',
-  'Class 8',
-  'Class 9',
-  'Class 10',
-  'Alim 1st Year',
-  'Alim 2nd Year',
-  'Fazil 1st Year',
-  'Fazil 2nd Year',
-  'Kamil 1st Year',
-  'Kamil 2nd Year',
-]
+async function getClassNames() {
+  const classes = await getClasses()
+  return classes.map((item) => item.className)
+}
 
 router.get('/', async (req, res) => {
   try {
@@ -53,8 +45,9 @@ router.post('/', requireAuth, uploadStudentPhoto.single('photo'), async (req, re
     return
   }
 
-  if (!CLASSES.includes(className)) {
-    res.status(400).json({ error: `className must be one of: ${CLASSES.join(', ')}` })
+  const classNames = await getClassNames()
+  if (!classNames.includes(className)) {
+    res.status(400).json({ error: `className must be one of: ${classNames.join(', ') || 'no classes configured yet'}` })
     return
   }
 
@@ -100,8 +93,9 @@ router.put('/:id', requireAuth, requireSuperAdmin, uploadStudentPhoto.single('ph
     return
   }
 
-  if (!CLASSES.includes(className)) {
-    res.status(400).json({ error: `className must be one of: ${CLASSES.join(', ')}` })
+  const classNames = await getClassNames()
+  if (!classNames.includes(className)) {
+    res.status(400).json({ error: `className must be one of: ${classNames.join(', ') || 'no classes configured yet'}` })
     return
   }
 
@@ -172,8 +166,9 @@ router.post('/:id/promote', requireAuth, async (req, res) => {
   const { id } = req.params
   const { toClass } = req.body
 
-  if (!toClass || !CLASSES.includes(toClass)) {
-    res.status(400).json({ error: `toClass must be one of: ${CLASSES.join(', ')}` })
+  const classNames = await getClassNames()
+  if (!toClass || !classNames.includes(toClass)) {
+    res.status(400).json({ error: `toClass must be one of: ${classNames.join(', ') || 'no classes configured yet'}` })
     return
   }
 
@@ -199,14 +194,15 @@ router.post('/:id/promote', requireAuth, async (req, res) => {
 
 router.post('/promote', requireAuth, async (req, res) => {
   const { fromClass, toClass } = req.body
+  const classNames = await getClassNames()
 
-  if (!fromClass || !CLASSES.includes(fromClass)) {
-    res.status(400).json({ error: `fromClass must be one of: ${CLASSES.join(', ')}` })
+  if (!fromClass || !classNames.includes(fromClass)) {
+    res.status(400).json({ error: `fromClass must be one of: ${classNames.join(', ') || 'no classes configured yet'}` })
     return
   }
 
-  if (!toClass || !CLASSES.includes(toClass)) {
-    res.status(400).json({ error: `toClass must be one of: ${CLASSES.join(', ')}` })
+  if (!toClass || !classNames.includes(toClass)) {
+    res.status(400).json({ error: `toClass must be one of: ${classNames.join(', ') || 'no classes configured yet'}` })
     return
   }
 

@@ -116,6 +116,33 @@ router.put('/:id', requireAuth, requireSuperAdmin, uploadTeacherPhoto.single('ph
   }
 })
 
+router.put('/:id/assign', requireAuth, requireSuperAdmin, async (req, res) => {
+  const { classNames } = req.body
+
+  if (!Array.isArray(classNames)) {
+    res.status(400).json({ error: 'classNames must be an array' })
+    return
+  }
+
+  try {
+    const updated = await updateTeacher(req.params.id, { assignedClasses: classNames })
+    if (!updated) {
+      res.status(404).json({ error: 'Teacher not found' })
+      return
+    }
+
+    await recordActivity({
+      admin: req.admin,
+      action: 'teacher.assign',
+      targetType: 'teacher',
+      details: `${updated.name} -> ${classNames.join(', ') || 'none'}`,
+    })
+    res.json(updated)
+  } catch (error) {
+    res.status(500).json({ error: error.message })
+  }
+})
+
 router.delete('/:id', requireAuth, requireSuperAdmin, async (req, res) => {
   try {
     const deleted = await deleteTeacher(req.params.id)
