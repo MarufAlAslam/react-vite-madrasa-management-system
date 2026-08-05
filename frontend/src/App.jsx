@@ -7,6 +7,7 @@ import { AuthProvider } from './context/AuthContext'
 import { useAuth } from './context/AuthContext'
 import { DataProvider } from './context/DataContext'
 import AdminAdminsPage from './pages/admin/AdminAdminsPage'
+import AdminClassesPage from './pages/admin/AdminClassesPage'
 import AdminExportPage from './pages/admin/AdminExportPage'
 import AdminFinancePage from './pages/admin/AdminFinancePage'
 import AdminGalleryPage from './pages/admin/AdminGalleryPage'
@@ -17,6 +18,7 @@ import AdminStudentEditPage from './pages/admin/AdminStudentEditPage'
 import AdminStudentListPage from './pages/admin/AdminStudentListPage'
 import AdminStudentsPage from './pages/admin/AdminStudentsPage'
 import AdminTeacherEditPage from './pages/admin/AdminTeacherEditPage'
+import AdminTeacherProfilePage from './pages/admin/AdminTeacherProfilePage'
 import AdminTeachersPage from './pages/admin/AdminTeachersPage'
 import AdminLoginPage from './pages/AdminLoginPage'
 import GalleryPage from './pages/GalleryPage'
@@ -58,11 +60,13 @@ function App() {
                 <Route path="overview" element={<AdminOverviewPage />} />
                 <Route path="finance" element={<AdminFinancePage />} />
                 <Route path="teachers" element={<AdminTeachersPage />} />
+                <Route path="classes" element={<AdminClassesPage />} />
                 <Route path="gallery" element={<AdminGalleryPage />} />
                 <Route path="admins" element={<AdminAdminsPage />} />
                 <Route path="logs" element={<AdminLogsPage />} />
                 <Route path="export" element={<AdminExportPage />} />
                 <Route path="teachers/:id/edit" element={<AdminTeacherEditPage />} />
+                <Route path="teachers/:id" element={<AdminTeacherProfilePage />} />
                 <Route path="students/:id/edit" element={<AdminStudentEditPage />} />
               </Route>
             </Route>

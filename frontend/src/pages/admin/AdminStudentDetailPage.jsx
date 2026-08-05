@@ -16,9 +16,10 @@ import {
 } from '../../services/backendApi'
 import { drawDoubleBorder, drawProfileHeader, imageUrlToCoverDataUrl, THEME } from '../../utils/pdf'
 import { getNextClass } from '../../constants/admin'
+import { computeGrade } from '../../utils/grade'
 
 const emptyPaymentForm = { title: '', amount: '' }
-const emptyResultForm = { examName: '', subject: '', marks: '', grade: '' }
+const emptyResultForm = { examName: '', subject: '', marks: '' }
 
 function filenameFor(name, suffix) {
   return `${suffix}-${name.replace(/\s+/g, '-').toLowerCase()}.pdf`
@@ -27,11 +28,13 @@ function filenameFor(name, suffix) {
 function AdminStudentDetailPage() {
   const { id } = useParams()
   const navigate = useNavigate()
-  const { students, removeStudent, promoteStudent } = useData()
+  const { students, classes, removeStudent, promoteStudent } = useData()
   const { token, isSuperAdmin } = useAuth()
 
   const student = students.find((item) => item.id === id)
-  const nextClass = student ? getNextClass(student.className) : null
+  const classNames = classes.map((item) => item.className)
+  const nextClass = student ? getNextClass(classNames, student.className) : null
+  const studentSubjects = classes.find((item) => item.className === student?.className)?.subjects ?? []
 
   const [payments, setPayments] = useState([])
   const [paymentsLoading, setPaymentsLoading] = useState(true)
@@ -172,10 +175,18 @@ function AdminStudentDetailPage() {
 
   async function handleResultSubmit(event) {
     event.preventDefault()
+
+    const fullMarks = studentSubjects.find((subject) => subject.name === resultForm.subject)?.fullMarks
+    if (!fullMarks) {
+      setResultFormError('Select a valid subject for this class.')
+      return
+    }
+
     setResultSubmitting(true)
     setResultFormError(null)
     try {
-      const created = await createResult({ studentId: student.id, ...resultForm }, token)
+      const grade = computeGrade(resultForm.marks, fullMarks)
+      const created = await createResult({ studentId: student.id, ...resultForm, grade }, token)
       setResults((prev) => [created, ...prev])
       setResultForm(emptyResultForm)
     } catch (error) {
@@ -192,7 +203,6 @@ function AdminStudentDetailPage() {
         examName: prev[resultId]?.examName ?? current.examName,
         subject: prev[resultId]?.subject ?? current.subject,
         marks: prev[resultId]?.marks ?? current.marks,
-        grade: prev[resultId]?.grade ?? current.grade,
         [field]: value,
       },
     }))
@@ -200,11 +210,20 @@ function AdminStudentDetailPage() {
 
   async function handleResultUpdate(resultId, current) {
     const edited = resultEdits[resultId] || {}
+    const subject = edited.subject ?? current.subject
+    const marks = edited.marks ?? current.marks
+    const fullMarks = studentSubjects.find((item) => item.name === subject)?.fullMarks
+
+    if (!fullMarks) {
+      setResultRowError((prev) => ({ ...prev, [resultId]: 'Select a valid subject for this class.' }))
+      return
+    }
+
     const payload = {
       examName: edited.examName ?? current.examName,
-      subject: edited.subject ?? current.subject,
-      marks: edited.marks ?? current.marks,
-      grade: edited.grade ?? current.grade,
+      subject,
+      marks,
+      grade: computeGrade(marks, fullMarks),
     }
 
     setResultRowBusy((prev) => ({ ...prev, [resultId]: true }))
@@ -269,7 +288,12 @@ function AdminStudentDetailPage() {
       autoTable(doc, {
         startY: 58,
         head: [['Exam', 'Subject', 'Marks', 'Grade']],
-        body: results.map((result) => [result.examName, result.subject, result.marks, result.grade]),
+        body: results.map((result) => [
+          result.examName,
+          studentSubjects.find((subject) => subject.name === result.subject)?.labelEn || result.subject,
+          result.marks,
+          result.grade,
+        ]),
         headStyles: { fillColor: THEME.green, textColor: 255 },
         alternateRowStyles: { fillColor: THEME.paperTint },
         styles: { textColor: THEME.ink, lineColor: THEME.gold, lineWidth: 0.2 },
@@ -330,7 +354,16 @@ function AdminStudentDetailPage() {
       const cardX = 14
       const cardY = 20
       const cardWidth = pageWidth - 28
-      const cardHeight = 110
+      const fieldsHeight = 96
+
+      doc.setFont('helvetica', 'normal')
+      doc.setFontSize(7.5)
+      const subjectTextWidth = cardWidth - 28
+      const subjectLines = studentSubjects.flatMap((subject, index) =>
+        doc.splitTextToSize(`${index + 1}. ${subject.labelEn || subject.name}`, subjectTextWidth),
+      )
+      const subjectsHeight = subjectLines.length * 4 + 14
+      const cardHeight = fieldsHeight + subjectsHeight + 24
 
       drawDoubleBorder(doc, cardX, cardY, cardWidth, cardHeight)
 
@@ -391,6 +424,21 @@ function AdminStudentDetailPage() {
       field("Mother's Name", student.motherName)
       field('Class', student.className)
       field('Roll No.', student.roll)
+
+      let subjY = cardY + fieldsHeight + 4
+      doc.setFont('helvetica', 'bold')
+      doc.setFontSize(10)
+      doc.setTextColor(...THEME.green)
+      doc.text('Subjects', fieldX, subjY)
+      subjY += 5
+
+      doc.setFont('helvetica', 'normal')
+      doc.setFontSize(7.5)
+      doc.setTextColor(...THEME.ink)
+      subjectLines.forEach((line) => {
+        doc.text(line, fieldX, subjY)
+        subjY += 4
+      })
 
       const sigY = cardY + cardHeight - 12
       const sigWidth = (cardWidth - 28) / 3
@@ -559,6 +607,12 @@ function AdminStudentDetailPage() {
         <p className="section-eyebrow">Results</p>
         <h2>Exam Results</h2>
 
+        {studentSubjects.length === 0 && (
+          <p className="helper-text">
+            No subjects configured for {student.className}. Add them under Manage Classes before entering results.
+          </p>
+        )}
+
         <form className="admin-form" onSubmit={handleResultSubmit}>
           <input
             type="text"
@@ -567,29 +621,33 @@ function AdminStudentDetailPage() {
             onChange={(event) => setResultForm((prev) => ({ ...prev, examName: event.target.value }))}
             required
           />
-          <input
-            type="text"
-            placeholder="Subject"
+          <select
             value={resultForm.subject}
             onChange={(event) => setResultForm((prev) => ({ ...prev, subject: event.target.value }))}
             required
-          />
+          >
+            <option value="">Select subject</option>
+            {studentSubjects.map((subject) => (
+              <option key={subject.name} value={subject.name}>
+                {subject.name} (out of {subject.fullMarks})
+              </option>
+            ))}
+          </select>
           <input
-            type="text"
-            placeholder="Marks"
+            type="number"
+            min="0"
+            placeholder="Marks obtained"
             value={resultForm.marks}
             onChange={(event) => setResultForm((prev) => ({ ...prev, marks: event.target.value }))}
             required
           />
-          <input
-            type="text"
-            placeholder="Grade"
-            value={resultForm.grade}
-            onChange={(event) => setResultForm((prev) => ({ ...prev, grade: event.target.value }))}
-            required
-          />
+          {resultForm.subject && resultForm.marks !== '' && (
+            <p className="helper-text">
+              Grade: {computeGrade(resultForm.marks, studentSubjects.find((s) => s.name === resultForm.subject)?.fullMarks)}
+            </p>
+          )}
           {resultFormError && <p className="error-text">{resultFormError}</p>}
-          <button type="submit" disabled={resultSubmitting}>
+          <button type="submit" disabled={resultSubmitting || studentSubjects.length === 0}>
             {resultSubmitting ? 'Saving...' : 'Add Result'}
           </button>
         </form>
@@ -612,27 +670,30 @@ function AdminStudentDetailPage() {
                     onChange={(event) => handleResultEditChange(result.id, 'examName', event.target.value, result)}
                     aria-label="Edit exam name"
                   />
-                  <input
-                    type="text"
+                  <select
                     className="inline-edit-input"
                     value={edited?.subject ?? result.subject}
                     onChange={(event) => handleResultEditChange(result.id, 'subject', event.target.value, result)}
                     aria-label="Edit subject"
-                  />
+                  >
+                    <option value={result.subject}>{result.subject}</option>
+                    {studentSubjects
+                      .filter((subject) => subject.name !== result.subject)
+                      .map((subject) => (
+                        <option key={subject.name} value={subject.name}>
+                          {subject.name} (out of {subject.fullMarks})
+                        </option>
+                      ))}
+                  </select>
                   <input
-                    type="text"
+                    type="number"
+                    min="0"
                     className="inline-edit-input"
                     value={edited?.marks ?? result.marks}
                     onChange={(event) => handleResultEditChange(result.id, 'marks', event.target.value, result)}
                     aria-label="Edit marks"
                   />
-                  <input
-                    type="text"
-                    className="inline-edit-input"
-                    value={edited?.grade ?? result.grade}
-                    onChange={(event) => handleResultEditChange(result.id, 'grade', event.target.value, result)}
-                    aria-label="Edit grade"
-                  />
+                  <p className="helper-text">Grade: {result.grade}</p>
                   {resultRowError[result.id] && <p className="error-text">{resultRowError[result.id]}</p>}
                   <div className="gallery-manage-actions">
                     <button type="button" disabled={busy} onClick={() => handleResultUpdate(result.id, result)}>

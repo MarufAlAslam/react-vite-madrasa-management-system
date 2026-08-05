@@ -1,17 +1,22 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { useAuth } from './AuthContext'
 import {
+  assignTeacherClasses as assignTeacherClassesBackend,
+  createClass as createClassBackend,
   createGalleryItem as createGalleryItemBackend,
   createTeacher as createTeacherBackend,
   createStudent as createStudentBackend,
+  deleteClass as deleteClassBackend,
   deleteGalleryItem as deleteGalleryItemBackend,
   deleteStudent as deleteStudentBackend,
   deleteTeacher as deleteTeacherBackend,
+  getClasses as getClassesBackend,
   getGallery as getGalleryBackend,
   getTeachers as getTeachersBackend,
   getStudents as getStudentsBackend,
   promoteStudent as promoteStudentBackend,
   promoteStudentsBulk as promoteStudentsBulkBackend,
+  updateClass as updateClassBackend,
   updateGalleryItem as updateGalleryItemBackend,
   updateStudent as updateStudentBackend,
   updateTeacher as updateTeacherBackend,
@@ -27,6 +32,7 @@ export function DataProvider({ children }) {
   const [teachers, setTeachers] = useState([])
   const [students, setStudents] = useState([])
   const [gallery, setGallery] = useState([])
+  const [classes, setClasses] = useState([])
   const [backendError, setBackendError] = useState(null)
 
   useEffect(() => {
@@ -36,14 +42,16 @@ export function DataProvider({ children }) {
       setNotices(noticeData)
 
       try {
-        const [teacherData, studentData, galleryData] = await Promise.all([
+        const [teacherData, studentData, galleryData, classData] = await Promise.all([
           getTeachersBackend(),
           getStudentsBackend(),
           getGalleryBackend(),
+          getClassesBackend(),
         ])
         setTeachers(teacherData)
         setStudents(studentData)
         setGallery(galleryData)
+        setClasses(classData)
         setBackendError(null)
       } catch (error) {
         setBackendError(error.message)
@@ -83,6 +91,15 @@ export function DataProvider({ children }) {
     async (id) => {
       await deleteTeacherBackend(id, token)
       setTeachers((prev) => prev.filter((teacher) => teacher.id !== id))
+    },
+    [token],
+  )
+
+  const assignTeacherClasses = useCallback(
+    async (id, classNames) => {
+      const updated = await assignTeacherClassesBackend(id, classNames, token)
+      setTeachers((prev) => prev.map((teacher) => (teacher.id === id ? updated : teacher)))
+      return updated
     },
     [token],
   )
@@ -159,6 +176,32 @@ export function DataProvider({ children }) {
     [token],
   )
 
+  const addClass = useCallback(
+    async (payload) => {
+      const created = await createClassBackend(payload, token)
+      setClasses((prev) => [...prev, created])
+      return created
+    },
+    [token],
+  )
+
+  const editClass = useCallback(
+    async (className, subjects) => {
+      const updated = await updateClassBackend(className, subjects, token)
+      setClasses((prev) => prev.map((item) => (item.className === className ? updated : item)))
+      return updated
+    },
+    [token],
+  )
+
+  const removeClass = useCallback(
+    async (className) => {
+      await deleteClassBackend(className, token)
+      setClasses((prev) => prev.filter((item) => item.className !== className))
+    },
+    [token],
+  )
+
   const value = useMemo(
     () => ({
       loading,
@@ -166,11 +209,13 @@ export function DataProvider({ children }) {
       teachers,
       students,
       gallery,
+      classes,
       backendError,
       addNotice,
       addTeacher,
       editTeacher,
       removeTeacher,
+      assignTeacherClasses,
       addStudent,
       editStudent,
       removeStudent,
@@ -179,6 +224,9 @@ export function DataProvider({ children }) {
       addGalleryItem,
       editGalleryItem,
       removeGalleryItem,
+      addClass,
+      editClass,
+      removeClass,
     }),
     [
       loading,
@@ -186,11 +234,13 @@ export function DataProvider({ children }) {
       teachers,
       students,
       gallery,
+      classes,
       backendError,
       addNotice,
       addTeacher,
       editTeacher,
       removeTeacher,
+      assignTeacherClasses,
       addStudent,
       editStudent,
       removeStudent,
@@ -199,6 +249,9 @@ export function DataProvider({ children }) {
       addGalleryItem,
       editGalleryItem,
       removeGalleryItem,
+      addClass,
+      editClass,
+      removeClass,
     ],
   )
 

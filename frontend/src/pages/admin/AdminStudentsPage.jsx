@@ -1,6 +1,5 @@
 import { useRef, useState } from 'react'
 import { useData } from '../../context/DataContext'
-import { CLASSES } from '../../constants/admin'
 
 const emptyStudentForm = {
   className: '',
@@ -13,7 +12,7 @@ const emptyStudentForm = {
 }
 
 function AdminStudentsPage() {
-  const { backendError, addStudent } = useData()
+  const { classes, backendError, addStudent } = useData()
 
   const [studentForm, setStudentForm] = useState(emptyStudentForm)
   const [studentPhoto, setStudentPhoto] = useState(null)
@@ -62,12 +61,13 @@ function AdminStudentsPage() {
           required
         >
           <option value="">Select class</option>
-          {CLASSES.map((className) => (
-            <option key={className} value={className}>
-              {className}
+          {classes.map((classItem) => (
+            <option key={classItem.className} value={classItem.className}>
+              {classItem.className}
             </option>
           ))}
         </select>
+        {classes.length === 0 && <p className="helper-text">No classes configured yet — add one under Manage Classes first.</p>}
         <input
           type="text"
           placeholder="Student name"

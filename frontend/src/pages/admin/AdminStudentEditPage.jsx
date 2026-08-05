@@ -1,12 +1,11 @@
 import { useRef, useState } from 'react'
 import { Navigate, useNavigate, useParams } from 'react-router-dom'
 import { useData } from '../../context/DataContext'
-import { CLASSES } from '../../constants/admin'
 
 function AdminStudentEditPage() {
   const { id } = useParams()
   const navigate = useNavigate()
-  const { students, editStudent } = useData()
+  const { students, classes, editStudent } = useData()
 
   const student = students.find((item) => item.id === id)
 
@@ -67,9 +66,9 @@ function AdminStudentEditPage() {
           onChange={(event) => setForm((prev) => ({ ...prev, className: event.target.value }))}
           required
         >
-          {CLASSES.map((className) => (
-            <option key={className} value={className}>
-              {className}
+          {classes.map((classItem) => (
+            <option key={classItem.className} value={classItem.className}>
+              {classItem.className}
             </option>
           ))}
         </select>

@@ -1,20 +1,27 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useData } from '../../context/DataContext'
-import { CLASSES, getNextClass } from '../../constants/admin'
+import { getNextClass } from '../../constants/admin'
 
 function AdminStudentListPage() {
-  const { students, backendError, bulkPromoteStudents } = useData()
+  const { students, classes, backendError, bulkPromoteStudents } = useData()
+  const classNames = useMemo(() => classes.map((item) => item.className), [classes])
 
   const [searchTerm, setSearchTerm] = useState('')
   const [classFilter, setClassFilter] = useState('all')
 
-  const [promoteFromClass, setPromoteFromClass] = useState(CLASSES[0])
+  const [promoteFromClass, setPromoteFromClass] = useState('')
   const [promoting, setPromoting] = useState(false)
   const [promoteError, setPromoteError] = useState(null)
   const [promoteMessage, setPromoteMessage] = useState(null)
 
-  const promoteToClass = getNextClass(promoteFromClass)
+  useEffect(() => {
+    if (!promoteFromClass && classNames.length > 0) {
+      setPromoteFromClass(classNames[0])
+    }
+  }, [classNames, promoteFromClass])
+
+  const promoteToClass = getNextClass(classNames, promoteFromClass)
 
   const filteredStudents = useMemo(() => {
     return students.filter((student) => {
@@ -60,7 +67,7 @@ function AdminStudentListPage() {
       <div className="panel finance-filter-row promote-panel">
         <label htmlFor="promote-from-class">Promote class:</label>
         <select id="promote-from-class" value={promoteFromClass} onChange={(event) => setPromoteFromClass(event.target.value)}>
-          {CLASSES.map((className) => (
+          {classNames.map((className) => (
             <option key={className} value={className}>
               {className}
             </option>
@@ -85,7 +92,7 @@ function AdminStudentListPage() {
         <label htmlFor="student-class-filter">Class:</label>
         <select id="student-class-filter" value={classFilter} onChange={(event) => setClassFilter(event.target.value)}>
           <option value="all">All classes</option>
-          {CLASSES.map((className) => (
+          {classNames.map((className) => (
             <option key={className} value={className}>
               {className}
             </option>

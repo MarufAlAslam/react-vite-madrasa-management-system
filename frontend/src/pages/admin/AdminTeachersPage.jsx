@@ -132,6 +132,9 @@ function AdminTeachersPage() {
             <p>{teacher.phone}</p>
 
             <div className="card-actions">
+              <Link className="cta-btn" to={`/admin/dashboard/teachers/${teacher.id}`}>
+                Profile
+              </Link>
               <Link className="cta-btn" to={`/admin/dashboard/teachers/${teacher.id}/edit`}>
                 Edit
               </Link>

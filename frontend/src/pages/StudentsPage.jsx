@@ -1,9 +1,8 @@
 import { useState } from 'react'
 import { useData } from '../context/DataContext'
-import { CLASSES } from '../constants/admin'
 
 function StudentsPage() {
-  const { students, loading } = useData()
+  const { students, classes, loading } = useData()
   const [selectedClass, setSelectedClass] = useState('')
 
   const filteredStudents = selectedClass ? students.filter((student) => student.className === selectedClass) : []
@@ -22,9 +21,9 @@ function StudentsPage() {
             onChange={(event) => setSelectedClass(event.target.value)}
           >
             <option value="">Choose a class...</option>
-            {CLASSES.map((className) => (
-              <option key={className} value={className}>
-                {className}
+            {classes.map((classItem) => (
+              <option key={classItem.className} value={classItem.className}>
+                {classItem.className}
               </option>
             ))}
           </select>

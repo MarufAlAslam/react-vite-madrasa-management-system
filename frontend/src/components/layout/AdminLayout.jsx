@@ -36,6 +36,11 @@ function AdminLayout() {
               Add Teacher
             </NavLink>
           )}
+          {isSuperAdmin && (
+            <NavLink to="/admin/dashboard/classes" className={tabClassName}>
+              Manage Classes
+            </NavLink>
+          )}
           <NavLink to="/admin/dashboard/students" end className={tabClassName}>
             Add Student
           </NavLink>

@@ -1,9 +1,8 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import jsPDF from 'jspdf'
 import autoTable from 'jspdf-autotable'
 import { useData } from '../../context/DataContext'
 import { imageUrlToCoverDataUrl, THEME } from '../../utils/pdf'
-import { CLASSES } from '../../constants/admin'
 
 const PHOTO_CELL_SIZE = 16
 
@@ -33,12 +32,18 @@ const EXPORT_CONFIG = {
 }
 
 function AdminExportPage() {
-  const { teachers, students } = useData()
+  const { teachers, students, classes } = useData()
 
   const [exportType, setExportType] = useState('students')
-  const [exportClass, setExportClass] = useState(CLASSES[0])
+  const [exportClass, setExportClass] = useState('')
   const [exportError, setExportError] = useState(null)
   const [exporting, setExporting] = useState(false)
+
+  useEffect(() => {
+    if (!exportClass && classes.length > 0) {
+      setExportClass(classes[0].className)
+    }
+  }, [classes, exportClass])
 
   async function handleExport() {
     setExportError(null)
@@ -115,9 +120,9 @@ function AdminExportPage() {
 
         {exportType === 'students' && (
           <select value={exportClass} onChange={(event) => setExportClass(event.target.value)}>
-            {CLASSES.map((className) => (
-              <option key={className} value={className}>
-                {className}
+            {classes.map((classItem) => (
+              <option key={classItem.className} value={classItem.className}>
+                {classItem.className}
               </option>
             ))}
           </select>

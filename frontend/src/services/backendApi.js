@@ -21,6 +21,30 @@ export async function login(email, password) {
   })
 }
 
+export async function getClasses() {
+  return request('/api/classes')
+}
+
+export async function createClass(payload, token) {
+  return request(
+    '/api/classes',
+    { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) },
+    token,
+  )
+}
+
+export async function updateClass(className, subjects, token) {
+  return request(
+    `/api/classes/${encodeURIComponent(className)}`,
+    { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ subjects }) },
+    token,
+  )
+}
+
+export async function deleteClass(className, token) {
+  return request(`/api/classes/${encodeURIComponent(className)}`, { method: 'DELETE' }, token)
+}
+
 export async function getTeachers() {
   return request('/api/teachers')
 }
@@ -35,6 +59,14 @@ export async function updateTeacher(id, formData, token) {
 
 export async function deleteTeacher(id, token) {
   return request(`/api/teachers/${id}`, { method: 'DELETE' }, token)
+}
+
+export async function assignTeacherClasses(id, classNames, token) {
+  return request(
+    `/api/teachers/${id}/assign`,
+    { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ classNames }) },
+    token,
+  )
 }
 
 export async function getStudents() {
