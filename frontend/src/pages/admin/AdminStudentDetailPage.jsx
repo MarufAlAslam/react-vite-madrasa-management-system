@@ -9,7 +9,7 @@ import { createPayment, deletePayment, getPayments, updatePayment } from '../../
 import { drawProfileHeader, imageUrlToCoverDataUrl, THEME } from '../../utils/pdf'
 import { getNextClass } from '../../constants/admin'
 import StudentResultsPanel from '../../components/admin/StudentResultsPanel'
-import { drawAdmitCard, loadInstitutionAssets, loadStudentPhoto } from '../../utils/admitCard'
+import { drawAdmitCard, getAdmitCardLayout, loadInstitutionAssets, loadStudentPhoto, PAGE_MARGIN } from '../../utils/admitCard'
 
 const emptyPaymentForm = { title: '', amount: '' }
 
@@ -203,8 +203,7 @@ function AdminStudentDetailPage() {
     setGenerating('admit')
     try {
       const doc = new jsPDF({ unit: 'mm', format: 'a4' })
-      const pageWidth = doc.internal.pageSize.getWidth()
-      const margin = 14
+      const { width, scale } = getAdmitCardLayout(doc, studentSubjects)
 
       const [assets, studentPhotoDataUrl] = await Promise.all([
         loadInstitutionAssets(settings),
@@ -212,10 +211,10 @@ function AdminStudentDetailPage() {
       ])
 
       drawAdmitCard(doc, {
-        x: margin,
-        y: margin,
-        width: pageWidth - margin * 2,
-        scale: 1,
+        x: PAGE_MARGIN,
+        y: PAGE_MARGIN,
+        width,
+        scale,
         assets,
         studentPhotoDataUrl,
         student,

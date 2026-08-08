@@ -3,11 +3,13 @@ import jsPDF from 'jspdf'
 import { Link } from 'react-router-dom'
 import { useData } from '../../context/DataContext'
 import {
-  admitCardNaturalHeight,
+  CARD_GAP,
   drawAdmitCard,
   drawCuttingLine,
+  getAdmitCardLayout,
   loadInstitutionAssets,
   loadStudentPhoto,
+  PAGE_MARGIN,
 } from '../../utils/admitCard'
 
 function AdminAdmitCardsPage() {
@@ -51,18 +53,10 @@ function AdminAdmitCardsPage() {
     setGenerating(true)
     try {
       const doc = new jsPDF({ unit: 'mm', format: 'a4' })
-      const pageWidth = doc.internal.pageSize.getWidth()
-      const pageHeight = doc.internal.pageSize.getHeight()
+      const { pageWidth, width, slotHeight, scale } = getAdmitCardLayout(doc, classSubjects)
 
       const assets = await loadInstitutionAssets(settings)
       const examInfo = { examName: exam.name, duration: exam.duration, venue: exam.venue }
-
-      const margin = 10
-      const gap = 8
-      const slotHeight = (pageHeight - margin * 2 - gap) / 2
-      const cardWidth = pageWidth - margin * 2
-      const naturalHeight = admitCardNaturalHeight(doc, classSubjects, cardWidth)
-      const scale = Math.min(1, slotHeight / naturalHeight)
 
       for (let index = 0; index < classStudents.length; index += 1) {
         const student = classStudents[index]
@@ -73,16 +67,16 @@ function AdminAdmitCardsPage() {
           doc.addPage()
         }
         if (positionInPage === 1) {
-          drawCuttingLine(doc, margin + slotHeight + gap / 2, pageWidth)
+          drawCuttingLine(doc, PAGE_MARGIN + slotHeight + CARD_GAP / 2, pageWidth)
         }
 
-        const cardY = margin + positionInPage * (slotHeight + gap)
+        const cardY = PAGE_MARGIN + positionInPage * (slotHeight + CARD_GAP)
         const studentPhotoDataUrl = await loadStudentPhoto(student)
 
         drawAdmitCard(doc, {
-          x: margin,
+          x: PAGE_MARGIN,
           y: cardY,
-          width: cardWidth,
+          width,
           scale,
           assets,
           studentPhotoDataUrl,

@@ -67,6 +67,22 @@ export function admitCardNaturalHeight(doc, subjects, width) {
   return HEADER_HEIGHT + GAP * 2 + bodyContentHeight
 }
 
+// Single source of truth for admit-card sizing so a single-student download
+// and the bulk (2-per-page) generator always render at identical dimensions —
+// the layout is always computed as if fitting two cards per A4 page.
+export const PAGE_MARGIN = 10
+export const CARD_GAP = 8
+
+export function getAdmitCardLayout(doc, subjects) {
+  const pageWidth = doc.internal.pageSize.getWidth()
+  const pageHeight = doc.internal.pageSize.getHeight()
+  const width = pageWidth - PAGE_MARGIN * 2
+  const slotHeight = (pageHeight - PAGE_MARGIN * 2 - CARD_GAP) / 2
+  const naturalHeight = admitCardNaturalHeight(doc, subjects, width)
+  const scale = Math.min(1, slotHeight / naturalHeight)
+  return { pageWidth, pageHeight, width, slotHeight, scale }
+}
+
 export async function loadInstitutionAssets(settings) {
   const [logo, examControllerSign, principalSign] = await Promise.all([
     settings?.logoUrl ? imageUrlToOpaqueDataUrl(settings.logoUrl).catch(() => null) : Promise.resolve(null),
