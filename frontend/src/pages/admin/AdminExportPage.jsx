@@ -64,7 +64,7 @@ function AdminExportPage() {
         rows.map((row) => imageUrlToCoverDataUrl(row.photoUrl, 200, 200).catch(() => null)),
       )
 
-      const doc = new jsPDF()
+      const doc = new jsPDF({ unit: 'mm', format: 'a4' })
       doc.setFont('helvetica', 'bold')
       doc.setTextColor(...THEME.green)
       doc.setFontSize(16)

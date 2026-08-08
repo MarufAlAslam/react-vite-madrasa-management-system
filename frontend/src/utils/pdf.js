@@ -49,6 +49,39 @@ export async function imageUrlToCoverDataUrl(url, targetWidth, targetHeight) {
   return canvas.toDataURL('image/jpeg', 0.92)
 }
 
+// Fetches an image, composites it over a white background (so PNG transparency
+// doesn't turn black when exported to JPEG), and returns its natural aspect ratio
+// so callers can fit it into a bounding box without distortion.
+export async function imageUrlToOpaqueDataUrl(url, maxDimension = 800) {
+  const response = await fetch(url)
+  const blob = await response.blob()
+  const bitmap = await createImageBitmap(blob)
+
+  const scale = Math.min(maxDimension / bitmap.width, maxDimension / bitmap.height, 1)
+  const width = Math.round(bitmap.width * scale)
+  const height = Math.round(bitmap.height * scale)
+
+  const canvas = document.createElement('canvas')
+  canvas.width = width
+  canvas.height = height
+  const ctx = canvas.getContext('2d')
+  ctx.fillStyle = '#ffffff'
+  ctx.fillRect(0, 0, width, height)
+  ctx.drawImage(bitmap, 0, 0, width, height)
+
+  return { dataUrl: canvas.toDataURL('image/jpeg', 0.92), aspectRatio: width / height }
+}
+
+export function fitContain(aspectRatio, boxWidth, boxHeight) {
+  let width = boxWidth
+  let height = boxWidth / aspectRatio
+  if (height > boxHeight) {
+    height = boxHeight
+    width = boxHeight * aspectRatio
+  }
+  return { width, height }
+}
+
 export function drawDoubleBorder(doc, x, y, width, height, { outerColor = THEME.green, innerColor = THEME.gold, gap = 3 } = {}) {
   doc.setDrawColor(...outerColor)
   doc.setLineWidth(1)

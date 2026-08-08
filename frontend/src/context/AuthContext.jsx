@@ -1,25 +1,49 @@
-import { createContext, useCallback, useContext, useMemo, useState } from 'react'
-import { login as loginRequest } from '../services/backendApi'
+import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
+import { login as loginRequest, setUnauthorizedHandler } from '../services/backendApi'
+import { getJwtExpiryMs } from '../utils/jwt'
 
 const AUTH_KEY = 'madrasa-admin-session'
 const AuthContext = createContext(null)
 
+function readStoredSession() {
+  const stored = localStorage.getItem(AUTH_KEY)
+  if (!stored) return null
+
+  const parsed = JSON.parse(stored)
+  if (parsed.expiresAt && Date.now() >= parsed.expiresAt) {
+    localStorage.removeItem(AUTH_KEY)
+    return null
+  }
+  return parsed
+}
+
 export function AuthProvider({ children }) {
-  const [session, setSession] = useState(() => {
-    const stored = localStorage.getItem(AUTH_KEY)
-    return stored ? JSON.parse(stored) : null
-  })
+  const [session, setSession] = useState(readStoredSession)
 
   const login = useCallback(async (email, password) => {
     const account = await loginRequest(email, password)
-    setSession(account)
-    localStorage.setItem(AUTH_KEY, JSON.stringify(account))
+    const expiresAt = getJwtExpiryMs(account.token)
+    const withExpiry = { ...account, expiresAt }
+    setSession(withExpiry)
+    localStorage.setItem(AUTH_KEY, JSON.stringify(withExpiry))
   }, [])
 
   const logout = useCallback(() => {
     setSession(null)
     localStorage.removeItem(AUTH_KEY)
   }, [])
+
+  useEffect(() => {
+    setUnauthorizedHandler(logout)
+  }, [logout])
+
+  useEffect(() => {
+    if (!session?.expiresAt) return undefined
+
+    const remaining = Math.max(session.expiresAt - Date.now(), 0)
+    const timer = setTimeout(logout, remaining)
+    return () => clearTimeout(timer)
+  }, [session, logout])
 
   const value = useMemo(
     () => ({

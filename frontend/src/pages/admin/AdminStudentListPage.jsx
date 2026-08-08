@@ -1,10 +1,12 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
+import { useConfirm } from '../../context/ConfirmContext'
 import { useData } from '../../context/DataContext'
 import { getNextClass } from '../../constants/admin'
 
 function AdminStudentListPage() {
   const { students, classes, backendError, bulkPromoteStudents } = useData()
+  const confirm = useConfirm()
   const classNames = useMemo(() => classes.map((item) => item.className), [classes])
 
   const [searchTerm, setSearchTerm] = useState('')
@@ -36,9 +38,9 @@ function AdminStudentListPage() {
   async function handleBulkPromote() {
     if (!promoteToClass) return
     if (
-      !window.confirm(
+      !(await confirm(
         `Promote every student currently in "${promoteFromClass}" to "${promoteToClass}"? This cannot be undone.`,
-      )
+      ))
     ) {
       return
     }

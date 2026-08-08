@@ -5,14 +5,19 @@ import AdminLayout from './components/layout/AdminLayout'
 import MainLayout from './components/layout/MainLayout'
 import { AuthProvider } from './context/AuthContext'
 import { useAuth } from './context/AuthContext'
+import { ConfirmProvider } from './context/ConfirmContext'
 import { DataProvider } from './context/DataContext'
 import AdminAdminsPage from './pages/admin/AdminAdminsPage'
+import AdminAdmitCardsPage from './pages/admin/AdminAdmitCardsPage'
 import AdminClassesPage from './pages/admin/AdminClassesPage'
+import AdminExamsPage from './pages/admin/AdminExamsPage'
 import AdminExportPage from './pages/admin/AdminExportPage'
 import AdminFinancePage from './pages/admin/AdminFinancePage'
 import AdminGalleryPage from './pages/admin/AdminGalleryPage'
 import AdminLogsPage from './pages/admin/AdminLogsPage'
 import AdminOverviewPage from './pages/admin/AdminOverviewPage'
+import AdminResultsPage from './pages/admin/AdminResultsPage'
+import AdminSettingsPage from './pages/admin/AdminSettingsPage'
 import AdminStudentDetailPage from './pages/admin/AdminStudentDetailPage'
 import AdminStudentEditPage from './pages/admin/AdminStudentEditPage'
 import AdminStudentListPage from './pages/admin/AdminStudentListPage'
@@ -36,43 +41,49 @@ function App() {
   return (
     <AuthProvider>
       <DataProvider>
-        <Routes>
-          <Route element={<MainLayout />}>
-            <Route index element={<HomePage />} />
-            <Route path="notice" element={<NoticePage />} />
-            <Route path="gallery" element={<GalleryPage />} />
-            <Route path="teachers" element={<TeachersPage />} />
-            <Route path="students" element={<StudentsPage />} />
-            <Route path="admin/login" element={<AdminLoginPage />} />
-            <Route
-              path="admin/dashboard"
-              element={
-                <ProtectedRoute>
-                  <AdminLayout />
-                </ProtectedRoute>
-              }
-            >
-              <Route index element={<AdminIndexRedirect />} />
-              <Route path="students" element={<AdminStudentsPage />} />
-              <Route path="students/list" element={<AdminStudentListPage />} />
-              <Route path="students/:id" element={<AdminStudentDetailPage />} />
-              <Route element={<RequireSuperAdmin />}>
-                <Route path="overview" element={<AdminOverviewPage />} />
-                <Route path="finance" element={<AdminFinancePage />} />
-                <Route path="teachers" element={<AdminTeachersPage />} />
-                <Route path="classes" element={<AdminClassesPage />} />
-                <Route path="gallery" element={<AdminGalleryPage />} />
-                <Route path="admins" element={<AdminAdminsPage />} />
-                <Route path="logs" element={<AdminLogsPage />} />
-                <Route path="export" element={<AdminExportPage />} />
-                <Route path="teachers/:id/edit" element={<AdminTeacherEditPage />} />
-                <Route path="teachers/:id" element={<AdminTeacherProfilePage />} />
-                <Route path="students/:id/edit" element={<AdminStudentEditPage />} />
+        <ConfirmProvider>
+          <Routes>
+            <Route element={<MainLayout />}>
+              <Route index element={<HomePage />} />
+              <Route path="notice" element={<NoticePage />} />
+              <Route path="gallery" element={<GalleryPage />} />
+              <Route path="teachers" element={<TeachersPage />} />
+              <Route path="students" element={<StudentsPage />} />
+              <Route path="admin/login" element={<AdminLoginPage />} />
+              <Route
+                path="admin/dashboard"
+                element={
+                  <ProtectedRoute>
+                    <AdminLayout />
+                  </ProtectedRoute>
+                }
+              >
+                <Route index element={<AdminIndexRedirect />} />
+                <Route path="students" element={<AdminStudentsPage />} />
+                <Route path="students/list" element={<AdminStudentListPage />} />
+                <Route path="results" element={<AdminResultsPage />} />
+                <Route path="students/:id" element={<AdminStudentDetailPage />} />
+                <Route element={<RequireSuperAdmin />}>
+                  <Route path="overview" element={<AdminOverviewPage />} />
+                  <Route path="finance" element={<AdminFinancePage />} />
+                  <Route path="teachers" element={<AdminTeachersPage />} />
+                  <Route path="classes" element={<AdminClassesPage />} />
+                  <Route path="gallery" element={<AdminGalleryPage />} />
+                  <Route path="admins" element={<AdminAdminsPage />} />
+                  <Route path="logs" element={<AdminLogsPage />} />
+                  <Route path="export" element={<AdminExportPage />} />
+                  <Route path="admit-cards" element={<AdminAdmitCardsPage />} />
+                  <Route path="exams" element={<AdminExamsPage />} />
+                  <Route path="settings" element={<AdminSettingsPage />} />
+                  <Route path="teachers/:id/edit" element={<AdminTeacherEditPage />} />
+                  <Route path="teachers/:id" element={<AdminTeacherProfilePage />} />
+                  <Route path="students/:id/edit" element={<AdminStudentEditPage />} />
+                </Route>
               </Route>
+              <Route path="*" element={<Navigate to="/" replace />} />
             </Route>
-            <Route path="*" element={<Navigate to="/" replace />} />
-          </Route>
-        </Routes>
+          </Routes>
+        </ConfirmProvider>
       </DataProvider>
     </AuthProvider>
   )

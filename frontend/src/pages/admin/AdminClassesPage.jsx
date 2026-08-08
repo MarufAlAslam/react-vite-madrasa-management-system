@@ -1,7 +1,8 @@
 import { useState } from 'react'
+import { useConfirm } from '../../context/ConfirmContext'
 import { useData } from '../../context/DataContext'
 
-const emptySubjectRow = { name: '', fullMarks: '', labelEn: '' }
+const emptySubjectRow = { name: '', fullMarks: '', labelEn: '', code: '' }
 
 function totalMarks(subjects) {
   return subjects.reduce((sum, subject) => sum + (Number(subject.fullMarks) || 0), 0)
@@ -37,6 +38,12 @@ function SubjectEditor({ subjects, onChange }) {
             onChange={(event) => updateRow(index, 'labelEn', event.target.value)}
           />
           <input
+            type="text"
+            placeholder="Subject code (optional)"
+            value={subject.code || ''}
+            onChange={(event) => updateRow(index, 'code', event.target.value)}
+          />
+          <input
             type="number"
             min="1"
             placeholder="Full marks"
@@ -60,6 +67,7 @@ function SubjectEditor({ subjects, onChange }) {
 
 function AdminClassesPage() {
   const { classes, backendError, addClass, editClass, removeClass } = useData()
+  const confirm = useConfirm()
 
   const [newClassName, setNewClassName] = useState('')
   const [newSubjects, setNewSubjects] = useState([{ ...emptySubjectRow }])
@@ -89,6 +97,7 @@ function AdminClassesPage() {
         name: subject.name.trim(),
         fullMarks: Number(subject.fullMarks),
         labelEn: subject.labelEn?.trim() || subject.name.trim(),
+        code: subject.code?.trim() || '',
       }))
       .filter((subject) => subject.name && subject.fullMarks > 0)
 
@@ -125,6 +134,7 @@ function AdminClassesPage() {
         name: subject.name.trim(),
         fullMarks: Number(subject.fullMarks),
         labelEn: subject.labelEn?.trim() || subject.name.trim(),
+        code: subject.code?.trim() || '',
       }))
       .filter((subject) => subject.name && subject.fullMarks > 0)
 
@@ -147,7 +157,11 @@ function AdminClassesPage() {
   }
 
   async function handleDelete(className) {
-    if (!window.confirm(`Delete "${className}"? Students already in this class will keep it, but it can no longer be selected.`)) {
+    if (
+      !(await confirm(`Delete "${className}"? Students already in this class will keep it, but it can no longer be selected.`, {
+        danger: true,
+      }))
+    ) {
       return
     }
 

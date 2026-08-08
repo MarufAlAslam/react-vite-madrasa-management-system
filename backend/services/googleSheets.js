@@ -9,6 +9,8 @@ const FINANCE_SHEET = 'IncomeExpenses'
 const PAYMENTS_SHEET = 'Payments'
 const RESULTS_SHEET = 'Results'
 const CLASSES_SHEET = 'Classes'
+const SETTINGS_SHEET = 'Settings'
+const EXAMS_SHEET = 'Exams'
 
 const TEACHER_COLUMNS = [
   'id',
@@ -32,6 +34,8 @@ const STUDENT_COLUMNS = [
   'contact',
   'photoUrl',
   'createdAt',
+  'registrationNo',
+  'section',
 ]
 const ADMIN_COLUMNS = ['email', 'passwordHash', 'name', 'role', 'createdAt']
 const LOG_COLUMNS = ['id', 'timestamp', 'adminEmail', 'adminName', 'action', 'targetType', 'details']
@@ -40,6 +44,8 @@ const FINANCE_COLUMNS = ['id', 'type', 'title', 'amount', 'date']
 const PAYMENT_COLUMNS = ['id', 'studentId', 'title', 'amount', 'date', 'createdAt']
 const RESULT_COLUMNS = ['id', 'studentId', 'examName', 'subject', 'marks', 'grade', 'createdAt']
 const CLASS_COLUMNS = ['className', 'subjects', 'createdAt']
+const SETTINGS_COLUMNS = ['logoUrl', 'examControllerSignUrl', 'principalSignUrl', 'updatedAt']
+const EXAM_COLUMNS = ['id', 'name', 'className', 'duration', 'venue', 'schedule', 'createdAt']
 
 let sheetsClient = null
 const sheetIdCache = new Map()
@@ -451,6 +457,54 @@ export async function deleteClass(className) {
 
   await deleteRow(CLASSES_SHEET, found.rowNumber)
   return parseClassRow(found.record)
+}
+
+export async function getSettings() {
+  const rows = await getRows(SETTINGS_SHEET, SETTINGS_COLUMNS)
+  return rows[0] || { logoUrl: '', examControllerSignUrl: '', principalSignUrl: '', updatedAt: '' }
+}
+
+export async function updateSettings(patch) {
+  const rows = await getRows(SETTINGS_SHEET, SETTINGS_COLUMNS)
+  const current = rows[0] || {}
+  const updated = { ...current, ...patch, updatedAt: new Date().toISOString() }
+
+  if (rows.length === 0) {
+    await appendRow(SETTINGS_SHEET, SETTINGS_COLUMNS, updated)
+  } else {
+    await updateRow(SETTINGS_SHEET, SETTINGS_COLUMNS, 2, updated)
+  }
+  return updated
+}
+
+function parseExamRow(record) {
+  let schedule = {}
+  try {
+    schedule = JSON.parse(record.schedule || '{}')
+  } catch {
+    schedule = {}
+  }
+  return { ...record, schedule }
+}
+
+export async function getExams(className) {
+  const rows = await getRows(EXAMS_SHEET, EXAM_COLUMNS)
+  const parsed = rows.map(parseExamRow)
+  return className ? parsed.filter((exam) => exam.className === className) : parsed
+}
+
+export async function addExam(record) {
+  const stored = { ...record, schedule: JSON.stringify(record.schedule || {}) }
+  await appendRow(EXAMS_SHEET, EXAM_COLUMNS, stored)
+  return parseExamRow(stored)
+}
+
+export async function deleteExam(id) {
+  const found = await findRowByColumn(EXAMS_SHEET, EXAM_COLUMNS, 'id', id)
+  if (!found) return null
+
+  await deleteRow(EXAMS_SHEET, found.rowNumber)
+  return parseExamRow(found.record)
 }
 
 export { isConfigured }

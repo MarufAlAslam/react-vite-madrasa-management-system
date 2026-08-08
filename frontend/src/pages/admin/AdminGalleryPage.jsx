@@ -1,8 +1,10 @@
 import { useRef, useState } from 'react'
+import { useConfirm } from '../../context/ConfirmContext'
 import { useData } from '../../context/DataContext'
 
 function AdminGalleryPage() {
   const { gallery, backendError, addGalleryItem, editGalleryItem, removeGalleryItem } = useData()
+  const confirm = useConfirm()
 
   const [galleryForm, setGalleryForm] = useState({ title: '' })
   const [galleryPhoto, setGalleryPhoto] = useState(null)
@@ -88,7 +90,7 @@ function AdminGalleryPage() {
   }
 
   async function handleGalleryDelete(id) {
-    if (!window.confirm('Delete this gallery photo? This cannot be undone.')) return
+    if (!(await confirm('Delete this gallery photo? This cannot be undone.', { danger: true }))) return
 
     setGalleryRowBusy((prev) => ({ ...prev, [id]: true }))
     setGalleryRowErrors((prev) => ({ ...prev, [id]: null }))

@@ -3,21 +3,26 @@ import { useAuth } from './AuthContext'
 import {
   assignTeacherClasses as assignTeacherClassesBackend,
   createClass as createClassBackend,
+  createExam as createExamBackend,
   createGalleryItem as createGalleryItemBackend,
   createTeacher as createTeacherBackend,
   createStudent as createStudentBackend,
   deleteClass as deleteClassBackend,
+  deleteExam as deleteExamBackend,
   deleteGalleryItem as deleteGalleryItemBackend,
   deleteStudent as deleteStudentBackend,
   deleteTeacher as deleteTeacherBackend,
   getClasses as getClassesBackend,
+  getExams as getExamsBackend,
   getGallery as getGalleryBackend,
+  getSettings as getSettingsBackend,
   getTeachers as getTeachersBackend,
   getStudents as getStudentsBackend,
   promoteStudent as promoteStudentBackend,
   promoteStudentsBulk as promoteStudentsBulkBackend,
   updateClass as updateClassBackend,
   updateGalleryItem as updateGalleryItemBackend,
+  updateSettings as updateSettingsBackend,
   updateStudent as updateStudentBackend,
   updateTeacher as updateTeacherBackend,
 } from '../services/backendApi'
@@ -33,6 +38,8 @@ export function DataProvider({ children }) {
   const [students, setStudents] = useState([])
   const [gallery, setGallery] = useState([])
   const [classes, setClasses] = useState([])
+  const [settings, setSettings] = useState(null)
+  const [exams, setExams] = useState([])
   const [backendError, setBackendError] = useState(null)
 
   useEffect(() => {
@@ -42,16 +49,20 @@ export function DataProvider({ children }) {
       setNotices(noticeData)
 
       try {
-        const [teacherData, studentData, galleryData, classData] = await Promise.all([
+        const [teacherData, studentData, galleryData, classData, settingsData, examData] = await Promise.all([
           getTeachersBackend(),
           getStudentsBackend(),
           getGalleryBackend(),
           getClassesBackend(),
+          getSettingsBackend(),
+          getExamsBackend(),
         ])
         setTeachers(teacherData)
         setStudents(studentData)
         setGallery(galleryData)
         setClasses(classData)
+        setSettings(settingsData)
+        setExams(examData)
         setBackendError(null)
       } catch (error) {
         setBackendError(error.message)
@@ -202,6 +213,32 @@ export function DataProvider({ children }) {
     [token],
   )
 
+  const updateInstitutionSettings = useCallback(
+    async (formData) => {
+      const updated = await updateSettingsBackend(formData, token)
+      setSettings(updated)
+      return updated
+    },
+    [token],
+  )
+
+  const addExam = useCallback(
+    async (payload) => {
+      const created = await createExamBackend(payload, token)
+      setExams((prev) => [created, ...prev])
+      return created
+    },
+    [token],
+  )
+
+  const removeExam = useCallback(
+    async (id) => {
+      await deleteExamBackend(id, token)
+      setExams((prev) => prev.filter((exam) => exam.id !== id))
+    },
+    [token],
+  )
+
   const value = useMemo(
     () => ({
       loading,
@@ -210,6 +247,8 @@ export function DataProvider({ children }) {
       students,
       gallery,
       classes,
+      settings,
+      exams,
       backendError,
       addNotice,
       addTeacher,
@@ -227,6 +266,9 @@ export function DataProvider({ children }) {
       addClass,
       editClass,
       removeClass,
+      updateInstitutionSettings,
+      addExam,
+      removeExam,
     }),
     [
       loading,
@@ -235,6 +277,8 @@ export function DataProvider({ children }) {
       students,
       gallery,
       classes,
+      settings,
+      exams,
       backendError,
       addNotice,
       addTeacher,
@@ -252,6 +296,9 @@ export function DataProvider({ children }) {
       addClass,
       editClass,
       removeClass,
+      updateInstitutionSettings,
+      addExam,
+      removeExam,
     ],
   )
 

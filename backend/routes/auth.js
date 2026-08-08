@@ -34,7 +34,7 @@ router.post('/login', async (req, res) => {
 
     const role = admin.role === 'super' ? 'super' : 'staff'
     const token = jwt.sign({ email: admin.email, name: admin.name, role }, process.env.JWT_SECRET, {
-      expiresIn: '12h',
+      expiresIn: '1d',
     })
 
     await recordActivity({ admin: { email: admin.email, name: admin.name }, action: 'login', targetType: 'admin' })

@@ -3,23 +3,15 @@ import { Link, Navigate, useNavigate, useParams } from 'react-router-dom'
 import jsPDF from 'jspdf'
 import autoTable from 'jspdf-autotable'
 import { useAuth } from '../../context/AuthContext'
+import { useConfirm } from '../../context/ConfirmContext'
 import { useData } from '../../context/DataContext'
-import {
-  createPayment,
-  createResult,
-  deletePayment,
-  deleteResult,
-  getPayments,
-  getResults,
-  updatePayment,
-  updateResult,
-} from '../../services/backendApi'
-import { drawDoubleBorder, drawProfileHeader, imageUrlToCoverDataUrl, THEME } from '../../utils/pdf'
+import { createPayment, deletePayment, getPayments, updatePayment } from '../../services/backendApi'
+import { drawProfileHeader, imageUrlToCoverDataUrl, THEME } from '../../utils/pdf'
 import { getNextClass } from '../../constants/admin'
-import { computeGrade } from '../../utils/grade'
+import StudentResultsPanel from '../../components/admin/StudentResultsPanel'
+import { drawAdmitCard, loadInstitutionAssets, loadStudentPhoto } from '../../utils/admitCard'
 
 const emptyPaymentForm = { title: '', amount: '' }
-const emptyResultForm = { examName: '', subject: '', marks: '' }
 
 function filenameFor(name, suffix) {
   return `${suffix}-${name.replace(/\s+/g, '-').toLowerCase()}.pdf`
@@ -28,8 +20,9 @@ function filenameFor(name, suffix) {
 function AdminStudentDetailPage() {
   const { id } = useParams()
   const navigate = useNavigate()
-  const { students, classes, removeStudent, promoteStudent } = useData()
+  const { students, classes, settings, exams, removeStudent, promoteStudent } = useData()
   const { token, isSuperAdmin } = useAuth()
+  const confirm = useConfirm()
 
   const student = students.find((item) => item.id === id)
   const classNames = classes.map((item) => item.className)
@@ -40,23 +33,12 @@ function AdminStudentDetailPage() {
   const [paymentsLoading, setPaymentsLoading] = useState(true)
   const [paymentsError, setPaymentsError] = useState(null)
 
-  const [results, setResults] = useState([])
-  const [resultsLoading, setResultsLoading] = useState(true)
-  const [resultsError, setResultsError] = useState(null)
-
   const [paymentForm, setPaymentForm] = useState(emptyPaymentForm)
   const [paymentFormError, setPaymentFormError] = useState(null)
   const [paymentSubmitting, setPaymentSubmitting] = useState(false)
   const [paymentEdits, setPaymentEdits] = useState({})
   const [paymentRowBusy, setPaymentRowBusy] = useState({})
   const [paymentRowError, setPaymentRowError] = useState({})
-
-  const [resultForm, setResultForm] = useState(emptyResultForm)
-  const [resultFormError, setResultFormError] = useState(null)
-  const [resultSubmitting, setResultSubmitting] = useState(false)
-  const [resultEdits, setResultEdits] = useState({})
-  const [resultRowBusy, setResultRowBusy] = useState({})
-  const [resultRowError, setResultRowError] = useState({})
 
   const [deleting, setDeleting] = useState(false)
   const [deleteError, setDeleteError] = useState(null)
@@ -66,17 +48,16 @@ function AdminStudentDetailPage() {
   const [pdfError, setPdfError] = useState(null)
   const [generating, setGenerating] = useState(null)
 
+  const [showAdmitForm, setShowAdmitForm] = useState(false)
+  const [selectedExamId, setSelectedExamId] = useState('')
+  const studentExams = exams.filter((exam) => exam.className === student?.className)
+
   useEffect(() => {
     if (!student) return
     getPayments(student.id, token)
       .then(setPayments)
       .catch((error) => setPaymentsError(error.message))
       .finally(() => setPaymentsLoading(false))
-
-    getResults(student.id, token)
-      .then(setResults)
-      .catch((error) => setResultsError(error.message))
-      .finally(() => setResultsLoading(false))
   }, [student, token])
 
   if (!student) {
@@ -84,7 +65,7 @@ function AdminStudentDetailPage() {
   }
 
   async function handleDelete() {
-    if (!window.confirm(`Delete ${student.name}? This cannot be undone.`)) return
+    if (!(await confirm(`Delete ${student.name}? This cannot be undone.`, { danger: true }))) return
     setDeleting(true)
     setDeleteError(null)
     try {
@@ -98,7 +79,7 @@ function AdminStudentDetailPage() {
 
   async function handlePromote() {
     if (!nextClass) return
-    if (!window.confirm(`Promote ${student.name} to ${nextClass}?`)) return
+    if (!(await confirm(`Promote ${student.name} to ${nextClass}?`))) return
     setPromoting(true)
     setPromoteError(null)
     try {
@@ -162,7 +143,7 @@ function AdminStudentDetailPage() {
   }
 
   async function handlePaymentDelete(paymentId) {
-    if (!window.confirm('Delete this payment entry?')) return
+    if (!(await confirm('Delete this payment entry?', { danger: true }))) return
     setPaymentRowBusy((prev) => ({ ...prev, [paymentId]: true }))
     try {
       await deletePayment(paymentId, token)
@@ -173,145 +154,11 @@ function AdminStudentDetailPage() {
     }
   }
 
-  async function handleResultSubmit(event) {
-    event.preventDefault()
-
-    const fullMarks = studentSubjects.find((subject) => subject.name === resultForm.subject)?.fullMarks
-    if (!fullMarks) {
-      setResultFormError('Select a valid subject for this class.')
-      return
-    }
-
-    setResultSubmitting(true)
-    setResultFormError(null)
-    try {
-      const grade = computeGrade(resultForm.marks, fullMarks)
-      const created = await createResult({ studentId: student.id, ...resultForm, grade }, token)
-      setResults((prev) => [created, ...prev])
-      setResultForm(emptyResultForm)
-    } catch (error) {
-      setResultFormError(error.message)
-    } finally {
-      setResultSubmitting(false)
-    }
-  }
-
-  function handleResultEditChange(resultId, field, value, current) {
-    setResultEdits((prev) => ({
-      ...prev,
-      [resultId]: {
-        examName: prev[resultId]?.examName ?? current.examName,
-        subject: prev[resultId]?.subject ?? current.subject,
-        marks: prev[resultId]?.marks ?? current.marks,
-        [field]: value,
-      },
-    }))
-  }
-
-  async function handleResultUpdate(resultId, current) {
-    const edited = resultEdits[resultId] || {}
-    const subject = edited.subject ?? current.subject
-    const marks = edited.marks ?? current.marks
-    const fullMarks = studentSubjects.find((item) => item.name === subject)?.fullMarks
-
-    if (!fullMarks) {
-      setResultRowError((prev) => ({ ...prev, [resultId]: 'Select a valid subject for this class.' }))
-      return
-    }
-
-    const payload = {
-      examName: edited.examName ?? current.examName,
-      subject,
-      marks,
-      grade: computeGrade(marks, fullMarks),
-    }
-
-    setResultRowBusy((prev) => ({ ...prev, [resultId]: true }))
-    setResultRowError((prev) => ({ ...prev, [resultId]: null }))
-
-    try {
-      const updated = await updateResult(resultId, payload, token)
-      setResults((prev) => prev.map((result) => (result.id === resultId ? updated : result)))
-      setResultEdits((prev) => {
-        const next = { ...prev }
-        delete next[resultId]
-        return next
-      })
-    } catch (error) {
-      setResultRowError((prev) => ({ ...prev, [resultId]: error.message }))
-    } finally {
-      setResultRowBusy((prev) => ({ ...prev, [resultId]: false }))
-    }
-  }
-
-  async function handleResultDelete(resultId) {
-    if (!window.confirm('Delete this result entry?')) return
-    setResultRowBusy((prev) => ({ ...prev, [resultId]: true }))
-    try {
-      await deleteResult(resultId, token)
-      setResults((prev) => prev.filter((result) => result.id !== resultId))
-    } catch (error) {
-      setResultRowError((prev) => ({ ...prev, [resultId]: error.message }))
-      setResultRowBusy((prev) => ({ ...prev, [resultId]: false }))
-    }
-  }
-
-  async function handleDownloadResult() {
-    setPdfError(null)
-    setGenerating('result')
-    try {
-      const doc = new jsPDF()
-      const pageWidth = doc.internal.pageSize.getWidth()
-
-      drawDoubleBorder(doc, 14, 14, pageWidth - 28, 38)
-
-      doc.setFont('helvetica', 'bold')
-      doc.setTextColor(...THEME.green)
-      doc.setFontSize(16)
-      doc.text('Moulovirhat H. Fazil Madrasah', pageWidth / 2, 26, { align: 'center' })
-      doc.setFontSize(12)
-      doc.text('Result Sheet', pageWidth / 2, 34, { align: 'center' })
-
-      try {
-        const photoDataUrl = await imageUrlToCoverDataUrl(student.photoUrl, 300, 300)
-        doc.addImage(photoDataUrl, 'JPEG', pageWidth - 40, 18, 22, 22)
-      } catch {
-        // proceed without photo if it can't be fetched
-      }
-
-      doc.setFont('helvetica', 'normal')
-      doc.setTextColor(...THEME.ink)
-      doc.setFontSize(10)
-      doc.text(`Name: ${student.name}`, 20, 42)
-      doc.text(`Class: ${student.className}    Roll: ${student.roll}`, 20, 47)
-
-      autoTable(doc, {
-        startY: 58,
-        head: [['Exam', 'Subject', 'Marks', 'Grade']],
-        body: results.map((result) => [
-          result.examName,
-          studentSubjects.find((subject) => subject.name === result.subject)?.labelEn || result.subject,
-          result.marks,
-          result.grade,
-        ]),
-        headStyles: { fillColor: THEME.green, textColor: 255 },
-        alternateRowStyles: { fillColor: THEME.paperTint },
-        styles: { textColor: THEME.ink, lineColor: THEME.gold, lineWidth: 0.2 },
-      })
-
-      doc.save(filenameFor(student.name, 'result'))
-    } catch (error) {
-      setPdfError(error.message)
-    } finally {
-      setGenerating(null)
-    }
-  }
-
   async function handleDownloadInvoice() {
     setPdfError(null)
     setGenerating('invoice')
     try {
-      const doc = new jsPDF()
+      const doc = new jsPDF({ unit: 'mm', format: 'a4' })
       let photoDataUrl = null
       try {
         photoDataUrl = await imageUrlToCoverDataUrl(student.photoUrl, 300, 300)
@@ -346,115 +193,38 @@ function AdminStudentDetailPage() {
   }
 
   async function handleDownloadAdmitCard() {
+    const exam = studentExams.find((item) => item.id === selectedExamId)
+    if (!exam) {
+      setPdfError('Select an exam first.')
+      return
+    }
+
     setPdfError(null)
     setGenerating('admit')
     try {
-      const doc = new jsPDF()
+      const doc = new jsPDF({ unit: 'mm', format: 'a4' })
       const pageWidth = doc.internal.pageSize.getWidth()
-      const cardX = 14
-      const cardY = 20
-      const cardWidth = pageWidth - 28
-      const fieldsHeight = 96
+      const margin = 14
 
-      doc.setFont('helvetica', 'normal')
-      doc.setFontSize(7.5)
-      const subjectTextWidth = cardWidth - 28
-      const subjectLines = studentSubjects.flatMap((subject, index) =>
-        doc.splitTextToSize(`${index + 1}. ${subject.labelEn || subject.name}`, subjectTextWidth),
-      )
-      const subjectsHeight = subjectLines.length * 4 + 14
-      const cardHeight = fieldsHeight + subjectsHeight + 24
+      const [assets, studentPhotoDataUrl] = await Promise.all([
+        loadInstitutionAssets(settings),
+        loadStudentPhoto(student),
+      ])
 
-      drawDoubleBorder(doc, cardX, cardY, cardWidth, cardHeight)
-
-      doc.setFont('helvetica', 'bold')
-      doc.setTextColor(...THEME.green)
-      doc.setFontSize(16)
-      doc.text('Moulovirhat H. Fazil Madrasah', pageWidth / 2, cardY + 14, { align: 'center' })
-
-      doc.setFont('helvetica', 'normal')
-      doc.setFontSize(9)
-      doc.setTextColor(...THEME.ink)
-      doc.text('Bhola, Barisal Division, Bangladesh', pageWidth / 2, cardY + 20, { align: 'center' })
-
-      doc.setDrawColor(...THEME.gold)
-      doc.setLineWidth(0.6)
-      doc.line(cardX + 20, cardY + 24, cardX + cardWidth - 20, cardY + 24)
-
-      doc.setFont('helvetica', 'bold')
-      doc.setFontSize(14)
-      doc.setTextColor(...THEME.green)
-      doc.text('ADMIT CARD', pageWidth / 2, cardY + 34, { align: 'center' })
-
-      const photoBoxSize = 32
-      const photoBoxX = cardX + cardWidth - photoBoxSize - 12
-      const photoBoxY = cardY + 40
-      doc.setDrawColor(...THEME.green)
-      doc.setLineWidth(0.5)
-      doc.rect(photoBoxX, photoBoxY, photoBoxSize, photoBoxSize)
-
-      try {
-        const photoDataUrl = await imageUrlToCoverDataUrl(student.photoUrl, 300, 300)
-        doc.addImage(photoDataUrl, 'JPEG', photoBoxX, photoBoxY, photoBoxSize, photoBoxSize)
-      } catch {
-        doc.setFontSize(8)
-        doc.setTextColor(...THEME.ink)
-        doc.text('Photo', photoBoxX + photoBoxSize / 2, photoBoxY + photoBoxSize / 2, { align: 'center' })
-      }
-
-      const fieldX = cardX + 14
-      const fieldValueX = fieldX + 36
-      const lineEndX = photoBoxX - 10
-      let y = cardY + 48
-
-      function field(label, value) {
-        doc.setFont('helvetica', 'bold')
-        doc.setFontSize(11)
-        doc.setTextColor(...THEME.ink)
-        doc.text(label, fieldX, y)
-        doc.setFont('helvetica', 'normal')
-        doc.text(String(value || ''), fieldValueX, y)
-        doc.setDrawColor(...THEME.gold)
-        doc.setLineWidth(0.2)
-        doc.line(fieldValueX, y + 1.5, lineEndX, y + 1.5)
-        y += 12
-      }
-
-      field('Name', student.name)
-      field("Mother's Name", student.motherName)
-      field('Class', student.className)
-      field('Roll No.', student.roll)
-
-      let subjY = cardY + fieldsHeight + 4
-      doc.setFont('helvetica', 'bold')
-      doc.setFontSize(10)
-      doc.setTextColor(...THEME.green)
-      doc.text('Subjects', fieldX, subjY)
-      subjY += 5
-
-      doc.setFont('helvetica', 'normal')
-      doc.setFontSize(7.5)
-      doc.setTextColor(...THEME.ink)
-      subjectLines.forEach((line) => {
-        doc.text(line, fieldX, subjY)
-        subjY += 4
+      drawAdmitCard(doc, {
+        x: margin,
+        y: margin,
+        width: pageWidth - margin * 2,
+        scale: 1,
+        assets,
+        studentPhotoDataUrl,
+        student,
+        examInfo: { examName: exam.name, duration: exam.duration, venue: exam.venue },
+        subjects: studentSubjects,
+        scheduleBySubject: exam.schedule,
       })
 
-      const sigY = cardY + cardHeight - 12
-      const sigWidth = (cardWidth - 28) / 3
-      ;['Issued by Office Incharge', 'Signature of Class Teacher', 'Signature of Candidate'].forEach(
-        (label, index) => {
-          const startX = cardX + 14 + index * sigWidth
-          doc.setDrawColor(...THEME.ink)
-          doc.setLineWidth(0.3)
-          doc.line(startX, sigY, startX + sigWidth - 20, sigY)
-          doc.setFont('helvetica', 'normal')
-          doc.setFontSize(8)
-          doc.text(label, startX + (sigWidth - 20) / 2, sigY + 5, { align: 'center' })
-        },
-      )
-
-      doc.save(filenameFor(student.name, 'admit-card'))
+      doc.save(filenameFor(`${student.name}-${exam.name}`, 'admit-card'))
     } catch (error) {
       setPdfError(error.message)
     } finally {
@@ -489,15 +259,18 @@ function AdminStudentDetailPage() {
             <p>
               <strong>Contact:</strong> {student.contact}
             </p>
+            <p>
+              <strong>Registration No.:</strong> {student.registrationNo || '-'}
+            </p>
+            <p>
+              <strong>Section:</strong> {student.section || '-'}
+            </p>
           </div>
         </div>
 
         {pdfError && <p className="error-text">{pdfError}</p>}
 
         <div className="card-actions">
-          <button type="button" className="cta-btn" disabled={generating === 'result'} onClick={handleDownloadResult}>
-            {generating === 'result' ? 'Preparing...' : 'View Result (PDF)'}
-          </button>
           <button
             type="button"
             className="cta-btn"
@@ -506,10 +279,49 @@ function AdminStudentDetailPage() {
           >
             {generating === 'invoice' ? 'Preparing...' : 'Payment Invoice (PDF)'}
           </button>
-          <button type="button" className="cta-btn" disabled={generating === 'admit'} onClick={handleDownloadAdmitCard}>
-            {generating === 'admit' ? 'Preparing...' : 'Download Admit Card (PDF)'}
+          <button type="button" className="cta-btn" onClick={() => setShowAdmitForm((prev) => !prev)}>
+            {showAdmitForm ? 'Hide Admit Card Form' : 'Download Admit Card (PDF)'}
           </button>
         </div>
+
+        {showAdmitForm && (
+          <div className="admin-form">
+            {studentExams.length === 0 ? (
+              <>
+                <p className="helper-text">No exams created yet for {student.className}.</p>
+                <div className="card-actions">
+                  <Link className="cta-btn" to="/admin/dashboard/exams">
+                    Create Exam
+                  </Link>
+                </div>
+              </>
+            ) : (
+              <>
+                <label className="file-input-label">
+                  <span>Exam</span>
+                  <select value={selectedExamId} onChange={(event) => setSelectedExamId(event.target.value)}>
+                    <option value="">Choose an exam...</option>
+                    {studentExams.map((exam) => (
+                      <option key={exam.id} value={exam.id}>
+                        {exam.name}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+                <div className="card-actions">
+                  <button
+                    type="button"
+                    className="cta-btn"
+                    disabled={generating === 'admit' || !selectedExamId}
+                    onClick={handleDownloadAdmitCard}
+                  >
+                    {generating === 'admit' ? 'Preparing...' : 'Generate Admit Card'}
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
+        )}
 
         <div className="card-actions">
           <button type="button" className="cta-btn" disabled={!nextClass || promoting} onClick={handlePromote}>
@@ -603,117 +415,7 @@ function AdminStudentDetailPage() {
         </div>
       </section>
 
-      <section className="panel">
-        <p className="section-eyebrow">Results</p>
-        <h2>Exam Results</h2>
-
-        {studentSubjects.length === 0 && (
-          <p className="helper-text">
-            No subjects configured for {student.className}. Add them under Manage Classes before entering results.
-          </p>
-        )}
-
-        <form className="admin-form" onSubmit={handleResultSubmit}>
-          <input
-            type="text"
-            placeholder="Exam name (e.g. Half Yearly)"
-            value={resultForm.examName}
-            onChange={(event) => setResultForm((prev) => ({ ...prev, examName: event.target.value }))}
-            required
-          />
-          <select
-            value={resultForm.subject}
-            onChange={(event) => setResultForm((prev) => ({ ...prev, subject: event.target.value }))}
-            required
-          >
-            <option value="">Select subject</option>
-            {studentSubjects.map((subject) => (
-              <option key={subject.name} value={subject.name}>
-                {subject.name} (out of {subject.fullMarks})
-              </option>
-            ))}
-          </select>
-          <input
-            type="number"
-            min="0"
-            placeholder="Marks obtained"
-            value={resultForm.marks}
-            onChange={(event) => setResultForm((prev) => ({ ...prev, marks: event.target.value }))}
-            required
-          />
-          {resultForm.subject && resultForm.marks !== '' && (
-            <p className="helper-text">
-              Grade: {computeGrade(resultForm.marks, studentSubjects.find((s) => s.name === resultForm.subject)?.fullMarks)}
-            </p>
-          )}
-          {resultFormError && <p className="error-text">{resultFormError}</p>}
-          <button type="submit" disabled={resultSubmitting || studentSubjects.length === 0}>
-            {resultSubmitting ? 'Saving...' : 'Add Result'}
-          </button>
-        </form>
-
-        {resultsLoading && <div className="empty-state">Loading results...</div>}
-        {resultsError && <p className="error-text">{resultsError}</p>}
-        {!resultsLoading && results.length === 0 && <div className="empty-state">No results recorded yet.</div>}
-
-        <div className="notice-vertical-list admin-list-gap">
-          {results.map((result) => {
-            const edited = resultEdits[result.id]
-            const busy = Boolean(resultRowBusy[result.id])
-            return (
-              <article key={result.id} className="notice-row-card">
-                <div>
-                  <input
-                    type="text"
-                    className="inline-edit-input"
-                    value={edited?.examName ?? result.examName}
-                    onChange={(event) => handleResultEditChange(result.id, 'examName', event.target.value, result)}
-                    aria-label="Edit exam name"
-                  />
-                  <select
-                    className="inline-edit-input"
-                    value={edited?.subject ?? result.subject}
-                    onChange={(event) => handleResultEditChange(result.id, 'subject', event.target.value, result)}
-                    aria-label="Edit subject"
-                  >
-                    <option value={result.subject}>{result.subject}</option>
-                    {studentSubjects
-                      .filter((subject) => subject.name !== result.subject)
-                      .map((subject) => (
-                        <option key={subject.name} value={subject.name}>
-                          {subject.name} (out of {subject.fullMarks})
-                        </option>
-                      ))}
-                  </select>
-                  <input
-                    type="number"
-                    min="0"
-                    className="inline-edit-input"
-                    value={edited?.marks ?? result.marks}
-                    onChange={(event) => handleResultEditChange(result.id, 'marks', event.target.value, result)}
-                    aria-label="Edit marks"
-                  />
-                  <p className="helper-text">Grade: {result.grade}</p>
-                  {resultRowError[result.id] && <p className="error-text">{resultRowError[result.id]}</p>}
-                  <div className="gallery-manage-actions">
-                    <button type="button" disabled={busy} onClick={() => handleResultUpdate(result.id, result)}>
-                      {busy ? 'Saving...' : 'Save'}
-                    </button>
-                    <button
-                      type="button"
-                      className="danger-btn"
-                      disabled={busy}
-                      onClick={() => handleResultDelete(result.id)}
-                    >
-                      Delete
-                    </button>
-                  </div>
-                </div>
-              </article>
-            )
-          })}
-        </div>
-      </section>
+      <StudentResultsPanel student={student} />
     </div>
   )
 }

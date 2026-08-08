@@ -1,5 +1,6 @@
 import { useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
+import { useConfirm } from '../../context/ConfirmContext'
 import { useData } from '../../context/DataContext'
 import { DESIGNATIONS } from '../../constants/admin'
 
@@ -7,6 +8,7 @@ const emptyTeacherForm = { name: '', designation: '', subject: '', indexNo: '', 
 
 function AdminTeachersPage() {
   const { teachers, backendError, addTeacher, removeTeacher } = useData()
+  const confirm = useConfirm()
 
   const [teacherForm, setTeacherForm] = useState(emptyTeacherForm)
   const [teacherPhoto, setTeacherPhoto] = useState(null)
@@ -45,7 +47,7 @@ function AdminTeachersPage() {
   }
 
   async function handleDelete(id) {
-    if (!window.confirm('Delete this teacher? This cannot be undone.')) return
+    if (!(await confirm('Delete this teacher? This cannot be undone.', { danger: true }))) return
 
     setRowBusy((prev) => ({ ...prev, [id]: true }))
     setRowError((prev) => ({ ...prev, [id]: null }))

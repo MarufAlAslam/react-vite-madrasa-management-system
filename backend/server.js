@@ -5,11 +5,13 @@ import { isConfigured } from './services/googleSheets.js'
 import adminsRouter from './routes/admins.js'
 import authRouter from './routes/auth.js'
 import classesRouter from './routes/classes.js'
+import examsRouter from './routes/exams.js'
 import galleryRouter from './routes/gallery.js'
 import incomeExpensesRouter from './routes/incomeExpenses.js'
 import logsRouter from './routes/logs.js'
 import paymentsRouter from './routes/payments.js'
 import resultsRouter from './routes/results.js'
+import settingsRouter from './routes/settings.js'
 import studentsRouter from './routes/students.js'
 import teachersRouter from './routes/teachers.js'
 
@@ -42,6 +44,7 @@ app.get('/api/health', (req, res) => {
 
 app.use('/api/auth', authRouter)
 app.use('/api/classes', classesRouter)
+app.use('/api/exams', examsRouter)
 app.use('/api/teachers', teachersRouter)
 app.use('/api/students', studentsRouter)
 app.use('/api/admins', adminsRouter)
@@ -50,6 +53,7 @@ app.use('/api/gallery', galleryRouter)
 app.use('/api/income-expenses', incomeExpensesRouter)
 app.use('/api/payments', paymentsRouter)
 app.use('/api/results', resultsRouter)
+app.use('/api/settings', settingsRouter)
 
 app.use((error, req, res, next) => {
   if (res.headersSent) {

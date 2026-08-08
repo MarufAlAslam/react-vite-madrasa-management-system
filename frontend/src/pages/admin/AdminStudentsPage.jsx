@@ -9,6 +9,8 @@ const emptyStudentForm = {
   roll: '',
   dob: '',
   contact: '',
+  registrationNo: '',
+  section: '',
 }
 
 function AdminStudentsPage() {
@@ -95,6 +97,18 @@ function AdminStudentsPage() {
           value={studentForm.roll}
           onChange={(event) => setStudentForm((prev) => ({ ...prev, roll: event.target.value }))}
           required
+        />
+        <input
+          type="text"
+          placeholder="Registration number (optional)"
+          value={studentForm.registrationNo}
+          onChange={(event) => setStudentForm((prev) => ({ ...prev, registrationNo: event.target.value }))}
+        />
+        <input
+          type="text"
+          placeholder="Section (optional)"
+          value={studentForm.section}
+          onChange={(event) => setStudentForm((prev) => ({ ...prev, section: event.target.value }))}
         />
         <label className="file-input-label">
           <span>Date of birth</span>

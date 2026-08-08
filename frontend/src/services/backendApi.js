@@ -1,5 +1,11 @@
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://madrasa-backend.vercel.app'
 
+let unauthorizedHandler = null
+
+export function setUnauthorizedHandler(handler) {
+  unauthorizedHandler = handler
+}
+
 async function request(path, options = {}, token) {
   const headers = token ? { ...options.headers, Authorization: `Bearer ${token}` } : options.headers
 
@@ -7,6 +13,9 @@ async function request(path, options = {}, token) {
   const data = await response.json().catch(() => null)
 
   if (!response.ok) {
+    if (response.status === 401 && token) {
+      unauthorizedHandler?.()
+    }
     throw new Error(data?.error || `Request failed with status ${response.status}`)
   }
 
@@ -191,4 +200,28 @@ export async function updateResult(id, payload, token) {
 
 export async function deleteResult(id, token) {
   return request(`/api/results/${id}`, { method: 'DELETE' }, token)
+}
+
+export async function getSettings() {
+  return request('/api/settings')
+}
+
+export async function updateSettings(formData, token) {
+  return request('/api/settings', { method: 'POST', body: formData }, token)
+}
+
+export async function getExams() {
+  return request('/api/exams')
+}
+
+export async function createExam(payload, token) {
+  return request(
+    '/api/exams',
+    { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) },
+    token,
+  )
+}
+
+export async function deleteExam(id, token) {
+  return request(`/api/exams/${id}`, { method: 'DELETE' }, token)
 }

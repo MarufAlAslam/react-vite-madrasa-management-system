@@ -20,3 +20,4 @@ const upload = multer({
 
 export const uploadTeacherPhoto = upload
 export const uploadStudentPhoto = upload
+export const uploadSettingsAssets = upload

@@ -31,7 +31,7 @@ router.get('/', async (req, res) => {
 })
 
 router.post('/', requireAuth, uploadStudentPhoto.single('photo'), async (req, res) => {
-  const { className, name, fatherName, motherName, roll, dob, contact } = req.body
+  const { className, name, fatherName, motherName, roll, dob, contact, registrationNo, section } = req.body
 
   if (!req.file) {
     res.status(400).json({ error: 'photo is required' })
@@ -71,6 +71,8 @@ router.post('/', requireAuth, uploadStudentPhoto.single('photo'), async (req, re
       contact,
       photoUrl,
       createdAt: new Date().toISOString(),
+      registrationNo: registrationNo || '',
+      section: section || '',
     }
 
     await addStudent(record)
@@ -84,7 +86,7 @@ router.post('/', requireAuth, uploadStudentPhoto.single('photo'), async (req, re
 
 router.put('/:id', requireAuth, requireSuperAdmin, uploadStudentPhoto.single('photo'), async (req, res) => {
   const { id } = req.params
-  const { className, name, fatherName, motherName, roll, dob, contact } = req.body
+  const { className, name, fatherName, motherName, roll, dob, contact, registrationNo, section } = req.body
 
   if (!className || !name || !fatherName || !motherName || !roll || !dob || !contact) {
     res.status(400).json({
@@ -125,6 +127,8 @@ router.put('/:id', requireAuth, requireSuperAdmin, uploadStudentPhoto.single('ph
       dob,
       contact,
       photoUrl,
+      registrationNo: registrationNo || '',
+      section: section || '',
     })
     if (req.file && existing.photoUrl) {
       await deletePhoto(existing.photoUrl)

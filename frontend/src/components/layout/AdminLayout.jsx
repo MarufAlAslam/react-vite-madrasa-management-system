@@ -47,6 +47,9 @@ function AdminLayout() {
           <NavLink to="/admin/dashboard/students/list" className={tabClassName}>
             Student List
           </NavLink>
+          <NavLink to="/admin/dashboard/results" className={tabClassName}>
+            Results
+          </NavLink>
           {isSuperAdmin && (
             <NavLink to="/admin/dashboard/gallery" className={tabClassName}>
               Update Gallery
@@ -65,6 +68,21 @@ function AdminLayout() {
           {isSuperAdmin && (
             <NavLink to="/admin/dashboard/export" className={tabClassName}>
               Export Data
+            </NavLink>
+          )}
+          {isSuperAdmin && (
+            <NavLink to="/admin/dashboard/exams" className={tabClassName}>
+              Exams
+            </NavLink>
+          )}
+          {isSuperAdmin && (
+            <NavLink to="/admin/dashboard/admit-cards" className={tabClassName}>
+              Admit Cards
+            </NavLink>
+          )}
+          {isSuperAdmin && (
+            <NavLink to="/admin/dashboard/settings" className={tabClassName}>
+              Institution Assets
             </NavLink>
           )}
           <button type="button" className="admin-tab-button" onClick={handleLogout}>

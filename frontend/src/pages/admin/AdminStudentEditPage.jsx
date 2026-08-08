@@ -19,6 +19,8 @@ function AdminStudentEditPage() {
           roll: student.roll,
           dob: student.dob,
           contact: student.contact,
+          registrationNo: student.registrationNo || '',
+          section: student.section || '',
         }
       : null,
   )
@@ -99,6 +101,18 @@ function AdminStudentEditPage() {
           value={form.roll}
           onChange={(event) => setForm((prev) => ({ ...prev, roll: event.target.value }))}
           required
+        />
+        <input
+          type="text"
+          placeholder="Registration number (optional)"
+          value={form.registrationNo}
+          onChange={(event) => setForm((prev) => ({ ...prev, registrationNo: event.target.value }))}
+        />
+        <input
+          type="text"
+          placeholder="Section (optional)"
+          value={form.section}
+          onChange={(event) => setForm((prev) => ({ ...prev, section: event.target.value }))}
         />
         <label className="file-input-label">
           <span>Date of birth</span>

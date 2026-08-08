@@ -564,6 +564,7 @@ input,
 	padding: 16px;
 	text-align: center;
 	color: #596757;
+	margin-top: 14px;
 }
 
 .gallery-grid {
@@ -734,6 +735,13 @@ input,
 	font-weight: 400;
 }
 
+.settings-asset-preview {
+	max-height: 60px;
+	max-width: 160px;
+	object-fit: contain;
+	margin-bottom: 6px;
+}
+
 .edit-preview-photo {
 	width: 140px;
 	height: 140px;
@@ -762,7 +770,7 @@ input,
 
 .subject-row {
 	display: grid;
-	grid-template-columns: 1fr 1fr 100px auto;
+	grid-template-columns: 1fr 1fr 90px 100px auto;
 	gap: 8px;
 	align-items: center;
 	margin-bottom: 10px;
@@ -874,6 +882,90 @@ input,
 	margin-top: 12px;
 }
 
+.subject-marks-grid {
+	display: grid;
+	gap: 8px;
+	margin: 4px 0;
+}
+
+.subject-marks-field {
+	display: grid;
+	grid-template-columns: 1fr 200px;
+	align-items: center;
+	gap: 10px;
+	font-size: 0.9rem;
+	font-weight: 700;
+	color: var(--green-900);
+	padding-bottom: 8px;
+	border-bottom: 1px solid var(--border);
+}
+
+.subject-marks-field:last-child {
+	border-bottom: 0;
+	padding-bottom: 0;
+}
+
+.subject-marks-field.is-editing {
+	border-left: 3px solid var(--gold-500);
+	padding-left: 8px;
+}
+
+.subject-marks-field input {
+	font-weight: 400;
+	width: 100%;
+	padding: 10px 12px;
+}
+
+@media (max-width: 640px) {
+	.subject-marks-field {
+		grid-template-columns: 1fr;
+	}
+}
+
+.table-wrap {
+	overflow-x: auto;
+	margin-top: 12px;
+}
+
+.data-table {
+	width: 100%;
+	border-collapse: collapse;
+	font-size: 0.9rem;
+}
+
+.data-table th,
+.data-table td {
+	padding: 8px 10px;
+	border-bottom: 1px solid var(--border);
+	text-align: left;
+}
+
+.data-table th {
+	background: var(--green-900);
+	color: #fff;
+	font-weight: 700;
+}
+
+.data-table tbody tr:nth-child(even) {
+	background: rgba(200, 169, 81, 0.08);
+}
+
+.result-exam-group {
+	border: 1px solid var(--border);
+	border-radius: 14px;
+	padding: 14px;
+	background: linear-gradient(180deg, #fff, #f8fcf7);
+	margin-top: 12px;
+}
+
+.result-exam-group .gallery-manage-actions {
+	margin-top: 14px;
+}
+
+.result-exam-group h3 {
+	margin-top: 0;
+}
+
 .stat-card p {
 	margin: 0;
 	color: #4f5f4d;
@@ -915,6 +1007,15 @@ input,
 	max-height: 62vh;
 	object-fit: cover;
 	border-radius: 12px;
+}
+
+.confirm-modal {
+	width: min(420px, 100%);
+}
+
+.confirm-modal p {
+	margin: 0 0 14px;
+	font-size: 0.95rem;
 }
 
 @media (max-width: 960px) {
