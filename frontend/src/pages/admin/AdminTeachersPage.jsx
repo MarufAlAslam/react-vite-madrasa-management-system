@@ -1,23 +1,21 @@
 import { useRef, useState } from 'react'
-import { Link } from 'react-router-dom'
-import { useConfirm } from '../../context/ConfirmContext'
 import { useData } from '../../context/DataContext'
-import { DESIGNATIONS } from '../../constants/admin'
+import { DESIGNATIONS, UNIQUE_DESIGNATIONS } from '../../constants/admin'
 
 const emptyTeacherForm = { name: '', designation: '', subject: '', indexNo: '', phone: '' }
 
 function AdminTeachersPage() {
-  const { teachers, backendError, addTeacher, removeTeacher } = useData()
-  const confirm = useConfirm()
+  const { teachers, backendError, addTeacher } = useData()
+
+  const availableDesignations = DESIGNATIONS.filter(
+    (designation) => !UNIQUE_DESIGNATIONS.includes(designation) || !teachers.some((t) => t.designation === designation),
+  )
 
   const [teacherForm, setTeacherForm] = useState(emptyTeacherForm)
   const [teacherPhoto, setTeacherPhoto] = useState(null)
   const [teacherFormError, setTeacherFormError] = useState(null)
   const [teacherSubmitting, setTeacherSubmitting] = useState(false)
   const teacherPhotoInputRef = useRef(null)
-
-  const [rowBusy, setRowBusy] = useState({})
-  const [rowError, setRowError] = useState({})
 
   async function handleTeacherSubmit(event) {
     event.preventDefault()
@@ -46,20 +44,6 @@ function AdminTeachersPage() {
     }
   }
 
-  async function handleDelete(id) {
-    if (!(await confirm('Delete this teacher? This cannot be undone.', { danger: true }))) return
-
-    setRowBusy((prev) => ({ ...prev, [id]: true }))
-    setRowError((prev) => ({ ...prev, [id]: null }))
-
-    try {
-      await removeTeacher(id)
-    } catch (error) {
-      setRowError((prev) => ({ ...prev, [id]: error.message }))
-      setRowBusy((prev) => ({ ...prev, [id]: false }))
-    }
-  }
-
   return (
     <section className="panel">
       <p className="section-eyebrow">Add Teacher</p>
@@ -81,7 +65,7 @@ function AdminTeachersPage() {
           required
         >
           <option value="">Select designation</option>
-          {DESIGNATIONS.map((designation) => (
+          {availableDesignations.map((designation) => (
             <option key={designation} value={designation}>
               {designation}
             </option>
@@ -123,36 +107,6 @@ function AdminTeachersPage() {
           {teacherSubmitting ? 'Adding...' : 'Add Teacher'}
         </button>
       </form>
-
-      <div className="teachers-grid admin-list-gap">
-        {teachers.map((teacher) => (
-          <article key={teacher.id} className="teacher-card">
-            <img src={teacher.photoUrl} alt={teacher.name} />
-            <h3>{teacher.name}</h3>
-            <p className="subject-pill">{teacher.designation}</p>
-            <p>{teacher.subject}</p>
-            <p>{teacher.phone}</p>
-
-            <div className="card-actions">
-              <Link className="cta-btn" to={`/admin/dashboard/teachers/${teacher.id}`}>
-                Profile
-              </Link>
-              <Link className="cta-btn" to={`/admin/dashboard/teachers/${teacher.id}/edit`}>
-                Edit
-              </Link>
-              <button
-                type="button"
-                className="cta-btn danger-btn"
-                disabled={rowBusy[teacher.id]}
-                onClick={() => handleDelete(teacher.id)}
-              >
-                {rowBusy[teacher.id] ? 'Deleting...' : 'Delete'}
-              </button>
-            </div>
-            {rowError[teacher.id] && <p className="error-text">{rowError[teacher.id]}</p>}
-          </article>
-        ))}
-      </div>
     </section>
   )
 }

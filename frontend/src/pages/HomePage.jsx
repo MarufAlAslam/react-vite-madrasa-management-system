@@ -28,7 +28,11 @@ const instituteFacts = [
 ]
 
 function HomePage() {
-  const { notices, loading } = useData()
+  const { notices, teachers, loading } = useData()
+
+  const principal = teachers.find((teacher) => teacher.designation === 'Principal')
+  const vicePrincipal = teachers.find((teacher) => teacher.designation === 'Vice Principal')
+  const leadership = [principal, vicePrincipal].filter(Boolean)
 
   return (
     <div className="page-stack">
@@ -69,6 +73,23 @@ function HomePage() {
           </p>
         </article>
       </section>
+
+      {leadership.length > 0 && (
+        <section className="panel">
+          <p className="section-eyebrow">Leadership</p>
+          <h2>Principal &amp; Vice Principal</h2>
+          <div className="teachers-grid">
+            {leadership.map((leader) => (
+              <article className="teacher-card" key={leader.id}>
+                <img src={leader.photoUrl} alt={leader.name} />
+                <h3>{leader.name}</h3>
+                <p className="subject-pill">{leader.designation}</p>
+                <p>{leader.subject}</p>
+              </article>
+            ))}
+          </div>
+        </section>
+      )}
 
       <section className="panel">
         <div className="stats-grid">

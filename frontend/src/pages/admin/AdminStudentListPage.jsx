@@ -1,8 +1,11 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
+import Pagination from '../../components/common/Pagination'
 import { useConfirm } from '../../context/ConfirmContext'
 import { useData } from '../../context/DataContext'
 import { getNextClass } from '../../constants/admin'
+
+const PAGE_SIZE = 12
 
 function AdminStudentListPage() {
   const { students, classes, backendError, bulkPromoteStudents } = useData()
@@ -11,6 +14,7 @@ function AdminStudentListPage() {
 
   const [searchTerm, setSearchTerm] = useState('')
   const [classFilter, setClassFilter] = useState('all')
+  const [page, setPage] = useState(1)
 
   const [promoteFromClass, setPromoteFromClass] = useState('')
   const [promoting, setPromoting] = useState(false)
@@ -34,6 +38,10 @@ function AdminStudentListPage() {
       return matchesClass && matchesSearch
     })
   }, [students, classFilter, searchTerm])
+
+  const pageCount = Math.max(1, Math.ceil(filteredStudents.length / PAGE_SIZE))
+  const currentPage = Math.min(page, pageCount)
+  const pagedStudents = filteredStudents.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE)
 
   async function handleBulkPromote() {
     if (!promoteToClass) return
@@ -103,7 +111,7 @@ function AdminStudentListPage() {
       </div>
 
       <div className="teachers-grid admin-list-gap">
-        {filteredStudents.map((student) => (
+        {pagedStudents.map((student) => (
           <Link key={student.id} to={`/admin/dashboard/students/${student.id}`} className="teacher-card card-link">
             <img src={student.photoUrl} alt={student.name} />
             <h3>{student.name}</h3>
@@ -114,6 +122,8 @@ function AdminStudentListPage() {
         ))}
         {filteredStudents.length === 0 && <div className="empty-state">No students match this filter.</div>}
       </div>
+
+      <Pagination page={currentPage} pageCount={pageCount} onPageChange={setPage} />
     </section>
   )
 }

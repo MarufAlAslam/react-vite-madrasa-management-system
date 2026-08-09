@@ -41,10 +41,11 @@ function MainLayout() {
           <NavLink to="/" end>
             Home
           </NavLink>
-          <NavLink to="/notice">Notification</NavLink>
+          <NavLink to="/notice">Notices</NavLink>
           <NavLink to="/gallery">Gallery</NavLink>
           <NavLink to="/teachers">Teachers</NavLink>
           <NavLink to="/students">Students</NavLink>
+          <NavLink to="/staff">Staff</NavLink>
           {isAuthenticated ? (
             <NavLink to="/admin/dashboard" className="nav-right">
               Admin Panel
@@ -74,10 +75,11 @@ function MainLayout() {
           <section>
             <h3>Quick Links</h3>
             <div className="footer-links">
-              <NavLink to="/notice">Notifications</NavLink>
+              <NavLink to="/notice">Notices</NavLink>
               <NavLink to="/gallery">Gallery</NavLink>
               <NavLink to="/teachers">Teachers</NavLink>
               <NavLink to="/students">Students</NavLink>
+              <NavLink to="/staff">Staff</NavLink>
             </div>
           </section>
 
@@ -88,6 +90,12 @@ function MainLayout() {
           </section>
         </div>
         <p className="footer-bottom mt-4">© {new Date().getFullYear()} Moulovirhat H. Fazil Madrasah. All rights reserved.</p>
+        <p className="footer-bottom">
+          Developed by,{' '}
+          <NavLink to="/developer" className="footer-dev-credit">
+            Maruf
+          </NavLink>
+        </p>
       </footer>
     </div>
   )

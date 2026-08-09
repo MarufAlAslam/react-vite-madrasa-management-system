@@ -1,97 +1,130 @@
-import { NavLink, Outlet, useNavigate } from 'react-router-dom'
+import { useEffect, useState } from 'react'
+import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
 
-function tabClassName({ isActive }) {
-  return `admin-tab-button ${isActive ? 'active' : ''}`
+function navLinkClass({ isActive }) {
+  return `admin-nav-link ${isActive ? 'active' : ''}`
 }
 
 function AdminLayout() {
-  const { logout, isSuperAdmin } = useAuth()
+  const { user, logout, isSuperAdmin } = useAuth()
   const navigate = useNavigate()
+  const location = useLocation()
+  const [sidebarOpen, setSidebarOpen] = useState(false)
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setSidebarOpen(false)
+  }, [location.pathname])
 
   function handleLogout() {
     logout()
     navigate('/admin/login', { replace: true })
   }
 
-  return (
-    <div className="page-stack">
-      <section className="panel admin-workspace">
-        <p className="section-eyebrow">Admin Panel</p>
-        <h2>Management Console</h2>
+  const navGroups = [
+    {
+      title: 'Dashboard',
+      items: [{ to: '/admin/dashboard/overview', label: 'Dashboard', show: isSuperAdmin }],
+    },
+    {
+      title: 'Students',
+      items: [
+        { to: '/admin/dashboard/students', label: 'Add Student', end: true, show: true },
+        { to: '/admin/dashboard/students/list', label: 'Student List', show: true },
+        { to: '/admin/dashboard/results', label: 'Results', show: true },
+      ],
+    },
+    {
+      title: 'Academics',
+      items: [
+        { to: '/admin/dashboard/classes', label: 'Classes', show: isSuperAdmin },
+        { to: '/admin/dashboard/exams', label: 'Exams', show: isSuperAdmin },
+        { to: '/admin/dashboard/admit-cards', label: 'Admit Cards', show: isSuperAdmin },
+        { to: '/admin/dashboard/teachers', label: 'Add Teacher', end: true, show: isSuperAdmin },
+        { to: '/admin/dashboard/teachers/list', label: 'Teacher List', show: isSuperAdmin },
+      ],
+    },
+    {
+      title: 'Finance',
+      items: [{ to: '/admin/dashboard/finance', label: 'Income & Expenses', show: isSuperAdmin }],
+    },
+    {
+      title: 'Office',
+      items: [
+        { to: '/admin/dashboard/staff', label: 'Add Staff', end: true, show: isSuperAdmin },
+        { to: '/admin/dashboard/staff/list', label: 'Staffs', show: isSuperAdmin },
+      ],
+    },
+    {
+      title: 'System',
+      items: [
+        { to: '/admin/dashboard/gallery', label: 'Update Gallery', show: isSuperAdmin },
+        { to: '/admin/dashboard/admins', label: 'Create Admin', show: isSuperAdmin },
+        { to: '/admin/dashboard/logs', label: 'Activity Log', show: isSuperAdmin },
+        { to: '/admin/dashboard/export', label: 'Export Data', show: isSuperAdmin },
+        { to: '/admin/dashboard/settings', label: 'Institution Assets', show: isSuperAdmin },
+      ],
+    },
+  ]
 
-        <div className="admin-tabs" role="tablist" aria-label="Admin sections">
-          {isSuperAdmin && (
-            <NavLink to="/admin/dashboard/overview" className={tabClassName}>
-              Dashboard
-            </NavLink>
-          )}
-          {isSuperAdmin && (
-            <NavLink to="/admin/dashboard/finance" className={tabClassName}>
-              Income & Expenses
-            </NavLink>
-          )}
-          {isSuperAdmin && (
-            <NavLink to="/admin/dashboard/teachers" className={tabClassName}>
-              Add Teacher
-            </NavLink>
-          )}
-          {isSuperAdmin && (
-            <NavLink to="/admin/dashboard/classes" className={tabClassName}>
-              Manage Classes
-            </NavLink>
-          )}
-          <NavLink to="/admin/dashboard/students" end className={tabClassName}>
-            Add Student
-          </NavLink>
-          <NavLink to="/admin/dashboard/students/list" className={tabClassName}>
-            Student List
-          </NavLink>
-          <NavLink to="/admin/dashboard/results" className={tabClassName}>
-            Results
-          </NavLink>
-          {isSuperAdmin && (
-            <NavLink to="/admin/dashboard/gallery" className={tabClassName}>
-              Update Gallery
-            </NavLink>
-          )}
-          {isSuperAdmin && (
-            <NavLink to="/admin/dashboard/admins" className={tabClassName}>
-              Create Admin
-            </NavLink>
-          )}
-          {isSuperAdmin && (
-            <NavLink to="/admin/dashboard/logs" className={tabClassName}>
-              Activity Log
-            </NavLink>
-          )}
-          {isSuperAdmin && (
-            <NavLink to="/admin/dashboard/export" className={tabClassName}>
-              Export Data
-            </NavLink>
-          )}
-          {isSuperAdmin && (
-            <NavLink to="/admin/dashboard/exams" className={tabClassName}>
-              Exams
-            </NavLink>
-          )}
-          {isSuperAdmin && (
-            <NavLink to="/admin/dashboard/admit-cards" className={tabClassName}>
-              Admit Cards
-            </NavLink>
-          )}
-          {isSuperAdmin && (
-            <NavLink to="/admin/dashboard/settings" className={tabClassName}>
-              Institution Assets
-            </NavLink>
-          )}
-          <button type="button" className="admin-tab-button" onClick={handleLogout}>
+  return (
+    <div className="admin-shell">
+      <aside className={`admin-sidebar ${sidebarOpen ? 'is-open' : ''}`}>
+        <div className="admin-sidebar-brand">
+          <img className="logo-mark" src="/images/logo.jpg" alt="Moulovirhat H. Fazil Madrasah logo" />
+          <span>Admin Panel</span>
+        </div>
+
+        <nav className="admin-sidebar-nav" aria-label="Admin sections">
+          {navGroups.map((group) => {
+            const visibleItems = group.items.filter((item) => item.show)
+            if (visibleItems.length === 0) return null
+
+            return (
+              <div className="admin-nav-group" key={group.title}>
+                <p className="admin-nav-group-title">{group.title}</p>
+                {visibleItems.map((item) => (
+                  <NavLink key={item.to} to={item.to} end={item.end} className={navLinkClass}>
+                    {item.label}
+                  </NavLink>
+                ))}
+              </div>
+            )
+          })}
+        </nav>
+
+        <a className="admin-dev-credit" href="/developer" target="_blank" rel="noreferrer">
+          Developed by, Maruf
+        </a>
+      </aside>
+
+      {sidebarOpen && <div className="admin-sidebar-backdrop" onClick={() => setSidebarOpen(false)} aria-hidden="true" />}
+
+      <div className="admin-main">
+        <header className="admin-topbar">
+          <div className="admin-topbar-left">
+            <button
+              type="button"
+              className="admin-sidebar-toggle"
+              aria-label="Toggle admin menu"
+              aria-expanded={sidebarOpen}
+              onClick={() => setSidebarOpen((prev) => !prev)}
+            >
+              ☰
+            </button>
+            <span className="admin-topbar-greeting">Hello, {user?.name}</span>
+          </div>
+
+          <button type="button" className="admin-logout-btn" onClick={handleLogout}>
             Log Out
           </button>
-        </div>
-      </section>
+        </header>
 
-      <Outlet />
+        <div className="admin-content">
+          <Outlet />
+        </div>
+      </div>
     </div>
   )
 }

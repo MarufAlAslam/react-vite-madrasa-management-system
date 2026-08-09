@@ -1,19 +1,28 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
+import { Link } from 'react-router-dom'
 import jsPDF from 'jspdf'
 import autoTable from 'jspdf-autotable'
 import { useAuth } from '../../context/AuthContext'
 import { useConfirm } from '../../context/ConfirmContext'
 import { useData } from '../../context/DataContext'
-import { createResult, deleteResult, getResults, updateResult } from '../../services/backendApi'
-import { computeGrade } from '../../utils/grade'
+import { createResult, deleteResult, getAllResults, getResults, updateResult } from '../../services/backendApi'
+import { computeGPA, computeGrade } from '../../utils/grade'
 import { drawDoubleBorder, imageUrlToCoverDataUrl, THEME } from '../../utils/pdf'
 
 function StudentResultsPanel({ student }) {
-  const { classes } = useData()
+  const { classes, exams, students } = useData()
   const { token } = useAuth()
   const confirm = useConfirm()
 
   const studentSubjects = classes.find((item) => item.className === student.className)?.subjects ?? []
+  const classExams = useMemo(
+    () =>
+      exams
+        .filter((exam) => exam.className === student.className)
+        .slice()
+        .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)),
+    [exams, student.className],
+  )
 
   const [results, setResults] = useState([])
   const [resultsLoading, setResultsLoading] = useState(true)
@@ -29,7 +38,7 @@ function StudentResultsPanel({ student }) {
   const [examActionError, setExamActionError] = useState({})
 
   const [pdfError, setPdfError] = useState(null)
-  const [generatingPdf, setGeneratingPdf] = useState(false)
+  const [generatingExam, setGeneratingExam] = useState(null)
 
   const formRef = useRef(null)
 
@@ -39,8 +48,23 @@ function StudentResultsPanel({ student }) {
       if (!map.has(result.examName)) map.set(result.examName, [])
       map.get(result.examName).push(result)
     })
-    return Array.from(map.entries()).map(([name, entries]) => ({ examName: name, entries }))
+    return Array.from(map.entries()).map(([name, entries]) => {
+      const publishedAt = entries.reduce(
+        (min, entry) => (entry.createdAt && (!min || entry.createdAt < min) ? entry.createdAt : min),
+        null,
+      )
+      const updatedAt = entries.reduce(
+        (max, entry) => (entry.updatedAt && (!max || entry.updatedAt > max) ? entry.updatedAt : max),
+        null,
+      )
+      return { examName: name, entries, publishedAt, updatedAt }
+    })
   }, [results])
+
+  const examNameOptions = useMemo(() => {
+    const names = classExams.map((exam) => exam.name)
+    return examName && !names.includes(examName) ? [examName, ...names] : names
+  }, [classExams, examName])
 
   useEffect(() => {
     setResultsLoading(true)
@@ -79,35 +103,36 @@ function StudentResultsPanel({ student }) {
     event.preventDefault()
 
     if (!examName.trim()) {
-      setResultFormError('Exam name is required.')
+      setResultFormError('Select an exam.')
       return
+    }
+
+    for (const subject of studentSubjects) {
+      const value = marksBySubject[subject.name]
+      if (value === undefined || value === '') continue
+
+      const numeric = Number(value)
+      if (Number.isNaN(numeric) || numeric < 0) {
+        setResultFormError(`Marks for "${subject.name}" cannot be negative.`)
+        return
+      }
+      if (numeric > subject.fullMarks) {
+        setResultFormError(`Marks for "${subject.name}" cannot exceed ${subject.fullMarks}.`)
+        return
+      }
     }
 
     const idsBySubject = editingResultIds || {}
-    const ops = []
-
-    studentSubjects.forEach((subject) => {
-      const value = marksBySubject[subject.name]
+    const ops = studentSubjects.map((subject) => {
+      const rawValue = marksBySubject[subject.name]
+      const value = rawValue === undefined || rawValue === '' ? '0' : rawValue
+      const grade = computeGrade(value, subject.fullMarks)
+      const payload = { examName: examName.trim(), subject: subject.name, marks: value, grade }
       const existingId = idsBySubject[subject.name]
-      const hasValue = value !== undefined && value !== ''
-
-      if (hasValue) {
-        const grade = computeGrade(value, subject.fullMarks)
-        const payload = { examName: examName.trim(), subject: subject.name, marks: value, grade }
-        ops.push(
-          existingId
-            ? updateResult(existingId, payload, token)
-            : createResult({ studentId: student.id, ...payload }, token),
-        )
-      } else if (existingId) {
-        ops.push(deleteResult(existingId, token))
-      }
+      return existingId
+        ? updateResult(existingId, payload, token)
+        : createResult({ studentId: student.id, ...payload }, token)
     })
-
-    if (ops.length === 0) {
-      setResultFormError('Enter marks for at least one subject.')
-      return
-    }
 
     setResultSubmitting(true)
     setResultFormError(null)
@@ -139,9 +164,9 @@ function StudentResultsPanel({ student }) {
     }
   }
 
-  async function handleDownloadResult() {
+  async function handleDownloadExamResult(group) {
     setPdfError(null)
-    setGeneratingPdf(true)
+    setGeneratingExam(group.examName)
     try {
       const doc = new jsPDF({ unit: 'mm', format: 'a4' })
       const pageWidth = doc.internal.pageSize.getWidth()
@@ -153,7 +178,7 @@ function StudentResultsPanel({ student }) {
       doc.setFontSize(16)
       doc.text('Moulovirhat H. Fazil Madrasah', pageWidth / 2, 26, { align: 'center' })
       doc.setFontSize(12)
-      doc.text('Result Sheet', pageWidth / 2, 34, { align: 'center' })
+      doc.text(`Result Sheet — ${group.examName}`, pageWidth / 2, 34, { align: 'center' })
 
       try {
         const photoDataUrl = await imageUrlToCoverDataUrl(student.photoUrl, 300, 300)
@@ -168,25 +193,63 @@ function StudentResultsPanel({ student }) {
       doc.text(`Name: ${student.name}`, 20, 42)
       doc.text(`Class: ${student.className}    Roll: ${student.roll}`, 20, 47)
 
+      const totalObtained = group.entries.reduce((sum, entry) => sum + Number(entry.marks), 0)
+      const totalFullMarks = group.entries.reduce((sum, entry) => {
+        const fullMarks = studentSubjects.find((subject) => subject.name === entry.subject)?.fullMarks || 0
+        return sum + fullMarks
+      }, 0)
+      const gpa = computeGPA(group.entries.map((entry) => entry.grade))
+
       autoTable(doc, {
         startY: 58,
-        head: [['Exam', 'Subject', 'Marks', 'Grade']],
-        body: results.map((result) => [
-          result.examName,
-          studentSubjects.find((subject) => subject.name === result.subject)?.labelEn || result.subject,
-          result.marks,
-          result.grade,
+        head: [['Subject', 'Marks Obtained', 'Full Marks', 'Grade']],
+        body: group.entries.map((entry) => [
+          studentSubjects.find((subject) => subject.name === entry.subject)?.labelEn || entry.subject,
+          entry.marks,
+          studentSubjects.find((subject) => subject.name === entry.subject)?.fullMarks ?? '-',
+          entry.grade,
         ]),
         headStyles: { fillColor: THEME.green, textColor: 255 },
         alternateRowStyles: { fillColor: THEME.paperTint },
         styles: { textColor: THEME.ink, lineColor: THEME.gold, lineWidth: 0.2 },
       })
 
-      doc.save(`result-${student.name.replace(/\s+/g, '-').toLowerCase()}.pdf`)
+      let meritText = 'Merit Position: -'
+      try {
+        const allResults = await getAllResults(token)
+        const classmateIds = new Set(
+          students.filter((item) => item.className === student.className).map((item) => item.id),
+        )
+        const totalsByStudent = new Map()
+        allResults.forEach((result) => {
+          if (result.examName !== group.examName) return
+          if (!classmateIds.has(result.studentId)) return
+          totalsByStudent.set(result.studentId, (totalsByStudent.get(result.studentId) || 0) + Number(result.marks))
+        })
+        const ranked = [...totalsByStudent.entries()].sort((a, b) => b[1] - a[1])
+        const position = ranked.findIndex(([id]) => id === student.id) + 1
+        if (position > 0) meritText = `Merit Position: ${position} of ${ranked.length} (in class)`
+      } catch {
+        // if the class-wide ranking can't be computed, still deliver the rest of the result sheet
+      }
+
+      let y = doc.lastAutoTable.finalY + 10
+      doc.setFont('helvetica', 'bold')
+      doc.setFontSize(11)
+      doc.setTextColor(...THEME.ink)
+      doc.text(`Total Marks Obtained: ${totalObtained} / ${totalFullMarks}`, 20, y)
+      y += 7
+      doc.text(`Final GPA: ${gpa.toFixed(2)}`, 20, y)
+      y += 7
+      doc.text(meritText, 20, y)
+
+      doc.save(
+        `result-${student.name.replace(/\s+/g, '-').toLowerCase()}-${group.examName.replace(/\s+/g, '-').toLowerCase()}.pdf`,
+      )
     } catch (error) {
       setPdfError(error.message)
     } finally {
-      setGeneratingPdf(false)
+      setGeneratingExam(null)
     }
   }
 
@@ -201,49 +264,64 @@ function StudentResultsPanel({ student }) {
         </p>
       )}
 
-      <form className="admin-form" onSubmit={handleSaveResults} ref={formRef}>
-        {editingResultIds && <p className="helper-text">Editing exam: {examName || '(unnamed)'}</p>}
+      {studentSubjects.length > 0 && classExams.length === 0 && (
+        <>
+          <p className="helper-text">No exams created yet for {student.className}.</p>
+          <div className="card-actions">
+            <Link className="cta-btn" to="/admin/dashboard/exams">
+              Create Exam
+            </Link>
+          </div>
+        </>
+      )}
 
-        <input
-          type="text"
-          placeholder="Exam name (e.g. First Term, Class Test, Mid Term)"
-          value={examName}
-          onChange={(event) => setExamName(event.target.value)}
-        />
+      {studentSubjects.length > 0 && classExams.length > 0 && (
+        <form className="admin-form" onSubmit={handleSaveResults} ref={formRef}>
+          {editingResultIds && <p className="helper-text">Editing exam: {examName || '(unnamed)'}</p>}
 
-        <div className="subject-marks-grid">
-          {studentSubjects.map((subject) => (
-            <label
-              className={`subject-marks-field ${editingResultIds?.[subject.name] ? 'is-editing' : ''}`}
-              key={subject.name}
-            >
-              <span>
-                {subject.name} (out of {subject.fullMarks})
-              </span>
-              <input
-                type="number"
-                min="0"
-                max={subject.fullMarks}
-                placeholder="Marks"
-                value={marksBySubject[subject.name] ?? ''}
-                onChange={(event) => handleMarksChange(subject.name, event.target.value)}
-              />
-            </label>
-          ))}
-        </div>
+          <select value={examName} onChange={(event) => setExamName(event.target.value)} required>
+            <option value="">Select exam...</option>
+            {examNameOptions.map((name) => (
+              <option key={name} value={name}>
+                {name}
+              </option>
+            ))}
+          </select>
 
-        {resultFormError && <p className="error-text">{resultFormError}</p>}
-        <div className="card-actions">
-          <button type="submit" disabled={resultSubmitting || studentSubjects.length === 0}>
-            {resultSubmitting ? 'Saving...' : editingResultIds ? 'Save Changes' : 'Save Results'}
-          </button>
-          {editingResultIds && (
-            <button type="button" className="danger-btn" onClick={cancelEdit}>
-              Cancel
+          <div className="subject-marks-grid">
+            {studentSubjects.map((subject) => (
+              <label
+                className={`subject-marks-field ${editingResultIds?.[subject.name] ? 'is-editing' : ''}`}
+                key={subject.name}
+              >
+                <span>
+                  {subject.name} (out of {subject.fullMarks})
+                </span>
+                <input
+                  type="number"
+                  min="0"
+                  max={subject.fullMarks}
+                  placeholder="Marks (blank = 0)"
+                  value={marksBySubject[subject.name] ?? ''}
+                  onChange={(event) => handleMarksChange(subject.name, event.target.value)}
+                />
+              </label>
+            ))}
+          </div>
+
+          {resultFormError && <p className="error-text">{resultFormError}</p>}
+          <div className="card-actions">
+            <button type="submit" disabled={resultSubmitting}>
+              {resultSubmitting ? 'Saving...' : editingResultIds ? 'Save Changes' : 'Save Results'}
             </button>
-          )}
-        </div>
-      </form>
+            {editingResultIds && (
+              <button type="button" className="danger-btn" onClick={cancelEdit}>
+                Cancel
+              </button>
+            )}
+          </div>
+        </form>
+      )}
 
       {resultsLoading && <div className="empty-state">Loading results...</div>}
       {resultsError && <p className="error-text">{resultsError}</p>}
@@ -252,6 +330,12 @@ function StudentResultsPanel({ student }) {
       {groupedResults.map((group) => (
         <div key={group.examName} className="result-exam-group">
           <h3>{group.examName}</h3>
+          <p className="result-exam-meta">
+            {group.publishedAt && <span>Published: {new Date(group.publishedAt).toLocaleString()}</span>}
+            {group.updatedAt && group.updatedAt !== group.publishedAt && (
+              <span>Updated: {new Date(group.updatedAt).toLocaleString()}</span>
+            )}
+          </p>
 
           <div className="table-wrap">
             <table className="data-table">
@@ -293,17 +377,16 @@ function StudentResultsPanel({ student }) {
             >
               {examBusy[group.examName] ? 'Deleting...' : 'Delete'}
             </button>
+            <button
+              type="button"
+              disabled={generatingExam === group.examName}
+              onClick={() => handleDownloadExamResult(group)}
+            >
+              {generatingExam === group.examName ? 'Preparing...' : 'Download Result Sheet (PDF)'}
+            </button>
           </div>
         </div>
       ))}
-
-      {!resultsLoading && results.length > 0 && (
-        <div className="card-actions">
-          <button type="button" className="cta-btn" disabled={generatingPdf} onClick={handleDownloadResult}>
-            {generatingPdf ? 'Preparing...' : 'Download Result Sheet (PDF)'}
-          </button>
-        </div>
-      )}
       {pdfError && <p className="error-text">{pdfError}</p>}
     </section>
   )

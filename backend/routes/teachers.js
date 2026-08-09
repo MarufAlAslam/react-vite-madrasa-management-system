@@ -9,13 +9,21 @@ import { recordActivity } from '../services/activity.js'
 const router = Router()
 
 const DESIGNATIONS = [
-  'Assistant Teacher',
-  'Senior Assistant Teacher',
-  'Lecturer',
-  'Assistant Professor',
-  'Vice Principal',
   'Principal',
+  'Vice Principal',
+  'Assistant Professor',
+  'Lecturer',
+  'Senior Assistant Teacher',
+  'Assistant Teacher',
 ]
+
+const UNIQUE_DESIGNATIONS = ['Principal', 'Vice Principal']
+
+async function findDesignationHolder(designation, excludeId) {
+  if (!UNIQUE_DESIGNATIONS.includes(designation)) return null
+  const teachers = await getTeachers()
+  return teachers.find((teacher) => teacher.designation === designation && teacher.id !== excludeId) || null
+}
 
 router.get('/', async (req, res) => {
   try {
@@ -41,6 +49,12 @@ router.post('/', requireAuth, requireSuperAdmin, uploadTeacherPhoto.single('phot
 
   if (!DESIGNATIONS.includes(designation)) {
     res.status(400).json({ error: `designation must be one of: ${DESIGNATIONS.join(', ')}` })
+    return
+  }
+
+  const existingHolder = await findDesignationHolder(designation, null)
+  if (existingHolder) {
+    res.status(409).json({ error: `${designation} is already assigned to ${existingHolder.name}` })
     return
   }
 
@@ -90,6 +104,12 @@ router.put('/:id', requireAuth, requireSuperAdmin, uploadTeacherPhoto.single('ph
   const existing = await getTeacherById(id).catch(() => null)
   if (!existing) {
     res.status(404).json({ error: 'Teacher not found' })
+    return
+  }
+
+  const existingHolder = await findDesignationHolder(designation, id)
+  if (existingHolder) {
+    res.status(409).json({ error: `${designation} is already assigned to ${existingHolder.name}` })
     return
   }
 

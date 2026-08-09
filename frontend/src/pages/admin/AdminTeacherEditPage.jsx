@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react'
 import { Navigate, useNavigate, useParams } from 'react-router-dom'
 import { useData } from '../../context/DataContext'
-import { DESIGNATIONS } from '../../constants/admin'
+import { DESIGNATIONS, UNIQUE_DESIGNATIONS } from '../../constants/admin'
 
 function AdminTeacherEditPage() {
   const { id } = useParams()
@@ -9,6 +9,12 @@ function AdminTeacherEditPage() {
   const { teachers, editTeacher } = useData()
 
   const teacher = teachers.find((item) => item.id === id)
+  const availableDesignations = DESIGNATIONS.filter(
+    (designation) =>
+      !UNIQUE_DESIGNATIONS.includes(designation) ||
+      designation === teacher?.designation ||
+      !teachers.some((t) => t.designation === designation),
+  )
 
   const [form, setForm] = useState(
     teacher
@@ -27,7 +33,7 @@ function AdminTeacherEditPage() {
   const photoInputRef = useRef(null)
 
   if (!teacher) {
-    return <Navigate to="/admin/dashboard/teachers" replace />
+    return <Navigate to="/admin/dashboard/teachers/list" replace />
   }
 
   async function handleSubmit(event) {
@@ -44,7 +50,7 @@ function AdminTeacherEditPage() {
       }
 
       await editTeacher(id, formData)
-      navigate('/admin/dashboard/teachers')
+      navigate('/admin/dashboard/teachers/list')
     } catch (submitError) {
       setError(submitError.message)
     } finally {
@@ -72,7 +78,7 @@ function AdminTeacherEditPage() {
           onChange={(event) => setForm((prev) => ({ ...prev, designation: event.target.value }))}
           required
         >
-          {DESIGNATIONS.map((designation) => (
+          {availableDesignations.map((designation) => (
             <option key={designation} value={designation}>
               {designation}
             </option>
@@ -115,7 +121,7 @@ function AdminTeacherEditPage() {
           <button type="submit" disabled={submitting}>
             {submitting ? 'Saving...' : 'Save Changes'}
           </button>
-          <button type="button" className="danger-btn" onClick={() => navigate('/admin/dashboard/teachers')}>
+          <button type="button" className="danger-btn" onClick={() => navigate('/admin/dashboard/teachers/list')}>
             Cancel
           </button>
         </div>

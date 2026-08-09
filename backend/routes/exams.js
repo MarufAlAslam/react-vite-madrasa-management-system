@@ -1,7 +1,7 @@
 import { Router } from 'express'
 import crypto from 'node:crypto'
 import { requireAuth, requireSuperAdmin } from '../middleware/auth.js'
-import { addExam, deleteExam, getClasses, getExams } from '../services/googleSheets.js'
+import { addExam, deleteExam, getClasses, getExams, updateExam } from '../services/googleSheets.js'
 import { recordActivity } from '../services/activity.js'
 
 const router = Router()
@@ -47,6 +47,38 @@ router.post('/', requireAuth, requireSuperAdmin, async (req, res) => {
       details: `${record.name} (${className})`,
     })
     res.status(201).json(created)
+  } catch (error) {
+    res.status(500).json({ error: error.message })
+  }
+})
+
+router.put('/:id', requireAuth, requireSuperAdmin, async (req, res) => {
+  const { name, duration, venue, schedule } = req.body
+
+  if (!name || !String(name).trim()) {
+    res.status(400).json({ error: 'name is required' })
+    return
+  }
+
+  try {
+    const updated = await updateExam(req.params.id, {
+      name: name.trim(),
+      duration: duration || '',
+      venue: venue || '',
+      schedule: schedule || {},
+    })
+    if (!updated) {
+      res.status(404).json({ error: 'Exam not found' })
+      return
+    }
+
+    await recordActivity({
+      admin: req.admin,
+      action: 'exam.update',
+      targetType: 'exam',
+      details: `${updated.name} (${updated.className})`,
+    })
+    res.json(updated)
   } catch (error) {
     res.status(500).json({ error: error.message })
   }

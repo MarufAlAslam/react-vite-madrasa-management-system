@@ -130,8 +130,20 @@ export async function getGallery() {
   return request('/api/gallery')
 }
 
-export async function createGalleryItem(formData, token) {
-  return request('/api/gallery', { method: 'POST', body: formData }, token)
+export async function createGalleryAlbum(formData, token) {
+  return request('/api/gallery/album', { method: 'POST', body: formData }, token)
+}
+
+export async function updateGalleryAlbum(albumTitle, payload, token) {
+  return request(
+    `/api/gallery/album/${encodeURIComponent(albumTitle)}`,
+    { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) },
+    token,
+  )
+}
+
+export async function deleteGalleryAlbum(albumTitle, token) {
+  return request(`/api/gallery/album/${encodeURIComponent(albumTitle)}`, { method: 'DELETE' }, token)
 }
 
 export async function updateGalleryItem(id, formData, token) {
@@ -182,6 +194,10 @@ export async function getResults(studentId, token) {
   return request(`/api/results?studentId=${encodeURIComponent(studentId)}`, {}, token)
 }
 
+export async function getAllResults(token) {
+  return request('/api/results', {}, token)
+}
+
 export async function createResult(payload, token) {
   return request(
     '/api/results',
@@ -222,6 +238,30 @@ export async function createExam(payload, token) {
   )
 }
 
+export async function updateExam(id, payload, token) {
+  return request(
+    `/api/exams/${id}`,
+    { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) },
+    token,
+  )
+}
+
 export async function deleteExam(id, token) {
   return request(`/api/exams/${id}`, { method: 'DELETE' }, token)
+}
+
+export async function getStaff() {
+  return request('/api/staff')
+}
+
+export async function createStaff(formData, token) {
+  return request('/api/staff', { method: 'POST', body: formData }, token)
+}
+
+export async function updateStaff(id, formData, token) {
+  return request(`/api/staff/${id}`, { method: 'PUT', body: formData }, token)
+}
+
+export async function deleteStaff(id, token) {
+  return request(`/api/staff/${id}`, { method: 'DELETE' }, token)
 }

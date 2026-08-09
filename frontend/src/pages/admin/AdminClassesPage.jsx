@@ -220,7 +220,10 @@ function AdminClassesPage() {
 
           return (
             <article key={classItem.className} className="notice-row-card">
-              <h3>{classItem.className}</h3>
+              <div className="class-card-heading">
+                <h3>{classItem.className}</h3>
+                <span className="subject-pill">{classItem.subjects.length} subject(s)</span>
+              </div>
 
               {isEditing ? (
                 <>
@@ -236,15 +239,32 @@ function AdminClassesPage() {
                 </>
               ) : (
                 <>
-                  <ul className="subject-list-view">
-                    {classItem.subjects.map((subject) => (
-                      <li key={subject.name}>
-                        <span>{subject.name}</span>
-                        <span>{subject.fullMarks}</span>
-                      </li>
-                    ))}
-                  </ul>
-                  <p className="subject-total">Total: {totalMarks(classItem.subjects)} marks</p>
+                  <div className="table-wrap">
+                    <table className="data-table">
+                      <thead>
+                        <tr>
+                          <th>Subject</th>
+                          <th>Code</th>
+                          <th>Full Marks</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {classItem.subjects.map((subject) => (
+                          <tr key={subject.name}>
+                            <td>{subject.name}</td>
+                            <td>{subject.code || '-'}</td>
+                            <td>{subject.fullMarks}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                      <tfoot>
+                        <tr>
+                          <td colSpan={2}>Total</td>
+                          <td>{totalMarks(classItem.subjects)} marks</td>
+                        </tr>
+                      </tfoot>
+                    </table>
+                  </div>
                   <div className="gallery-manage-actions">
                     <button type="button" onClick={() => startEdit(classItem)}>
                       Edit

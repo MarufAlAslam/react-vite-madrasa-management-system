@@ -11,6 +11,7 @@ const RESULTS_SHEET = 'Results'
 const CLASSES_SHEET = 'Classes'
 const SETTINGS_SHEET = 'Settings'
 const EXAMS_SHEET = 'Exams'
+const STAFF_SHEET = 'Staff'
 
 const TEACHER_COLUMNS = [
   'id',
@@ -39,13 +40,14 @@ const STUDENT_COLUMNS = [
 ]
 const ADMIN_COLUMNS = ['email', 'passwordHash', 'name', 'role', 'createdAt']
 const LOG_COLUMNS = ['id', 'timestamp', 'adminEmail', 'adminName', 'action', 'targetType', 'details']
-const GALLERY_COLUMNS = ['id', 'title', 'photoUrl', 'createdAt']
+const GALLERY_COLUMNS = ['id', 'title', 'photoUrl', 'createdAt', 'albumTitle', 'featured']
 const FINANCE_COLUMNS = ['id', 'type', 'title', 'amount', 'date']
 const PAYMENT_COLUMNS = ['id', 'studentId', 'title', 'amount', 'date', 'createdAt']
-const RESULT_COLUMNS = ['id', 'studentId', 'examName', 'subject', 'marks', 'grade', 'createdAt']
+const RESULT_COLUMNS = ['id', 'studentId', 'examName', 'subject', 'marks', 'grade', 'createdAt', 'updatedAt']
 const CLASS_COLUMNS = ['className', 'subjects', 'createdAt']
 const SETTINGS_COLUMNS = ['logoUrl', 'examControllerSignUrl', 'principalSignUrl', 'updatedAt']
 const EXAM_COLUMNS = ['id', 'name', 'className', 'duration', 'venue', 'schedule', 'createdAt']
+const STAFF_COLUMNS = ['id', 'name', 'designation', 'phone', 'photoUrl', 'createdAt']
 
 let sheetsClient = null
 const sheetIdCache = new Map()
@@ -148,6 +150,21 @@ async function findRowByColumn(sheetName, columns, matchColumn, matchValue) {
     rowNumber: dataIndex + 2, // +1 for 0-based -> 1-based, +1 for the header row
     record: rowToRecord(rows[dataIndex], columns),
   }
+}
+
+async function findRowsByColumn(sheetName, columns, matchColumn, matchValue) {
+  const sheets = getSheetsClient()
+
+  const response = await sheets.spreadsheets.values.get({
+    spreadsheetId: process.env.GOOGLE_SHEET_ID,
+    range: `${sheetName}!A2:${columnLetter(columns.length)}`,
+  })
+
+  const rows = response.data.values || []
+
+  return rows
+    .map((row, index) => ({ rowNumber: index + 2, record: rowToRecord(row, columns) }))
+    .filter((entry) => entry.record[matchColumn] === matchValue)
 }
 
 async function updateRow(sheetName, columns, rowNumber, record) {
@@ -318,19 +335,24 @@ export async function getLogs() {
   return rows.reverse()
 }
 
+function parseGalleryRow(record) {
+  return { ...record, featured: record.featured === 'true' }
+}
+
 export async function getGallery() {
   const rows = await getRows(GALLERY_SHEET, GALLERY_COLUMNS)
-  return rows.reverse()
+  return rows.map(parseGalleryRow).reverse()
 }
 
 export async function getGalleryItemById(id) {
   const found = await findRowByColumn(GALLERY_SHEET, GALLERY_COLUMNS, 'id', id)
-  return found?.record ?? null
+  return found ? parseGalleryRow(found.record) : null
 }
 
 export async function addGalleryItem(record) {
-  await appendRow(GALLERY_SHEET, GALLERY_COLUMNS, record)
-  return record
+  const stored = { ...record, featured: record.featured ? 'true' : '' }
+  await appendRow(GALLERY_SHEET, GALLERY_COLUMNS, stored)
+  return parseGalleryRow(stored)
 }
 
 export async function updateGalleryItem(id, patch) {
@@ -338,8 +360,9 @@ export async function updateGalleryItem(id, patch) {
   if (!found) return null
 
   const updated = { ...found.record, ...patch, id }
+  if (patch.featured !== undefined) updated.featured = patch.featured ? 'true' : ''
   await updateRow(GALLERY_SHEET, GALLERY_COLUMNS, found.rowNumber, updated)
-  return updated
+  return parseGalleryRow(updated)
 }
 
 export async function deleteGalleryItem(id) {
@@ -347,7 +370,34 @@ export async function deleteGalleryItem(id) {
   if (!found) return null
 
   await deleteRow(GALLERY_SHEET, found.rowNumber)
-  return found.record
+  return parseGalleryRow(found.record)
+}
+
+export async function updateGalleryAlbum(albumTitle, patch) {
+  const matches = await findRowsByColumn(GALLERY_SHEET, GALLERY_COLUMNS, 'albumTitle', albumTitle)
+  const updatedRecords = []
+
+  for (const match of matches) {
+    const updated = { ...match.record, ...patch }
+    if (patch.featured !== undefined) updated.featured = patch.featured ? 'true' : ''
+    await updateRow(GALLERY_SHEET, GALLERY_COLUMNS, match.rowNumber, updated)
+    updatedRecords.push(parseGalleryRow(updated))
+  }
+
+  return updatedRecords
+}
+
+export async function deleteGalleryAlbum(albumTitle) {
+  const matches = await findRowsByColumn(GALLERY_SHEET, GALLERY_COLUMNS, 'albumTitle', albumTitle)
+  const sorted = [...matches].sort((a, b) => b.rowNumber - a.rowNumber)
+  const deletedRecords = []
+
+  for (const match of sorted) {
+    await deleteRow(GALLERY_SHEET, match.rowNumber)
+    deletedRecords.push(parseGalleryRow(match.record))
+  }
+
+  return deletedRecords
 }
 
 export async function getIncomeExpenses() {
@@ -403,7 +453,7 @@ export async function updateResult(id, patch) {
   const found = await findRowByColumn(RESULTS_SHEET, RESULT_COLUMNS, 'id', id)
   if (!found) return null
 
-  const updated = { ...found.record, ...patch, id }
+  const updated = { ...found.record, ...patch, id, updatedAt: new Date().toISOString() }
   await updateRow(RESULTS_SHEET, RESULT_COLUMNS, found.rowNumber, updated)
   return updated
 }
@@ -499,12 +549,57 @@ export async function addExam(record) {
   return parseExamRow(stored)
 }
 
+export async function updateExam(id, patch) {
+  const found = await findRowByColumn(EXAMS_SHEET, EXAM_COLUMNS, 'id', id)
+  if (!found) return null
+
+  const updated = {
+    ...found.record,
+    ...patch,
+    id,
+    schedule: JSON.stringify(patch.schedule ?? parseExamRow(found.record).schedule),
+  }
+  await updateRow(EXAMS_SHEET, EXAM_COLUMNS, found.rowNumber, updated)
+  return parseExamRow(updated)
+}
+
 export async function deleteExam(id) {
   const found = await findRowByColumn(EXAMS_SHEET, EXAM_COLUMNS, 'id', id)
   if (!found) return null
 
   await deleteRow(EXAMS_SHEET, found.rowNumber)
   return parseExamRow(found.record)
+}
+
+export async function getStaff() {
+  return getRows(STAFF_SHEET, STAFF_COLUMNS)
+}
+
+export async function getStaffById(id) {
+  const found = await findRowByColumn(STAFF_SHEET, STAFF_COLUMNS, 'id', id)
+  return found?.record ?? null
+}
+
+export async function addStaff(record) {
+  await appendRow(STAFF_SHEET, STAFF_COLUMNS, record)
+  return record
+}
+
+export async function updateStaff(id, patch) {
+  const found = await findRowByColumn(STAFF_SHEET, STAFF_COLUMNS, 'id', id)
+  if (!found) return null
+
+  const updated = { ...found.record, ...patch, id }
+  await updateRow(STAFF_SHEET, STAFF_COLUMNS, found.rowNumber, updated)
+  return updated
+}
+
+export async function deleteStaff(id) {
+  const found = await findRowByColumn(STAFF_SHEET, STAFF_COLUMNS, 'id', id)
+  if (!found) return null
+
+  await deleteRow(STAFF_SHEET, found.rowNumber)
+  return found.record
 }
 
 export { isConfigured }

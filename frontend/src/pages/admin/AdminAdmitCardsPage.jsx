@@ -119,7 +119,11 @@ function AdminAdmitCardsPage() {
         </select>
       </div>
 
-      {classFilter && (
+      {classFilter && classStudents.length === 0 && (
+        <div className="empty-state">No students found in {classFilter}.</div>
+      )}
+
+      {classFilter && classStudents.length > 0 && (
         <>
           <p className="helper-text">{classStudents.length} student(s) in {classFilter}.</p>
 

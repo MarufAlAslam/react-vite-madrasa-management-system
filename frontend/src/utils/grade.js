@@ -14,3 +14,15 @@ export function computeGrade(marks, fullMarks) {
   const match = GRADE_SCALE.find((entry) => percentage >= entry.min)
   return match ? match.grade : 'F'
 }
+
+export const GRADE_POINTS = { 'A+': 5, A: 4, 'A-': 3.5, B: 3, C: 2, D: 1, F: 0 }
+
+export function gradePointFor(grade) {
+  return GRADE_POINTS[grade] ?? 0
+}
+
+export function computeGPA(grades) {
+  if (grades.length === 0) return 0
+  const total = grades.reduce((sum, grade) => sum + gradePointFor(grade), 0)
+  return total / grades.length
+}

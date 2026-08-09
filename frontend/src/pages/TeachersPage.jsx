@@ -1,7 +1,9 @@
 import { useData } from '../context/DataContext'
+import { sortByDesignation } from '../constants/admin'
 
 function TeachersPage() {
   const { teachers, loading } = useData()
+  const sortedTeachers = sortByDesignation(teachers)
 
   return (
     <div className="page-stack">
@@ -16,7 +18,7 @@ function TeachersPage() {
 
         {!loading && teachers.length > 0 && (
           <div className="teachers-grid">
-            {teachers.map((teacher) => (
+            {sortedTeachers.map((teacher) => (
               <article key={teacher.id} className="teacher-card">
                 <img src={teacher.photoUrl} alt={teacher.name} />
                 <h3>{teacher.name}</h3>

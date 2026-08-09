@@ -4,7 +4,7 @@ import { useData } from '../../context/DataContext'
 import ExamScheduleForm from '../../components/admin/ExamScheduleForm'
 
 function AdminExamsPage() {
-  const { classes, exams, backendError, addExam, removeExam } = useData()
+  const { classes, exams, backendError, addExam, editExam, removeExam } = useData()
   const confirm = useConfirm()
 
   const [classFilter, setClassFilter] = useState('')
@@ -14,6 +14,7 @@ function AdminExamsPage() {
   const [scheduleBySubject, setScheduleBySubject] = useState({})
   const [createError, setCreateError] = useState(null)
   const [creating, setCreating] = useState(false)
+  const [editingExamId, setEditingExamId] = useState(null)
 
   const [rowBusy, setRowBusy] = useState({})
   const [rowError, setRowError] = useState({})
@@ -29,6 +30,17 @@ function AdminExamsPage() {
     setDuration('')
     setVenue('')
     setScheduleBySubject({})
+    setEditingExamId(null)
+  }
+
+  function startEditExam(exam) {
+    setClassFilter(exam.className)
+    setExamName(exam.name)
+    setDuration(exam.duration || '')
+    setVenue(exam.venue || '')
+    setScheduleBySubject(exam.schedule || {})
+    setEditingExamId(exam.id)
+    setCreateError(null)
   }
 
   async function handleCreate(event) {
@@ -46,13 +58,22 @@ function AdminExamsPage() {
 
     setCreating(true)
     try {
-      await addExam({
-        name: examName.trim(),
-        className: classFilter,
-        duration: duration.trim(),
-        venue: venue.trim(),
-        schedule: scheduleBySubject,
-      })
+      if (editingExamId) {
+        await editExam(editingExamId, {
+          name: examName.trim(),
+          duration: duration.trim(),
+          venue: venue.trim(),
+          schedule: scheduleBySubject,
+        })
+      } else {
+        await addExam({
+          name: examName.trim(),
+          className: classFilter,
+          duration: duration.trim(),
+          venue: venue.trim(),
+          schedule: scheduleBySubject,
+        })
+      }
       resetForm()
     } catch (error) {
       setCreateError(error.message)
@@ -92,7 +113,12 @@ function AdminExamsPage() {
 
       <div className="finance-filter-row">
         <label htmlFor="exam-class-filter">Class:</label>
-        <select id="exam-class-filter" value={classFilter} onChange={(event) => setClassFilter(event.target.value)}>
+        <select
+          id="exam-class-filter"
+          value={classFilter}
+          disabled={Boolean(editingExamId)}
+          onChange={(event) => setClassFilter(event.target.value)}
+        >
           <option value="">Choose a class...</option>
           {classes.map((classItem) => (
             <option key={classItem.className} value={classItem.className}>
@@ -104,6 +130,7 @@ function AdminExamsPage() {
 
       {classFilter && (
         <form className="admin-form" onSubmit={handleCreate}>
+          {editingExamId && <p className="helper-text">Editing exam: {examName || '(unnamed)'}</p>}
           <ExamScheduleForm
             subjects={classSubjects}
             examName={examName}
@@ -116,9 +143,16 @@ function AdminExamsPage() {
             onScheduleChange={handleScheduleChange}
           />
           {createError && <p className="error-text">{createError}</p>}
-          <button type="submit" disabled={creating}>
-            {creating ? 'Creating...' : 'Create Exam'}
-          </button>
+          <div className="card-actions">
+            <button type="submit" disabled={creating}>
+              {creating ? 'Saving...' : editingExamId ? 'Save Changes' : 'Create Exam'}
+            </button>
+            {editingExamId && (
+              <button type="button" className="danger-btn" onClick={resetForm}>
+                Cancel
+              </button>
+            )}
+          </div>
         </form>
       )}
 
@@ -137,6 +171,9 @@ function AdminExamsPage() {
               </p>
               {rowError[exam.id] && <p className="error-text">{rowError[exam.id]}</p>}
               <div className="gallery-manage-actions">
+                <button type="button" onClick={() => startEditExam(exam)}>
+                  Edit
+                </button>
                 <button
                   type="button"
                   className="danger-btn"

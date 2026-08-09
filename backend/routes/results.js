@@ -24,6 +24,7 @@ router.post('/', requireAuth, async (req, res) => {
       return
     }
 
+    const now = new Date().toISOString()
     const record = {
       id: crypto.randomUUID(),
       studentId,
@@ -31,7 +32,8 @@ router.post('/', requireAuth, async (req, res) => {
       subject,
       marks,
       grade,
-      createdAt: new Date().toISOString(),
+      createdAt: now,
+      updatedAt: now,
     }
 
     await addResult(record)
