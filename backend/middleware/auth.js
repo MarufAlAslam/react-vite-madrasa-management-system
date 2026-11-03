@@ -29,3 +29,17 @@ export function requireSuperAdmin(req, res, next) {
   }
   next()
 }
+
+// Attaches req.admin when a valid token is sent, but never rejects the request.
+export function optionalAuth(req, res, next) {
+  const [scheme, token] = (req.get('authorization') || '').split(' ')
+
+  if (scheme === 'Bearer' && token && process.env.JWT_SECRET) {
+    try {
+      req.admin = jwt.verify(token, process.env.JWT_SECRET)
+    } catch {
+      // Treat an invalid token as an anonymous visitor.
+    }
+  }
+  next()
+}

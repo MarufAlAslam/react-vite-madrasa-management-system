@@ -1,4 +1,5 @@
 import { useRef, useState } from 'react'
+import StudentSectionSelect from '../../components/admin/StudentSectionSelect'
 import { useData } from '../../context/DataContext'
 
 const emptyStudentForm = {
@@ -59,7 +60,7 @@ function AdminStudentsPage() {
       <form className="admin-form" onSubmit={handleStudentSubmit}>
         <select
           value={studentForm.className}
-          onChange={(event) => setStudentForm((prev) => ({ ...prev, className: event.target.value }))}
+          onChange={(event) => setStudentForm((prev) => ({ ...prev, className: event.target.value, section: '' }))}
           required
         >
           <option value="">Select class</option>
@@ -104,11 +105,10 @@ function AdminStudentsPage() {
           value={studentForm.registrationNo}
           onChange={(event) => setStudentForm((prev) => ({ ...prev, registrationNo: event.target.value }))}
         />
-        <input
-          type="text"
-          placeholder="Section (optional)"
+        <StudentSectionSelect
+          className={studentForm.className}
           value={studentForm.section}
-          onChange={(event) => setStudentForm((prev) => ({ ...prev, section: event.target.value }))}
+          onChange={(section) => setStudentForm((prev) => ({ ...prev, section }))}
         />
         <label className="file-input-label">
           <span>Date of birth</span>

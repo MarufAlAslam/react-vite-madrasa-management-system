@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
+import TeacherCard from '../../components/common/TeacherCard'
 import Pagination from '../../components/common/Pagination'
 import { useConfirm } from '../../context/ConfirmContext'
 import { useData } from '../../context/DataContext'
@@ -21,7 +22,7 @@ function AdminTeacherListPage() {
     const term = searchTerm.trim().toLowerCase()
     const filtered = teachers.filter((teacher) => {
       const matchesDesignation = designationFilter === 'all' || teacher.designation === designationFilter
-      const matchesSearch = !term || teacher.name.toLowerCase().includes(term) || teacher.subject?.toLowerCase().includes(term)
+      const matchesSearch = !term || teacher.name.toLowerCase().includes(term) || teacher.subject?.toLowerCase().includes(term) || teacher.department?.toLowerCase().includes(term)
       return matchesDesignation && matchesSearch
     })
     return sortByDesignation(filtered)
@@ -57,7 +58,7 @@ function AdminTeacherListPage() {
         <input
           id="teacher-search"
           type="search"
-          placeholder="Name or subject"
+          placeholder="Name, subject or department"
           value={searchTerm}
           onChange={(event) => setSearchTerm(event.target.value)}
         />
@@ -80,11 +81,7 @@ function AdminTeacherListPage() {
         {pagedTeachers.map((teacher) => (
           <article key={teacher.id} className="teacher-card">
             <Link to={`/admin/dashboard/teachers/${teacher.id}`} className="teacher-card-link">
-              <img src={teacher.photoUrl} alt={teacher.name} />
-              <h3>{teacher.name}</h3>
-              <p className="subject-pill">{teacher.designation}</p>
-              <p>{teacher.subject}</p>
-              <p>{teacher.phone}</p>
+              <TeacherCard teacher={teacher} />
             </Link>
             <div className="card-actions">
               <Link className="cta-btn" to={`/admin/dashboard/teachers/${teacher.id}/edit`}>

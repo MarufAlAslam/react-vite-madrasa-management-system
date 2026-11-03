@@ -1,4 +1,4 @@
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://madrasa-backend.vercel.app'
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://madrasa-backend-eight.vercel.app'
 
 let unauthorizedHandler = null
 
@@ -54,8 +54,8 @@ export async function deleteClass(className, token) {
   return request(`/api/classes/${encodeURIComponent(className)}`, { method: 'DELETE' }, token)
 }
 
-export async function getTeachers() {
-  return request('/api/teachers')
+export async function getTeachers(token) {
+  return request('/api/teachers', {}, token)
 }
 
 export async function createTeacher(formData, token) {

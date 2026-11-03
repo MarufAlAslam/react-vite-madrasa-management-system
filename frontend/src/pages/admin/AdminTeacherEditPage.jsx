@@ -1,5 +1,7 @@
 import { useRef, useState } from 'react'
 import { Navigate, useNavigate, useParams } from 'react-router-dom'
+import TeacherDocumentUploads from '../../components/admin/TeacherDocumentUploads'
+import TeacherFormFields from '../../components/admin/TeacherFormFields'
 import { useData } from '../../context/DataContext'
 import { DESIGNATIONS, UNIQUE_DESIGNATIONS } from '../../constants/admin'
 
@@ -24,10 +26,19 @@ function AdminTeacherEditPage() {
           subject: teacher.subject,
           indexNo: teacher.indexNo,
           phone: teacher.phone,
+          joiningDate: teacher.joiningDate || '',
+          gender: teacher.gender || '',
+          bloodGroup: teacher.bloodGroup || '',
+          department: teacher.department || '',
+          qualification: teacher.qualification || '',
+          nid: teacher.nid || '',
+          address: teacher.address || '',
         }
       : null,
   )
   const [photo, setPhoto] = useState(null)
+  const [documents, setDocuments] = useState({})
+  const [removedDocuments, setRemovedDocuments] = useState({})
   const [error, setError] = useState(null)
   const [submitting, setSubmitting] = useState(false)
   const photoInputRef = useRef(null)
@@ -48,6 +59,11 @@ function AdminTeacherEditPage() {
       if (photo) {
         formData.append('photo', photo)
       }
+      Object.entries(documents).forEach(([field, file]) => file && formData.append(field, file))
+      formData.append(
+        'removeDocuments',
+        Object.keys(removedDocuments).filter((field) => removedDocuments[field]).join(','),
+      )
 
       await editTeacher(id, formData)
       navigate('/admin/dashboard/teachers/list')
@@ -66,45 +82,7 @@ function AdminTeacherEditPage() {
       <form className="admin-form" onSubmit={handleSubmit}>
         <img className="edit-preview-photo" src={photo ? URL.createObjectURL(photo) : teacher.photoUrl} alt={teacher.name} />
 
-        <input
-          type="text"
-          placeholder="Teacher name"
-          value={form.name}
-          onChange={(event) => setForm((prev) => ({ ...prev, name: event.target.value }))}
-          required
-        />
-        <select
-          value={form.designation}
-          onChange={(event) => setForm((prev) => ({ ...prev, designation: event.target.value }))}
-          required
-        >
-          {availableDesignations.map((designation) => (
-            <option key={designation} value={designation}>
-              {designation}
-            </option>
-          ))}
-        </select>
-        <input
-          type="text"
-          placeholder="Subject"
-          value={form.subject}
-          onChange={(event) => setForm((prev) => ({ ...prev, subject: event.target.value }))}
-          required
-        />
-        <input
-          type="text"
-          placeholder="Index No."
-          value={form.indexNo}
-          onChange={(event) => setForm((prev) => ({ ...prev, indexNo: event.target.value }))}
-          required
-        />
-        <input
-          type="text"
-          placeholder="Contact number"
-          value={form.phone}
-          onChange={(event) => setForm((prev) => ({ ...prev, phone: event.target.value }))}
-          required
-        />
+        <TeacherFormFields form={form} setForm={setForm} designations={availableDesignations} />
         <label className="file-input-label">
           <span>Replace photo (optional)</span>
           <input
@@ -114,6 +92,14 @@ function AdminTeacherEditPage() {
             onChange={(event) => setPhoto(event.target.files[0] || null)}
           />
         </label>
+
+        <TeacherDocumentUploads
+          teacher={teacher}
+          files={documents}
+          setFiles={setDocuments}
+          removed={removedDocuments}
+          setRemoved={setRemovedDocuments}
+        />
 
         {error && <p className="error-text">{error}</p>}
 

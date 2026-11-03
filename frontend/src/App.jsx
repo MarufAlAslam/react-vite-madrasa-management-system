@@ -16,6 +16,7 @@ import AdminFinancePage from './pages/admin/AdminFinancePage'
 import AdminGalleryPage from './pages/admin/AdminGalleryPage'
 import AdminLogsPage from './pages/admin/AdminLogsPage'
 import AdminOverviewPage from './pages/admin/AdminOverviewPage'
+import AdminClassResultSheetPage from './pages/admin/AdminClassResultSheetPage'
 import AdminResultsPage from './pages/admin/AdminResultsPage'
 import AdminSettingsPage from './pages/admin/AdminSettingsPage'
 import AdminStaffEditPage from './pages/admin/AdminStaffEditPage'
@@ -72,6 +73,7 @@ function App() {
               <Route path="students" element={<AdminStudentsPage />} />
               <Route path="students/list" element={<AdminStudentListPage />} />
               <Route path="results" element={<AdminResultsPage />} />
+              <Route path="results/class" element={<AdminClassResultSheetPage />} />
               <Route path="students/:id" element={<AdminStudentDetailPage />} />
               <Route element={<RequireSuperAdmin />}>
                 <Route path="overview" element={<AdminOverviewPage />} />

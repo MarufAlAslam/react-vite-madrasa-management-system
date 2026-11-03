@@ -81,10 +81,7 @@ function HomePage() {
           <div className="teachers-grid">
             {leadership.map((leader) => (
               <article className="teacher-card" key={leader.id}>
-                <img src={leader.photoUrl} alt={leader.name} />
-                <h3>{leader.name}</h3>
-                <p className="subject-pill">{leader.designation}</p>
-                <p>{leader.subject}</p>
+                <TeacherCard teacher={leader} />
               </article>
             ))}
           </div>

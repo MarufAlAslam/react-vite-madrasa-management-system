@@ -1,4 +1,4 @@
-import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
 import { useAuth } from './AuthContext'
 import {
   assignTeacherClasses as assignTeacherClassesBackend,
@@ -58,7 +58,7 @@ export function DataProvider({ children }) {
 
       try {
         const [teacherData, studentData, galleryData, classData, settingsData, examData, staffData] = await Promise.all([
-          getTeachersBackend(),
+          getTeachersBackend(token),
           getStudentsBackend(),
           getGalleryBackend(),
           getClassesBackend(),
@@ -82,7 +82,20 @@ export function DataProvider({ children }) {
     }
 
     loadAll()
+    // Runs once on mount; later session changes are handled by the teacher reload effect below.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  // NID is only returned to admins, so reload teachers whenever the session changes.
+  const previousToken = useRef(token)
+  useEffect(() => {
+    if (previousToken.current === token) return
+    previousToken.current = token
+
+    getTeachersBackend(token)
+      .then(setTeachers)
+      .catch((error) => setBackendError(error.message))
+  }, [token])
 
   const addNotice = useCallback(async (newNotice) => {
     const created = await createNotice(newNotice)

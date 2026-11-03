@@ -1,5 +1,6 @@
 import { useRef, useState } from 'react'
 import { Navigate, useNavigate, useParams } from 'react-router-dom'
+import StudentSectionSelect from '../../components/admin/StudentSectionSelect'
 import { useData } from '../../context/DataContext'
 
 function AdminStudentEditPage() {
@@ -65,7 +66,7 @@ function AdminStudentEditPage() {
 
         <select
           value={form.className}
-          onChange={(event) => setForm((prev) => ({ ...prev, className: event.target.value }))}
+          onChange={(event) => setForm((prev) => ({ ...prev, className: event.target.value, section: '' }))}
           required
         >
           {classes.map((classItem) => (
@@ -108,11 +109,10 @@ function AdminStudentEditPage() {
           value={form.registrationNo}
           onChange={(event) => setForm((prev) => ({ ...prev, registrationNo: event.target.value }))}
         />
-        <input
-          type="text"
-          placeholder="Section (optional)"
+        <StudentSectionSelect
+          className={form.className}
           value={form.section}
-          onChange={(event) => setForm((prev) => ({ ...prev, section: event.target.value }))}
+          onChange={(section) => setForm((prev) => ({ ...prev, section }))}
         />
         <label className="file-input-label">
           <span>Date of birth</span>

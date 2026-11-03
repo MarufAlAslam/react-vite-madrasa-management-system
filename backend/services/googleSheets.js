@@ -23,6 +23,17 @@ const TEACHER_COLUMNS = [
   'photoUrl',
   'createdAt',
   'assignedClasses',
+  'joiningDate',
+  'gender',
+  'bloodGroup',
+  'department',
+  'qualification',
+  'nid',
+  'address',
+  'ntraCertificateUrl',
+  'appointmentLetterUrl',
+  'joiningLetterUrl',
+  'additionalDocumentUrl',
 ]
 const STUDENT_COLUMNS = [
   'id',
@@ -282,6 +293,7 @@ export async function deleteStudent(id) {
 export async function promoteStudentsByClass(fromClass, toClass) {
   const sheets = getSheetsClient()
   const classColIndex = STUDENT_COLUMNS.indexOf('className')
+  const sectionColIndex = STUDENT_COLUMNS.indexOf('section')
 
   const response = await sheets.spreadsheets.values.get({
     spreadsheetId: process.env.GOOGLE_SHEET_ID,
@@ -298,6 +310,11 @@ export async function promoteStudentsByClass(fromClass, toClass) {
         range: `${STUDENTS_SHEET}!${columnLetter(classColIndex + 1)}${rowNumber}`,
         values: [[toClass]],
       })
+      // Sections only exist in Class 6, so a promoted student's old section no longer applies.
+      data.push({
+        range: `${STUDENTS_SHEET}!${columnLetter(sectionColIndex + 1)}${rowNumber}`,
+        values: [['']],
+      })
     }
   })
 
@@ -308,7 +325,7 @@ export async function promoteStudentsByClass(fromClass, toClass) {
     requestBody: { valueInputOption: 'RAW', data },
   })
 
-  return data.length
+  return data.length / 2
 }
 
 export async function getAdminByEmail(email) {

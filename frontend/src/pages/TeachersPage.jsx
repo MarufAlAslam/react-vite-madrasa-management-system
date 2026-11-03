@@ -1,3 +1,4 @@
+import TeacherCard from '../components/common/TeacherCard'
 import { useData } from '../context/DataContext'
 import { sortByDesignation } from '../constants/admin'
 
@@ -20,11 +21,7 @@ function TeachersPage() {
           <div className="teachers-grid">
             {sortedTeachers.map((teacher) => (
               <article key={teacher.id} className="teacher-card">
-                <img src={teacher.photoUrl} alt={teacher.name} />
-                <h3>{teacher.name}</h3>
-                <p className="subject-pill">{teacher.designation}</p>
-                <p>{teacher.subject}</p>
-                <p>{teacher.phone}</p>
+                <TeacherCard teacher={teacher} />
               </article>
             ))}
           </div>

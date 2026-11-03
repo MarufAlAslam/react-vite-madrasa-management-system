@@ -32,7 +32,8 @@ function AdminLayout() {
       items: [
         { to: '/admin/dashboard/students', label: 'Add Student', end: true, show: true },
         { to: '/admin/dashboard/students/list', label: 'Student List', show: true },
-        { to: '/admin/dashboard/results', label: 'Results', show: true },
+        { to: '/admin/dashboard/results', label: 'Results', end: true, show: true },
+        { to: '/admin/dashboard/results/class', label: 'Class Result Sheet', show: true },
       ],
     },
     {

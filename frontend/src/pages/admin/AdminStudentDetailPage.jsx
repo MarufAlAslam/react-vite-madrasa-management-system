@@ -7,6 +7,7 @@ import { useConfirm } from '../../context/ConfirmContext'
 import { useData } from '../../context/DataContext'
 import { createPayment, deletePayment, getPayments, updatePayment } from '../../services/backendApi'
 import { drawProfileHeader, imageUrlToCoverDataUrl, THEME } from '../../utils/pdf'
+import { downloadStudentIdCard } from '../../utils/idCard'
 import { getNextClass } from '../../constants/admin'
 import StudentResultsPanel from '../../components/admin/StudentResultsPanel'
 import { drawAdmitCard, getAdmitCardLayout, loadInstitutionAssets, loadStudentPhoto, PAGE_MARGIN } from '../../utils/admitCard'
@@ -192,6 +193,18 @@ function AdminStudentDetailPage() {
     }
   }
 
+  async function handleDownloadIdCard() {
+    setPdfError(null)
+    setGenerating('idcard')
+    try {
+      await downloadStudentIdCard(student, settings)
+    } catch (error) {
+      setPdfError(error.message)
+    } finally {
+      setGenerating(null)
+    }
+  }
+
   async function handleDownloadAdmitCard() {
     const exam = studentExams.find((item) => item.id === selectedExamId)
     if (!exam) {
@@ -277,6 +290,14 @@ function AdminStudentDetailPage() {
             onClick={handleDownloadInvoice}
           >
             {generating === 'invoice' ? 'Preparing...' : 'Payment Invoice (PDF)'}
+          </button>
+          <button
+            type="button"
+            className="cta-btn"
+            disabled={generating === 'idcard'}
+            onClick={handleDownloadIdCard}
+          >
+            {generating === 'idcard' ? 'Preparing...' : 'Student ID Card (PDF)'}
           </button>
           <button type="button" className="cta-btn" onClick={() => setShowAdmitForm((prev) => !prev)}>
             {showAdmitForm ? 'Hide Admit Card Form' : 'Download Admit Card (PDF)'}

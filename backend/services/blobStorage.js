@@ -1,9 +1,9 @@
 import crypto from 'node:crypto'
 import { del, put } from '@vercel/blob'
-import { ALLOWED_MIME_TYPES } from '../middleware/upload.js'
+import { DOCUMENT_MIME_TYPES } from '../middleware/upload.js'
 
 export async function uploadPhoto(folder, file) {
-  const extension = ALLOWED_MIME_TYPES[file.mimetype]
+  const extension = DOCUMENT_MIME_TYPES[file.mimetype]
   const pathname = `${folder}/${Date.now()}-${crypto.randomUUID()}${extension}`
 
   const blob = await put(pathname, file.buffer, {

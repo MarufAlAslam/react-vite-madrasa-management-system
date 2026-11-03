@@ -1,9 +1,9 @@
 import { Router } from 'express'
 import crypto from 'node:crypto'
-import { requireAuth, requireSuperAdmin } from '../middleware/auth.js'
+import { optionalAuth, requireAuth, requireSuperAdmin } from '../middleware/auth.js'
 import { addTeacher, deleteTeacher, getTeacherById, getTeachers, updateTeacher } from '../services/googleSheets.js'
 import { deletePhoto, uploadPhoto } from '../services/blobStorage.js'
-import { uploadTeacherPhoto } from '../middleware/upload.js'
+import { TEACHER_DOCUMENT_FIELDS, uploadTeacherFiles } from '../middleware/upload.js'
 import { recordActivity } from '../services/activity.js'
 
 const router = Router()
@@ -19,25 +19,73 @@ const DESIGNATIONS = [
 
 const UNIQUE_DESIGNATIONS = ['Principal', 'Vice Principal']
 
+const GENDERS = ['Male', 'Female']
+const BLOOD_GROUPS = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-']
+
+function pickProfileFields(body) {
+  const { joiningDate, gender, bloodGroup, department, qualification, nid, address } = body
+  return {
+    joiningDate: joiningDate || '',
+    gender: gender || '',
+    bloodGroup: bloodGroup || '',
+    department: department || '',
+    qualification: qualification || '',
+    nid: nid || '',
+    address: address || '',
+  }
+}
+
+function validateProfileFields({ gender, bloodGroup }) {
+  if (gender && !GENDERS.includes(gender)) return `gender must be one of: ${GENDERS.join(', ')}`
+  if (bloodGroup && !BLOOD_GROUPS.includes(bloodGroup)) return `bloodGroup must be one of: ${BLOOD_GROUPS.join(', ')}`
+  return null
+}
+
+const DOCUMENT_URL_KEYS = TEACHER_DOCUMENT_FIELDS.map((field) => `${field}Url`)
+
+// NID and uploaded documents are sensitive: only admins may see them, public visitors never do.
+function withoutPrivateFields(teacher) {
+  const rest = { ...teacher }
+  delete rest.nid
+  DOCUMENT_URL_KEYS.forEach((key) => delete rest[key])
+  return rest
+}
+
+// Uploads whichever documents were sent; on any failure removes the ones already stored.
+async function uploadDocuments(files) {
+  const urls = {}
+  try {
+    for (const field of TEACHER_DOCUMENT_FIELDS) {
+      const file = files?.[field]?.[0]
+      if (file) urls[`${field}Url`] = await uploadPhoto('teacher-documents', file)
+    }
+  } catch (error) {
+    await Promise.all(Object.values(urls).map(deletePhoto))
+    throw new Error(`Document upload failed: ${error.message}`)
+  }
+  return urls
+}
+
 async function findDesignationHolder(designation, excludeId) {
   if (!UNIQUE_DESIGNATIONS.includes(designation)) return null
   const teachers = await getTeachers()
   return teachers.find((teacher) => teacher.designation === designation && teacher.id !== excludeId) || null
 }
 
-router.get('/', async (req, res) => {
+router.get('/', optionalAuth, async (req, res) => {
   try {
     const teachers = await getTeachers()
-    res.json(teachers)
+    res.json(req.admin ? teachers : teachers.map(withoutPrivateFields))
   } catch (error) {
     res.status(500).json({ error: error.message })
   }
 })
 
-router.post('/', requireAuth, requireSuperAdmin, uploadTeacherPhoto.single('photo'), async (req, res) => {
+router.post('/', requireAuth, requireSuperAdmin, uploadTeacherFiles, async (req, res) => {
   const { name, designation, subject, indexNo, phone } = req.body
+  const photoFile = req.files?.photo?.[0]
 
-  if (!req.file) {
+  if (!photoFile) {
     res.status(400).json({ error: 'photo is required' })
     return
   }
@@ -52,6 +100,13 @@ router.post('/', requireAuth, requireSuperAdmin, uploadTeacherPhoto.single('phot
     return
   }
 
+  const profileFields = pickProfileFields(req.body)
+  const profileError = validateProfileFields(profileFields)
+  if (profileError) {
+    res.status(400).json({ error: profileError })
+    return
+  }
+
   const existingHolder = await findDesignationHolder(designation, null)
   if (existingHolder) {
     res.status(409).json({ error: `${designation} is already assigned to ${existingHolder.name}` })
@@ -60,9 +115,18 @@ router.post('/', requireAuth, requireSuperAdmin, uploadTeacherPhoto.single('phot
 
   let photoUrl
   try {
-    photoUrl = await uploadPhoto('teachers', req.file)
+    photoUrl = await uploadPhoto('teachers', photoFile)
   } catch (error) {
     res.status(500).json({ error: `Photo upload failed: ${error.message}` })
+    return
+  }
+
+  let documentUrls
+  try {
+    documentUrls = await uploadDocuments(req.files)
+  } catch (error) {
+    await deletePhoto(photoUrl)
+    res.status(500).json({ error: error.message })
     return
   }
 
@@ -74,6 +138,8 @@ router.post('/', requireAuth, requireSuperAdmin, uploadTeacherPhoto.single('phot
       subject,
       indexNo,
       phone,
+      ...profileFields,
+      ...documentUrls,
       photoUrl,
       createdAt: new Date().toISOString(),
     }
@@ -82,14 +148,15 @@ router.post('/', requireAuth, requireSuperAdmin, uploadTeacherPhoto.single('phot
     await recordActivity({ admin: req.admin, action: 'teacher.create', targetType: 'teacher', details: name })
     res.status(201).json(record)
   } catch (error) {
-    await deletePhoto(photoUrl)
+    await Promise.all([photoUrl, ...Object.values(documentUrls)].map(deletePhoto))
     res.status(500).json({ error: error.message })
   }
 })
 
-router.put('/:id', requireAuth, requireSuperAdmin, uploadTeacherPhoto.single('photo'), async (req, res) => {
+router.put('/:id', requireAuth, requireSuperAdmin, uploadTeacherFiles, async (req, res) => {
   const { id } = req.params
-  const { name, designation, subject, indexNo, phone } = req.body
+  const { name, designation, subject, indexNo, phone, removeDocuments } = req.body
+  const photoFile = req.files?.photo?.[0]
 
   if (!name || !designation || !subject || !indexNo || !phone) {
     res.status(400).json({ error: 'name, designation, subject, indexNo, and phone are required' })
@@ -98,6 +165,13 @@ router.put('/:id', requireAuth, requireSuperAdmin, uploadTeacherPhoto.single('ph
 
   if (!DESIGNATIONS.includes(designation)) {
     res.status(400).json({ error: `designation must be one of: ${DESIGNATIONS.join(', ')}` })
+    return
+  }
+
+  const profileFields = pickProfileFields(req.body)
+  const profileError = validateProfileFields(profileFields)
+  if (profileError) {
+    res.status(400).json({ error: profileError })
     return
   }
 
@@ -114,24 +188,55 @@ router.put('/:id', requireAuth, requireSuperAdmin, uploadTeacherPhoto.single('ph
   }
 
   let photoUrl = existing.photoUrl
-  if (req.file) {
+  if (photoFile) {
     try {
-      photoUrl = await uploadPhoto('teachers', req.file)
+      photoUrl = await uploadPhoto('teachers', photoFile)
     } catch (error) {
       res.status(500).json({ error: `Photo upload failed: ${error.message}` })
       return
     }
   }
 
+  let newDocumentUrls
   try {
-    const updated = await updateTeacher(id, { name, designation, subject, indexNo, phone, photoUrl })
-    if (req.file && existing.photoUrl) {
+    newDocumentUrls = await uploadDocuments(req.files)
+  } catch (error) {
+    if (photoFile) await deletePhoto(photoUrl)
+    res.status(500).json({ error: error.message })
+    return
+  }
+
+  // A newly uploaded file replaces the old one; otherwise a document is cleared only if the admin asked to remove it.
+  const documentPatch = { ...newDocumentUrls }
+  String(removeDocuments || '')
+    .split(',')
+    .filter((field) => TEACHER_DOCUMENT_FIELDS.includes(field) && !newDocumentUrls[`${field}Url`])
+    .forEach((field) => {
+      documentPatch[`${field}Url`] = ''
+    })
+
+  try {
+    const updated = await updateTeacher(id, {
+      name,
+      designation,
+      subject,
+      indexNo,
+      phone,
+      ...profileFields,
+      ...documentPatch,
+      photoUrl,
+    })
+
+    if (photoFile && existing.photoUrl) {
       await deletePhoto(existing.photoUrl)
     }
+    await Promise.all(Object.keys(documentPatch).map((key) => existing[key] && deletePhoto(existing[key])))
+
     await recordActivity({ admin: req.admin, action: 'teacher.update', targetType: 'teacher', details: name })
     res.json(updated)
   } catch (error) {
-    if (req.file) await deletePhoto(photoUrl)
+    if (photoFile) await deletePhoto(photoUrl)
+    await Promise.all(Object.values(newDocumentUrls).map(deletePhoto))
     res.status(500).json({ error: error.message })
   }
 })
@@ -171,9 +276,7 @@ router.delete('/:id', requireAuth, requireSuperAdmin, async (req, res) => {
       return
     }
 
-    if (deleted.photoUrl) {
-      await deletePhoto(deleted.photoUrl)
-    }
+    await Promise.all([deleted.photoUrl, ...DOCUMENT_URL_KEYS.map((key) => deleted[key])].map((url) => url && deletePhoto(url)))
 
     await recordActivity({
       admin: req.admin,

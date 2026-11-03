@@ -16,6 +16,21 @@ import { recordActivity } from '../services/activity.js'
 
 const router = Router()
 
+const CLASS_SIX_SECTIONS = ['Ka', 'Kha']
+
+// Only Class 6 is split into sections (Ka / Kha); every other class has none.
+function isClassSix(className) {
+  return /(^|\D)6(\D|$)|\bsix\b/i.test(className)
+}
+
+// Returns the section to store, or null if it's invalid for this class.
+function resolveSection(className, section) {
+  if (!isClassSix(className)) return ''
+  return CLASS_SIX_SECTIONS.includes(section) ? section : null
+}
+
+const SECTION_ERROR = `section must be one of: ${CLASS_SIX_SECTIONS.join(', ')} for Class 6`
+
 async function getClassNames() {
   const classes = await getClasses()
   return classes.map((item) => item.className)
@@ -51,6 +66,12 @@ router.post('/', requireAuth, uploadStudentPhoto.single('photo'), async (req, re
     return
   }
 
+  const resolvedSection = resolveSection(className, section)
+  if (resolvedSection === null) {
+    res.status(400).json({ error: SECTION_ERROR })
+    return
+  }
+
   let photoUrl
   try {
     photoUrl = await uploadPhoto('students', req.file)
@@ -72,7 +93,7 @@ router.post('/', requireAuth, uploadStudentPhoto.single('photo'), async (req, re
       photoUrl,
       createdAt: new Date().toISOString(),
       registrationNo: registrationNo || '',
-      section: section || '',
+      section: resolvedSection,
     }
 
     await addStudent(record)
@@ -98,6 +119,12 @@ router.put('/:id', requireAuth, requireSuperAdmin, uploadStudentPhoto.single('ph
   const classNames = await getClassNames()
   if (!classNames.includes(className)) {
     res.status(400).json({ error: `className must be one of: ${classNames.join(', ') || 'no classes configured yet'}` })
+    return
+  }
+
+  const resolvedSection = resolveSection(className, section)
+  if (resolvedSection === null) {
+    res.status(400).json({ error: SECTION_ERROR })
     return
   }
 
@@ -128,7 +155,7 @@ router.put('/:id', requireAuth, requireSuperAdmin, uploadStudentPhoto.single('ph
       contact,
       photoUrl,
       registrationNo: registrationNo || '',
-      section: section || '',
+      section: resolvedSection,
     })
     if (req.file && existing.photoUrl) {
       await deletePhoto(existing.photoUrl)
@@ -177,7 +204,7 @@ router.post('/:id/promote', requireAuth, async (req, res) => {
   }
 
   try {
-    const updated = await updateStudent(id, { className: toClass })
+    const updated = await updateStudent(id, { className: toClass, section: '' })
     if (!updated) {
       res.status(404).json({ error: 'Student not found' })
       return

@@ -1,8 +1,23 @@
 import { useRef, useState } from 'react'
+import TeacherDocumentUploads from '../../components/admin/TeacherDocumentUploads'
+import TeacherFormFields from '../../components/admin/TeacherFormFields'
 import { useData } from '../../context/DataContext'
 import { DESIGNATIONS, UNIQUE_DESIGNATIONS } from '../../constants/admin'
 
-const emptyTeacherForm = { name: '', designation: '', subject: '', indexNo: '', phone: '' }
+const emptyTeacherForm = {
+  name: '',
+  designation: '',
+  subject: '',
+  indexNo: '',
+  phone: '',
+  joiningDate: '',
+  gender: '',
+  bloodGroup: '',
+  department: '',
+  qualification: '',
+  nid: '',
+  address: '',
+}
 
 function AdminTeachersPage() {
   const { teachers, backendError, addTeacher } = useData()
@@ -13,6 +28,8 @@ function AdminTeachersPage() {
 
   const [teacherForm, setTeacherForm] = useState(emptyTeacherForm)
   const [teacherPhoto, setTeacherPhoto] = useState(null)
+  const [documents, setDocuments] = useState({})
+  const [documentInputKey, setDocumentInputKey] = useState(0)
   const [teacherFormError, setTeacherFormError] = useState(null)
   const [teacherSubmitting, setTeacherSubmitting] = useState(false)
   const teacherPhotoInputRef = useRef(null)
@@ -32,10 +49,13 @@ function AdminTeachersPage() {
       const formData = new FormData()
       Object.entries(teacherForm).forEach(([key, value]) => formData.append(key, value))
       formData.append('photo', teacherPhoto)
+      Object.entries(documents).forEach(([field, file]) => file && formData.append(field, file))
 
       await addTeacher(formData)
       setTeacherForm(emptyTeacherForm)
       setTeacherPhoto(null)
+      setDocuments({})
+      setDocumentInputKey((key) => key + 1)
       if (teacherPhotoInputRef.current) teacherPhotoInputRef.current.value = ''
     } catch (error) {
       setTeacherFormError(error.message)
@@ -52,45 +72,11 @@ function AdminTeachersPage() {
       {backendError && <p className="error-text">Could not reach the data server: {backendError}</p>}
 
       <form className="admin-form" onSubmit={handleTeacherSubmit}>
-        <input
-          type="text"
-          placeholder="Teacher name"
-          value={teacherForm.name}
-          onChange={(event) => setTeacherForm((prev) => ({ ...prev, name: event.target.value }))}
-          required
-        />
-        <select
-          value={teacherForm.designation}
-          onChange={(event) => setTeacherForm((prev) => ({ ...prev, designation: event.target.value }))}
-          required
-        >
-          <option value="">Select designation</option>
-          {availableDesignations.map((designation) => (
-            <option key={designation} value={designation}>
-              {designation}
-            </option>
-          ))}
-        </select>
-        <input
-          type="text"
-          placeholder="Subject"
-          value={teacherForm.subject}
-          onChange={(event) => setTeacherForm((prev) => ({ ...prev, subject: event.target.value }))}
-          required
-        />
-        <input
-          type="text"
-          placeholder="Index No."
-          value={teacherForm.indexNo}
-          onChange={(event) => setTeacherForm((prev) => ({ ...prev, indexNo: event.target.value }))}
-          required
-        />
-        <input
-          type="text"
-          placeholder="Contact number"
-          value={teacherForm.phone}
-          onChange={(event) => setTeacherForm((prev) => ({ ...prev, phone: event.target.value }))}
-          required
+        <TeacherFormFields
+          form={teacherForm}
+          setForm={setTeacherForm}
+          designations={availableDesignations}
+          designationPlaceholder="Select designation"
         />
         <label className="file-input-label">
           <span>Photo</span>
@@ -102,6 +88,7 @@ function AdminTeachersPage() {
             required
           />
         </label>
+        <TeacherDocumentUploads key={documentInputKey} files={documents} setFiles={setDocuments} />
         {teacherFormError && <p className="error-text">{teacherFormError}</p>}
         <button type="submit" disabled={teacherSubmitting}>
           {teacherSubmitting ? 'Adding...' : 'Add Teacher'}
