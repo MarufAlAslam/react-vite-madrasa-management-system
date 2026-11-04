@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import { useData } from '../context/DataContext'
 import HeroCarousel from '../components/common/HeroCarousel'
+import TeacherCard from '../components/common/TeacherCard'
 
 const programs = [
   {
