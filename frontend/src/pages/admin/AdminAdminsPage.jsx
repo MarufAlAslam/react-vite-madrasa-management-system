@@ -89,7 +89,7 @@ function AdminAdminsPage() {
         {admins.map((admin) => (
           <article key={admin.email} className="notice-row-card">
             <div>
-              <p className="notice-date">{admin.role === 'super' ? 'Super Admin' : 'Staff Admin'}</p>
+              <p className="notice-date">{{ super: 'Super Admin', teacher: 'Teacher Login' }[admin.role] ?? 'Staff Admin'}</p>
               <h3>{admin.name}</h3>
               <p>{admin.email}</p>
             </div>

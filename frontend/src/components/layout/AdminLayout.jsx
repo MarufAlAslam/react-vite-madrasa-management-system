@@ -7,7 +7,7 @@ function navLinkClass({ isActive }) {
 }
 
 function AdminLayout() {
-  const { user, logout, isSuperAdmin } = useAuth()
+  const { user, logout, isSuperAdmin, isTeacher } = useAuth()
   const navigate = useNavigate()
   const location = useLocation()
   const [sidebarOpen, setSidebarOpen] = useState(false)
@@ -24,16 +24,23 @@ function AdminLayout() {
 
   const navGroups = [
     {
+      title: 'My Work',
+      items: [
+        { to: '/admin/dashboard/my-results', label: 'Enter Results', show: isTeacher },
+        { to: '/admin/dashboard/change-password', label: 'Change Password', show: isTeacher },
+      ],
+    },
+    {
       title: 'Dashboard',
       items: [{ to: '/admin/dashboard/overview', label: 'Dashboard', show: isSuperAdmin }],
     },
     {
       title: 'Students',
       items: [
-        { to: '/admin/dashboard/students', label: 'Add Student', end: true, show: true },
-        { to: '/admin/dashboard/students/list', label: 'Student List', show: true },
-        { to: '/admin/dashboard/results', label: 'Results', end: true, show: true },
-        { to: '/admin/dashboard/results/class', label: 'Class Result Sheet', show: true },
+        { to: '/admin/dashboard/students', label: 'Add Student', end: true, show: !isTeacher },
+        { to: '/admin/dashboard/students/list', label: 'Student List', show: !isTeacher },
+        { to: '/admin/dashboard/results', label: 'Results', end: true, show: !isTeacher },
+        { to: '/admin/dashboard/results/class', label: 'Class Result Sheet', show: !isTeacher },
       ],
     },
     {
@@ -41,9 +48,11 @@ function AdminLayout() {
       items: [
         { to: '/admin/dashboard/classes', label: 'Classes', show: isSuperAdmin },
         { to: '/admin/dashboard/exams', label: 'Exams', show: isSuperAdmin },
+        { to: '/admin/dashboard/seat-plan', label: 'Seat Plan', show: isSuperAdmin },
         { to: '/admin/dashboard/admit-cards', label: 'Admit Cards', show: isSuperAdmin },
         { to: '/admin/dashboard/teachers', label: 'Add Teacher', end: true, show: isSuperAdmin },
         { to: '/admin/dashboard/teachers/list', label: 'Teacher List', show: isSuperAdmin },
+        { to: '/admin/dashboard/teachers/access', label: 'Teacher Access', show: isSuperAdmin },
       ],
     },
     {
@@ -96,7 +105,7 @@ function AdminLayout() {
         </nav>
 
         <a className="admin-dev-credit" href="/developer" target="_blank" rel="noreferrer">
-          Developed by, Maruf
+          Developer Info
         </a>
       </aside>
 

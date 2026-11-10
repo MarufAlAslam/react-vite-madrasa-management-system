@@ -2,7 +2,7 @@ import { THEME, fitContain, imageUrlToCoverDataUrl, imageUrlToOpaqueDataUrl } fr
 
 const HEADER_HEIGHT = 30
 const INFO_ROW_HEIGHT = 7
-const INFO_ROWS = 5
+const INFO_ROWS = 3
 const SUBJECT_HEADER_HEIGHT = 7
 const SUBJECT_ROW_HEIGHT = 6.5
 const SUBJECT_LINE_HEIGHT = 3.8
@@ -14,16 +14,11 @@ const TABLE_GAP = 6
 
 const LABELS = {
   name: 'Name',
-  studentId: 'Student ID',
   roll: 'Roll No.',
-  registrationNo: 'Reg. No.',
   department: 'Class',
   section: 'Section',
-  session: 'Session',
   father: "Father's Name",
   mother: "Mother's Name",
-  duration: 'Duration',
-  venue: 'Venue',
   title: 'ADMIT CARD',
   serial: 'SL',
   subjectCode: 'Code',
@@ -103,15 +98,6 @@ export async function loadStudentPhoto(student) {
   }
 }
 
-function studentDisplayId(student) {
-  return `STU-${student.id.slice(0, 8).toUpperCase()}`
-}
-
-function currentSession() {
-  const year = new Date().getFullYear()
-  return `Jan ${year}-Dec ${year}`
-}
-
 export function drawAdmitCard(doc, { x, y, width, scale, assets, studentPhotoDataUrl, student, examInfo, subjects, scheduleBySubject }) {
   const subjectLines = getSubjectLines(doc, subjects, width)
   const height = admitCardNaturalHeight(doc, subjects, width) * scale
@@ -176,22 +162,13 @@ export function drawAdmitCard(doc, { x, y, width, scale, assets, studentPhotoDat
   const rows = [
     [{ label: LABELS.name, value: student.name, weight: 1 }],
     [
-      { label: LABELS.studentId, value: studentDisplayId(student), weight: 1 },
       { label: LABELS.roll, value: student.roll, weight: 1 },
-      { label: LABELS.registrationNo, value: student.registrationNo || '-', weight: 1 },
-    ],
-    [
       { label: LABELS.department, value: student.className, weight: 1 },
       { label: LABELS.section, value: student.section || '-', weight: 1 },
-      { label: LABELS.session, value: currentSession(), weight: 1 },
     ],
     [
       { label: LABELS.father, value: student.fatherName, weight: 1 },
       { label: LABELS.mother, value: student.motherName, weight: 1 },
-    ],
-    [
-      { label: LABELS.duration, value: examInfo.duration || '-', weight: 1 },
-      { label: LABELS.venue, value: examInfo.venue || 'Moulovirhat H. Fazil Madrasah', weight: 1 },
     ],
   ]
 

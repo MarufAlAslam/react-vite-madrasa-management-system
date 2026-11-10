@@ -122,7 +122,6 @@ export function downloadTeacherIdCard(teacher, settings) {
       details: [
         ['Name', teacher.name],
         ['Designation', teacher.designation],
-        ['Department', teacher.department],
         ['Index No.', teacher.indexNo],
         ['Phone', teacher.phone],
       ],

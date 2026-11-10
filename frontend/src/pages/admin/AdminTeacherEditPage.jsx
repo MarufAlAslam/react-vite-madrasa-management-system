@@ -29,7 +29,6 @@ function AdminTeacherEditPage() {
           joiningDate: teacher.joiningDate || '',
           gender: teacher.gender || '',
           bloodGroup: teacher.bloodGroup || '',
-          department: teacher.department || '',
           qualification: teacher.qualification || '',
           nid: teacher.nid || '',
           address: teacher.address || '',

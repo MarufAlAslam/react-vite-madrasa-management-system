@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { Link, Navigate, useParams } from 'react-router-dom'
 import { TEACHER_DOCUMENTS } from '../../constants/admin'
+import TeacherAssignments from '../../components/admin/TeacherAssignments'
+import TeacherLoginForm from '../../components/admin/TeacherLoginForm'
 import { useData } from '../../context/DataContext'
 import { teacherDetails } from '../../utils/teacher'
 import { downloadTeacherIdCard } from '../../utils/idCard'
@@ -82,6 +84,9 @@ function AdminTeacherProfilePage() {
           )
         })}
       </ul>
+
+      <TeacherAssignments teacher={teacher} />
+      <TeacherLoginForm teacher={teacher} />
 
       {pdfError && <p className="error-text">{pdfError}</p>}
 

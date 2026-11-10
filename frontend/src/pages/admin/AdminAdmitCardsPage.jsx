@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react'
 import jsPDF from 'jspdf'
 import { Link } from 'react-router-dom'
 import { useData } from '../../context/DataContext'
+import { sortStudents } from '../../constants/admin'
 import {
   CARD_GAP,
   drawAdmitCard,
@@ -24,7 +25,7 @@ function AdminAdmitCardsPage() {
   const classSubjects = classes.find((item) => item.className === classFilter)?.subjects ?? []
   const classExams = useMemo(() => exams.filter((exam) => exam.className === classFilter), [exams, classFilter])
   const classStudents = useMemo(
-    () => students.filter((student) => student.className === classFilter),
+    () => sortStudents(students.filter((student) => student.className === classFilter), [classFilter]),
     [students, classFilter],
   )
 
@@ -56,7 +57,7 @@ function AdminAdmitCardsPage() {
       const { pageWidth, width, slotHeight, scale } = getAdmitCardLayout(doc, classSubjects)
 
       const assets = await loadInstitutionAssets(settings)
-      const examInfo = { examName: exam.name, duration: exam.duration, venue: exam.venue }
+      const examInfo = { examName: exam.name }
 
       for (let index = 0; index < classStudents.length; index += 1) {
         const student = classStudents[index]

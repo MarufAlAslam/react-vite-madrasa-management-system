@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken'
 
-export function requireAuth(req, res, next) {
+function verifyToken(req, res, next, { allowTeacher }) {
   const header = req.get('authorization') || ''
   const [scheme, token] = header.split(' ')
 
@@ -16,10 +16,25 @@ export function requireAuth(req, res, next) {
 
   try {
     req.admin = jwt.verify(token, process.env.JWT_SECRET)
-    next()
   } catch {
     res.status(401).json({ error: 'Invalid or expired session, please log in again' })
+    return
   }
+
+  if (req.admin.role === 'teacher' && !allowTeacher) {
+    res.status(403).json({ error: 'Teacher accounts cannot perform this action' })
+    return
+  }
+  next()
+}
+
+// Admins and staff only. Teacher logins are rejected everywhere except routes that opt in with requireAuthOrTeacher.
+export function requireAuth(req, res, next) {
+  verifyToken(req, res, next, { allowTeacher: false })
+}
+
+export function requireAuthOrTeacher(req, res, next) {
+  verifyToken(req, res, next, { allowTeacher: true })
 }
 
 export function requireSuperAdmin(req, res, next) {

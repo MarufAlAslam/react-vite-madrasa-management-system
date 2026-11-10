@@ -22,7 +22,7 @@ function AdminTeacherListPage() {
     const term = searchTerm.trim().toLowerCase()
     const filtered = teachers.filter((teacher) => {
       const matchesDesignation = designationFilter === 'all' || teacher.designation === designationFilter
-      const matchesSearch = !term || teacher.name.toLowerCase().includes(term) || teacher.subject?.toLowerCase().includes(term) || teacher.department?.toLowerCase().includes(term)
+      const matchesSearch = !term || teacher.name.toLowerCase().includes(term) || teacher.subject?.toLowerCase().includes(term)
       return matchesDesignation && matchesSearch
     })
     return sortByDesignation(filtered)
@@ -58,7 +58,7 @@ function AdminTeacherListPage() {
         <input
           id="teacher-search"
           type="search"
-          placeholder="Name, subject or department"
+          placeholder="Name or subject"
           value={searchTerm}
           onChange={(event) => setSearchTerm(event.target.value)}
         />

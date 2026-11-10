@@ -26,7 +26,7 @@ const TEACHER_COLUMNS = [
   'joiningDate',
   'gender',
   'bloodGroup',
-  'department',
+  'department', // no longer used; kept so the columns after it keep their positions in the sheet
   'qualification',
   'nid',
   'address',
@@ -49,7 +49,7 @@ const STUDENT_COLUMNS = [
   'registrationNo',
   'section',
 ]
-const ADMIN_COLUMNS = ['email', 'passwordHash', 'name', 'role', 'createdAt']
+const ADMIN_COLUMNS = ['email', 'passwordHash', 'name', 'role', 'createdAt', 'teacherId']
 const LOG_COLUMNS = ['id', 'timestamp', 'adminEmail', 'adminName', 'action', 'targetType', 'details']
 const GALLERY_COLUMNS = ['id', 'title', 'photoUrl', 'createdAt', 'albumTitle', 'featured']
 const FINANCE_COLUMNS = ['id', 'type', 'title', 'amount', 'date']
@@ -331,6 +331,14 @@ export async function promoteStudentsByClass(fromClass, toClass) {
 export async function getAdminByEmail(email) {
   const found = await findRowByColumn(ADMINS_SHEET, ADMIN_COLUMNS, 'email', email)
   return found?.record ?? null
+}
+
+export async function updateAdminPassword(email, passwordHash) {
+  const found = await findRowByColumn(ADMINS_SHEET, ADMIN_COLUMNS, 'email', email)
+  if (!found) return false
+
+  await updateRow(ADMINS_SHEET, ADMIN_COLUMNS, found.rowNumber, { ...found.record, passwordHash })
+  return true
 }
 
 export async function getAdmins() {

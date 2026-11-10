@@ -10,7 +10,6 @@ export function formatDate(value) {
 export function teacherDetails(teacher, { includeNid = false } = {}) {
   const details = [
     ['Designation', teacher.designation],
-    ['Department', teacher.department],
     ['Subject Taught', teacher.subject],
     ['Qualification', teacher.qualification],
     ['Joining Date', formatDate(teacher.joiningDate)],

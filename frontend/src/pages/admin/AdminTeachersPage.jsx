@@ -13,7 +13,6 @@ const emptyTeacherForm = {
   joiningDate: '',
   gender: '',
   bloodGroup: '',
-  department: '',
   qualification: '',
   nid: '',
   address: '',

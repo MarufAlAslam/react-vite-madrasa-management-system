@@ -19,7 +19,6 @@ function TeacherFormFields({ form, setForm, designations, designationPlaceholder
           </option>
         ))}
       </select>
-      <input type="text" placeholder="Department" {...bind('department')} />
       <input type="text" placeholder="Subject taught" {...bind('subject')} required />
       <input type="text" placeholder="Educational qualification" {...bind('qualification')} />
       <input type="text" placeholder="Index No." {...bind('indexNo')} required />

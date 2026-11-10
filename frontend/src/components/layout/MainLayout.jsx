@@ -91,9 +91,8 @@ function MainLayout() {
         </div>
         <p className="footer-bottom mt-4">© {new Date().getFullYear()} Moulovirhat H. Fazil Madrasah. All rights reserved.</p>
         <p className="footer-bottom">
-          Developed by,{' '}
           <NavLink to="/developer" className="footer-dev-credit">
-            Maruf
+            Developer Info
           </NavLink>
         </p>
       </footer>

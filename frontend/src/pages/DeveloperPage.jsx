@@ -35,7 +35,7 @@ const icons = {
   ),
 }
 
-const education = [
+const leadEducation = [
   {
     degree: 'B.Sc. in Computer Science and Engineering',
     institution: 'Patuakhali Science and Technology University, Bangladesh',
@@ -45,76 +45,120 @@ const education = [
     institution: 'Jagannath University, Bangladesh',
   },
   {
-    degree: 'M.Sc. in Automotive Software Engineering',
-    institution: 'Technical University of Chemnitz, Germany',
+    degree: 'M.Sc. in Automation and Robotics',
+    institution: 'TU Dortmund University, Germany',
   },
 ]
 
-function DeveloperPage() {
+const assistantEducation = [
+  leadEducation[0],
+  {
+    degree: 'M.Sc. in Computer Science and Engineering',
+    institution: leadEducation[0].institution,
+  },
+]
+
+// A profile card followed by that person's education.
+function DeveloperProfile({ photo, alt, eyebrow, title, role, location, children, education }) {
   return (
-    <div className="page-stack">
+    <>
       <section className="developer-hero">
         <div className="developer-hero-photo-wrap">
-          <img className="developer-hero-photo" src="/images/dev.jpeg" alt="Maruf H." />
+          <img className="developer-hero-photo" src={photo} alt={alt} />
         </div>
         <div className="developer-hero-copy">
           <p className="section-eyebrow developer-fade" style={{ '--delay': '0ms' }}>
-            Developer
+            {eyebrow}
           </p>
           <h2 className="developer-hero-title developer-fade" style={{ '--delay': '80ms' }}>
-            Hi, I&apos;m Maruf H.
+            {title}
           </h2>
           <p className="developer-hero-role developer-fade" style={{ '--delay': '160ms' }}>
-            Lead Web Develper - Bloxley
+            {role}
           </p>
-          <p className="developer-hero-location developer-fade" style={{ '--delay': '220ms' }}>
-            {icons.location}
-            Chemnitz, Germany
-          </p>
+          {location && (
+            <p className="developer-hero-location developer-fade" style={{ '--delay': '220ms' }}>
+              {icons.location}
+              {location}
+            </p>
+          )}
           <div className="developer-icon-row developer-fade" style={{ '--delay': '300ms' }}>
-            <a
-              className="developer-icon-btn"
-              href="https://github.com/MarufAlAslam"
-              target="_blank"
-              rel="noreferrer"
-              aria-label="GitHub"
-            >
-              {icons.github}
-            </a>
-            <a
-              className="developer-icon-btn"
-              href="https://www.linkedin.com/in/webdevmaruf/"
-              target="_blank"
-              rel="noreferrer"
-              aria-label="LinkedIn"
-            >
-              {icons.linkedin}
-            </a>
-            <a className="developer-icon-btn" href="mailto:marufalaslam@gmail.com" aria-label="Email">
-              {icons.mail}
-            </a>
-            <a className="developer-icon-btn" href="tel:+8801724783655" aria-label="Phone">
-              {icons.phone}
-            </a>
+            {children}
           </div>
         </div>
       </section>
 
-      <section className="panel developer-education-panel">
-        <p className="section-eyebrow">Education</p>
-        <h2>Academic Background</h2>
-        <div className="developer-education-list">
-          {education.map((item) => (
-            <article className="developer-education-item" key={item.degree}>
-              <span className="developer-education-icon">{icons.cap}</span>
-              <div>
-                <h3>{item.degree}</h3>
-                <p>{item.institution}</p>
-              </div>
-            </article>
-          ))}
-        </div>
-      </section>
+      {education.length > 0 && (
+        <section className="panel developer-education-panel">
+          <p className="section-eyebrow">Education</p>
+          <h2>Academic Background</h2>
+          <div className="developer-education-list">
+            {education.map((item) => (
+              <article className="developer-education-item" key={item.degree}>
+                <span className="developer-education-icon">{icons.cap}</span>
+                <div>
+                  <h3>{item.degree}</h3>
+                  <p>{item.institution}</p>
+                </div>
+              </article>
+            ))}
+          </div>
+        </section>
+      )}
+    </>
+  )
+}
+
+function DeveloperPage() {
+  return (
+    <div className="page-stack">
+      <DeveloperProfile
+        photo="/images/dev.jpeg"
+        alt="Maruf H."
+        eyebrow="Developer"
+        title="Maruf H."
+        role="Lead Web Develper, Bloxley"
+        location="Dortmund, Germany"
+        education={leadEducation}
+      >
+        <a
+          className="developer-icon-btn"
+          href="https://github.com/MarufAlAslam"
+          target="_blank"
+          rel="noreferrer"
+          aria-label="GitHub"
+        >
+          {icons.github}
+        </a>
+        <a
+          className="developer-icon-btn"
+          href="https://www.linkedin.com/in/webdevmaruf/"
+          target="_blank"
+          rel="noreferrer"
+          aria-label="LinkedIn"
+        >
+          {icons.linkedin}
+        </a>
+        <a className="developer-icon-btn" href="mailto:marufalaslam@gmail.com" aria-label="Email">
+          {icons.mail}
+        </a>
+        <a className="developer-icon-btn" href="tel:+8801724783655" aria-label="Phone">
+          {icons.phone}
+        </a>
+      </DeveloperProfile>
+
+      <DeveloperProfile
+        photo="/images/dev-2.jpg"
+        alt="Mizanur Rahman"
+        eyebrow="Assistant Developer"
+        title="Mizanur Rahman"
+        role="Lecturer, Moulovirhat H. Fazil Madrasah"
+        education={assistantEducation}
+      >
+        <a className="developer-icon-btn" href="tel:+8801710744490" aria-label="Phone">
+          {icons.phone}
+        </a>
+      </DeveloperProfile>
     </div>
   )
 }

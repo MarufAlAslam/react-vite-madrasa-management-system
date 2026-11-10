@@ -47,10 +47,18 @@ export function AuthProvider({ children }) {
 
   const value = useMemo(
     () => ({
-      user: session ? { name: session.name, email: session.email, role: session.role } : null,
+      user: session ? { name: session.name, email: session.email, role: session.role, teacherId: session.teacherId } : null,
       token: session?.token ?? null,
       isAuthenticated: Boolean(session),
       isSuperAdmin: session?.role === 'super',
+      isTeacher: session?.role === 'teacher',
+      // Where each kind of login lands after signing in (or when it opens a page it can't use).
+      homePath:
+        session?.role === 'teacher'
+          ? '/admin/dashboard/my-results'
+          : session?.role === 'super'
+            ? '/admin/dashboard/overview'
+            : '/admin/dashboard/students',
       login,
       logout,
     }),

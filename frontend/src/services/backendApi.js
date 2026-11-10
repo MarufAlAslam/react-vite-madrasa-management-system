@@ -70,10 +70,10 @@ export async function deleteTeacher(id, token) {
   return request(`/api/teachers/${id}`, { method: 'DELETE' }, token)
 }
 
-export async function assignTeacherClasses(id, classNames, token) {
+export async function assignTeacherClasses(id, assignments, token) {
   return request(
     `/api/teachers/${id}/assign`,
-    { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ classNames }) },
+    { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ assignments }) },
     token,
   )
 }
@@ -117,6 +117,26 @@ export async function getAdmins(token) {
 export async function createAdmin(payload, token) {
   return request(
     '/api/admins',
+    { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) },
+    token,
+  )
+}
+
+export async function changePassword(currentPassword, newPassword, token) {
+  return request(
+    '/api/auth/password',
+    {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ currentPassword, newPassword }),
+    },
+    token,
+  )
+}
+
+export async function createTeacherLogin(payload, token) {
+  return request(
+    '/api/admins/teacher-login',
     { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) },
     token,
   )

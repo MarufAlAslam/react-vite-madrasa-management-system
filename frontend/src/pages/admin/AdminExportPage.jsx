@@ -2,7 +2,9 @@ import { useEffect, useState } from 'react'
 import jsPDF from 'jspdf'
 import autoTable from 'jspdf-autotable'
 import { useData } from '../../context/DataContext'
+import { sortByDesignation, sortStudents } from '../../constants/admin'
 import { imageUrlToCoverDataUrl, THEME } from '../../utils/pdf'
+import { formatDate } from '../../utils/teacher'
 
 const PHOTO_CELL_SIZE = 16
 
@@ -21,21 +23,24 @@ const EXPORT_CONFIG = {
   teachers: {
     label: 'Teachers',
     columns: [
+      { key: 'serial', label: 'SL', isSerial: true },
       { key: 'photoUrl', label: 'Photo', isImage: true },
       { key: 'name', label: 'Name' },
       { key: 'designation', label: 'Designation' },
-      { key: 'department', label: 'Department' },
       { key: 'subject', label: 'Subject' },
-      { key: 'qualification', label: 'Qualification' },
-      { key: 'joiningDate', label: 'Joined' },
-      { key: 'gender', label: 'Gender' },
-      { key: 'bloodGroup', label: 'Blood' },
       { key: 'indexNo', label: 'Index No.' },
-      { key: 'nid', label: 'NID' },
       { key: 'phone', label: 'Phone' },
-      { key: 'address', label: 'Address' },
+      { key: 'joiningDate', label: 'Joining Date', format: formatDate },
     ],
   },
+}
+
+// Principal first, then Vice Principal and so on; teachers with the same designation go by joining date, then name.
+function sortTeachersForExport(teachers) {
+  const byJoiningThenName = [...teachers].sort(
+    (a, b) => (a.joiningDate || '9999').localeCompare(b.joiningDate || '9999') || a.name.localeCompare(b.name),
+  )
+  return sortByDesignation(byJoiningThenName)
 }
 
 function AdminExportPage() {
@@ -57,7 +62,13 @@ function AdminExportPage() {
     setExporting(true)
 
     try {
-      const rows = exportType === 'teachers' ? teachers : students.filter((s) => s.className === exportClass)
+      const rows =
+        exportType === 'teachers'
+          ? sortTeachersForExport(teachers)
+          : sortStudents(
+              students.filter((s) => s.className === exportClass),
+              [exportClass],
+            )
 
       if (rows.length === 0) {
         setExportError('No records match this selection.')
@@ -84,7 +95,14 @@ function AdminExportPage() {
       autoTable(doc, {
         startY: 22,
         head: [config.columns.map((column) => column.label)],
-        body: rows.map((row) => config.columns.map((column) => (column.isImage ? '' : String(row[column.key] ?? '')))),
+        body: rows.map((row, index) =>
+          config.columns.map((column) => {
+            if (column.isImage) return ''
+            if (column.isSerial) return String(index + 1)
+            const value = row[column.key] ?? ''
+            return String(column.format && value ? column.format(value) : value)
+          }),
+        ),
         styles: { minCellHeight: PHOTO_CELL_SIZE + 4, valign: 'middle', textColor: THEME.ink, lineColor: THEME.gold, lineWidth: 0.2 },
         headStyles: { fillColor: THEME.green, textColor: 255 },
         alternateRowStyles: { fillColor: THEME.paperTint },

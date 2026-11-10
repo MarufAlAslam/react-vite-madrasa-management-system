@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import Pagination from '../../components/common/Pagination'
 import { useConfirm } from '../../context/ConfirmContext'
 import { useData } from '../../context/DataContext'
-import { getNextClass } from '../../constants/admin'
+import { getNextClass, sortStudents } from '../../constants/admin'
 
 const PAGE_SIZE = 12
 
@@ -30,14 +30,15 @@ function AdminStudentListPage() {
   const promoteToClass = getNextClass(classNames, promoteFromClass)
 
   const filteredStudents = useMemo(() => {
-    return students.filter((student) => {
+    const matching = students.filter((student) => {
       const matchesClass = classFilter === 'all' || student.className === classFilter
       const term = searchTerm.trim().toLowerCase()
       const matchesSearch =
         !term || student.name.toLowerCase().includes(term) || String(student.roll).toLowerCase().includes(term)
       return matchesClass && matchesSearch
     })
-  }, [students, classFilter, searchTerm])
+    return sortStudents(matching, classNames)
+  }, [students, classNames, classFilter, searchTerm])
 
   const pageCount = Math.max(1, Math.ceil(filteredStudents.length / PAGE_SIZE))
   const currentPage = Math.min(page, pageCount)

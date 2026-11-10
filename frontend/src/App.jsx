@@ -1,5 +1,9 @@
 import { Navigate, Route, Routes } from 'react-router-dom'
 import ProtectedRoute from './components/common/ProtectedRoute'
+import RequireStaff from './components/common/RequireStaff'
+import RequireTeacher from './components/common/RequireTeacher'
+import ChangePasswordPage from './pages/admin/ChangePasswordPage'
+import TeacherResultsPage from './pages/admin/TeacherResultsPage'
 import RequireSuperAdmin from './components/common/RequireSuperAdmin'
 import AdminLayout from './components/layout/AdminLayout'
 import MainLayout from './components/layout/MainLayout'
@@ -17,6 +21,7 @@ import AdminGalleryPage from './pages/admin/AdminGalleryPage'
 import AdminLogsPage from './pages/admin/AdminLogsPage'
 import AdminOverviewPage from './pages/admin/AdminOverviewPage'
 import AdminClassResultSheetPage from './pages/admin/AdminClassResultSheetPage'
+import AdminSeatPlanPage from './pages/admin/AdminSeatPlanPage'
 import AdminResultsPage from './pages/admin/AdminResultsPage'
 import AdminSettingsPage from './pages/admin/AdminSettingsPage'
 import AdminStaffEditPage from './pages/admin/AdminStaffEditPage'
@@ -26,6 +31,7 @@ import AdminStudentDetailPage from './pages/admin/AdminStudentDetailPage'
 import AdminStudentEditPage from './pages/admin/AdminStudentEditPage'
 import AdminStudentListPage from './pages/admin/AdminStudentListPage'
 import AdminStudentsPage from './pages/admin/AdminStudentsPage'
+import AdminTeacherAccessPage from './pages/admin/AdminTeacherAccessPage'
 import AdminTeacherEditPage from './pages/admin/AdminTeacherEditPage'
 import AdminTeacherListPage from './pages/admin/AdminTeacherListPage'
 import AdminTeacherProfilePage from './pages/admin/AdminTeacherProfilePage'
@@ -40,8 +46,8 @@ import StudentsPage from './pages/StudentsPage'
 import TeachersPage from './pages/TeachersPage'
 
 function AdminIndexRedirect() {
-  const { isSuperAdmin } = useAuth()
-  return <Navigate to={isSuperAdmin ? '/admin/dashboard/overview' : '/admin/dashboard/students'} replace />
+  const { homePath } = useAuth()
+  return <Navigate to={homePath} replace />
 }
 
 function App() {
@@ -70,16 +76,23 @@ function App() {
               }
             >
               <Route index element={<AdminIndexRedirect />} />
-              <Route path="students" element={<AdminStudentsPage />} />
-              <Route path="students/list" element={<AdminStudentListPage />} />
-              <Route path="results" element={<AdminResultsPage />} />
-              <Route path="results/class" element={<AdminClassResultSheetPage />} />
-              <Route path="students/:id" element={<AdminStudentDetailPage />} />
+              <Route element={<RequireTeacher />}>
+                <Route path="my-results" element={<TeacherResultsPage />} />
+                <Route path="change-password" element={<ChangePasswordPage />} />
+              </Route>
+              <Route element={<RequireStaff />}>
+                <Route path="students" element={<AdminStudentsPage />} />
+                <Route path="students/list" element={<AdminStudentListPage />} />
+                <Route path="results" element={<AdminResultsPage />} />
+                <Route path="results/class" element={<AdminClassResultSheetPage />} />
+                <Route path="students/:id" element={<AdminStudentDetailPage />} />
+              </Route>
               <Route element={<RequireSuperAdmin />}>
                 <Route path="overview" element={<AdminOverviewPage />} />
                 <Route path="finance" element={<AdminFinancePage />} />
                 <Route path="teachers" element={<AdminTeachersPage />} />
                 <Route path="teachers/list" element={<AdminTeacherListPage />} />
+                <Route path="teachers/access" element={<AdminTeacherAccessPage />} />
                 <Route path="classes" element={<AdminClassesPage />} />
                 <Route path="gallery" element={<AdminGalleryPage />} />
                 <Route path="admins" element={<AdminAdminsPage />} />
@@ -87,6 +100,7 @@ function App() {
                 <Route path="export" element={<AdminExportPage />} />
                 <Route path="admit-cards" element={<AdminAdmitCardsPage />} />
                 <Route path="exams" element={<AdminExamsPage />} />
+                <Route path="seat-plan" element={<AdminSeatPlanPage />} />
                 <Route path="settings" element={<AdminSettingsPage />} />
                 <Route path="staff" element={<AdminStaffPage />} />
                 <Route path="staff/list" element={<AdminStaffListPage />} />

@@ -231,7 +231,7 @@ function AdminStudentDetailPage() {
         assets,
         studentPhotoDataUrl,
         student,
-        examInfo: { examName: exam.name, duration: exam.duration, venue: exam.venue },
+        examInfo: { examName: exam.name },
         subjects: studentSubjects,
         scheduleBySubject: exam.schedule,
       })

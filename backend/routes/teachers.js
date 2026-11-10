@@ -1,7 +1,7 @@
 import { Router } from 'express'
 import crypto from 'node:crypto'
 import { optionalAuth, requireAuth, requireSuperAdmin } from '../middleware/auth.js'
-import { addTeacher, deleteTeacher, getTeacherById, getTeachers, updateTeacher } from '../services/googleSheets.js'
+import { addTeacher, deleteTeacher, getClasses, getTeacherById, getTeachers, updateTeacher } from '../services/googleSheets.js'
 import { deletePhoto, uploadPhoto } from '../services/blobStorage.js'
 import { TEACHER_DOCUMENT_FIELDS, uploadTeacherFiles } from '../middleware/upload.js'
 import { recordActivity } from '../services/activity.js'
@@ -23,12 +23,11 @@ const GENDERS = ['Male', 'Female']
 const BLOOD_GROUPS = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-']
 
 function pickProfileFields(body) {
-  const { joiningDate, gender, bloodGroup, department, qualification, nid, address } = body
+  const { joiningDate, gender, bloodGroup, qualification, nid, address } = body
   return {
     joiningDate: joiningDate || '',
     gender: gender || '',
     bloodGroup: bloodGroup || '',
-    department: department || '',
     qualification: qualification || '',
     nid: nid || '',
     address: address || '',
@@ -75,7 +74,9 @@ async function findDesignationHolder(designation, excludeId) {
 router.get('/', optionalAuth, async (req, res) => {
   try {
     const teachers = await getTeachers()
-    res.json(req.admin ? teachers : teachers.map(withoutPrivateFields))
+    // Teacher logins are not admins, so they get the public view too.
+    const canSeePrivate = req.admin && req.admin.role !== 'teacher'
+    res.json(canSeePrivate ? teachers : teachers.map(withoutPrivateFields))
   } catch (error) {
     res.status(500).json({ error: error.message })
   }
@@ -241,16 +242,31 @@ router.put('/:id', requireAuth, requireSuperAdmin, uploadTeacherFiles, async (re
   }
 })
 
+// Replaces the teacher's class/subject assignments. Each entry is { className, subject } and must exist in Classes.
 router.put('/:id/assign', requireAuth, requireSuperAdmin, async (req, res) => {
-  const { classNames } = req.body
+  const { assignments } = req.body
 
-  if (!Array.isArray(classNames)) {
-    res.status(400).json({ error: 'classNames must be an array' })
+  if (!Array.isArray(assignments)) {
+    res.status(400).json({ error: 'assignments must be an array of { className, subject }' })
     return
   }
 
   try {
-    const updated = await updateTeacher(req.params.id, { assignedClasses: classNames })
+    const classes = await getClasses()
+    const cleaned = []
+
+    for (const item of assignments) {
+      const subjects = classes.find((classItem) => classItem.className === item?.className)?.subjects
+      if (!subjects?.some((subject) => subject.name === item.subject)) {
+        res.status(400).json({ error: `"${item?.subject}" is not a subject of "${item?.className}"` })
+        return
+      }
+      if (!cleaned.some((entry) => entry.className === item.className && entry.subject === item.subject)) {
+        cleaned.push({ className: item.className, subject: item.subject })
+      }
+    }
+
+    const updated = await updateTeacher(req.params.id, { assignedClasses: cleaned })
     if (!updated) {
       res.status(404).json({ error: 'Teacher not found' })
       return
@@ -260,7 +276,7 @@ router.put('/:id/assign', requireAuth, requireSuperAdmin, async (req, res) => {
       admin: req.admin,
       action: 'teacher.assign',
       targetType: 'teacher',
-      details: `${updated.name} -> ${classNames.join(', ') || 'none'}`,
+      details: `${updated.name} -> ${cleaned.map((entry) => `${entry.className}/${entry.subject}`).join(', ') || 'none'}`,
     })
     res.json(updated)
   } catch (error) {

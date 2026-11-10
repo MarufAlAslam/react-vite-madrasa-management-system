@@ -130,8 +130,8 @@ export function DataProvider({ children }) {
   )
 
   const assignTeacherClasses = useCallback(
-    async (id, classNames) => {
-      const updated = await assignTeacherClassesBackend(id, classNames, token)
+    async (id, assignments) => {
+      const updated = await assignTeacherClassesBackend(id, assignments, token)
       setTeachers((prev) => prev.map((teacher) => (teacher.id === id ? updated : teacher)))
       return updated
     },
