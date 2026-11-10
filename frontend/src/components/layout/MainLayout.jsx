@@ -1,9 +1,13 @@
 import { useEffect, useState } from 'react'
 import { NavLink, Outlet, useLocation } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
+import { useData } from '../../context/DataContext'
+import { getMadrasaName } from '../../utils/institution'
 
 function MainLayout() {
   const { isAuthenticated } = useAuth()
+  const { settings } = useData()
+  const madrasaName = getMadrasaName(settings)
   const location = useLocation()
   const [menuOpen, setMenuOpen] = useState(false)
 
@@ -16,9 +20,9 @@ function MainLayout() {
     <div className="app-shell">
       <header className="top-header">
         <div className="brand-block logo-only">
-          <img className="logo-mark logo-large" src="/images/logo.jpg" alt="Moulovirhat H. Fazil Madrasah logo" />
+          <img className="logo-mark logo-large" src="/images/logo.jpg" alt={`${madrasaName} logo`} />
           <div className="brand-copy">
-            <h1>Moulovirhat H. Fazil Madrasah</h1>
+            <h1>{madrasaName}</h1>
             <p className="tagline">Islamic education with discipline, character, and service.</p>
           </div>
         </div>
@@ -67,7 +71,7 @@ function MainLayout() {
       <footer className="site-footer">
         <div className="footer-grid">
           <section>
-            <h3>Moulovirhat H. Fazil Madrasah</h3>
+            <h3>{madrasaName}</h3>
             <p>EIIN: 101165 &middot; Established 1935</p>
             <p>Bhola, Barisal Division, Bangladesh</p>
           </section>
@@ -89,7 +93,7 @@ function MainLayout() {
             <p>Phone: +880 1771-656565</p>
           </section>
         </div>
-        <p className="footer-bottom mt-4">© {new Date().getFullYear()} Moulovirhat H. Fazil Madrasah. All rights reserved.</p>
+        <p className="footer-bottom mt-4">© {new Date().getFullYear()} {madrasaName}. All rights reserved.</p>
         <p className="footer-bottom">
           <NavLink to="/developer" className="footer-dev-credit">
             Developer Info

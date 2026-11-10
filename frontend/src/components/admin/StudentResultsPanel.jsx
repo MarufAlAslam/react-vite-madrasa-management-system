@@ -7,10 +7,11 @@ import { useConfirm } from '../../context/ConfirmContext'
 import { useData } from '../../context/DataContext'
 import { createResult, deleteResult, getAllResults, getResults, updateResult } from '../../services/backendApi'
 import { computeGPA, computeGrade } from '../../utils/grade'
+import { getMadrasaName } from '../../utils/institution'
 import { drawDoubleBorder, imageUrlToCoverDataUrl, THEME } from '../../utils/pdf'
 
 function StudentResultsPanel({ student }) {
-  const { classes, exams, students } = useData()
+  const { classes, exams, students, settings } = useData()
   const { token } = useAuth()
   const confirm = useConfirm()
 
@@ -176,7 +177,7 @@ function StudentResultsPanel({ student }) {
       doc.setFont('helvetica', 'bold')
       doc.setTextColor(...THEME.green)
       doc.setFontSize(16)
-      doc.text('Moulovirhat H. Fazil Madrasah', pageWidth / 2, 26, { align: 'center' })
+      doc.text(getMadrasaName(settings), pageWidth / 2, 26, { align: 'center' })
       doc.setFontSize(12)
       doc.text(`Result Sheet — ${group.examName}`, pageWidth / 2, 34, { align: 'center' })
 

@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import { useData } from '../context/DataContext'
+import { getMadrasaName } from '../utils/institution'
 import HeroCarousel from '../components/common/HeroCarousel'
 import TeacherCard from '../components/common/TeacherCard'
 
@@ -29,7 +30,7 @@ const instituteFacts = [
 ]
 
 function HomePage() {
-  const { notices, teachers, loading } = useData()
+  const { notices, teachers, settings, loading } = useData()
 
   const principal = teachers.find((teacher) => teacher.designation === 'Principal')
   const vicePrincipal = teachers.find((teacher) => teacher.designation === 'Vice Principal')
@@ -39,7 +40,7 @@ function HomePage() {
     <div className="page-stack">
       <section className="panel hero-panel">
         <div>
-          <p className="section-eyebrow">Welcome to Moulovirhat H. Fazil Madrasah</p>
+          <p className="section-eyebrow">Welcome to {getMadrasaName(settings)}</p>
           <h2 className="hero-title">Serving Islamic Education in Bhola Since 1935</h2>
           <p>
             A government-recognized Fazil-level madrasah in Bhola, Barisal, offering Dakhil, Alim, and Fazil
@@ -61,13 +62,13 @@ function HomePage() {
 
       <section className="panel about-panel">
         <div className="about-image-wrap">
-          <img src="/images/img-4.jpg" alt="Moulovirhat H. Fazil Madrasah campus" />
+          <img src="/images/img-4.jpg" alt={`${getMadrasaName(settings)} campus`} />
         </div>
         <article>
           <p className="section-eyebrow">About Our Madrasah</p>
           <h2>Established 1935, Recognized 1953</h2>
           <p>
-            Moulovirhat H. Fazil Madrasah (EIIN: 101165) is a government-recognized Fazil-level madrasah located
+            {getMadrasaName(settings)} (EIIN: 101165) is a government-recognized Fazil-level madrasah located
             in Bhola, Barisal Division. Founded on 1 March 1935 and officially recognized on 5 August 1953, the
             institution operates under the Bangladesh Madrasah Education Board with Bangla-medium, day-shift
             instruction across Science, Business Studies, and Humanities.

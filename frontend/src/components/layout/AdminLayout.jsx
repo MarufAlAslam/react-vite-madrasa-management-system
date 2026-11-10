@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react'
 import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
+import { useData } from '../../context/DataContext'
+import { getMadrasaName } from '../../utils/institution'
 
 function navLinkClass({ isActive }) {
   return `admin-nav-link ${isActive ? 'active' : ''}`
@@ -8,6 +10,7 @@ function navLinkClass({ isActive }) {
 
 function AdminLayout() {
   const { user, logout, isSuperAdmin, isTeacher } = useAuth()
+  const { settings } = useData()
   const navigate = useNavigate()
   const location = useLocation()
   const [sidebarOpen, setSidebarOpen] = useState(false)
@@ -82,7 +85,7 @@ function AdminLayout() {
     <div className="admin-shell">
       <aside className={`admin-sidebar ${sidebarOpen ? 'is-open' : ''}`}>
         <div className="admin-sidebar-brand">
-          <img className="logo-mark" src="/images/logo.jpg" alt="Moulovirhat H. Fazil Madrasah logo" />
+          <img className="logo-mark" src="/images/logo.jpg" alt={`${getMadrasaName(settings)} logo`} />
           <span>Admin Panel</span>
         </div>
 

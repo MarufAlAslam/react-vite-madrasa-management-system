@@ -10,7 +10,7 @@ import { downloadTeacherProfilePdf } from '../../utils/teacherProfilePdf'
 
 function AdminTeacherProfilePage() {
   const { id } = useParams()
-  const { teachers } = useData()
+  const { teachers, settings } = useData()
   const [generating, setGenerating] = useState(false)
   const [pdfError, setPdfError] = useState(null)
 
@@ -36,7 +36,7 @@ function AdminTeacherProfilePage() {
     setPdfError(null)
     setGenerating(true)
     try {
-      await downloadTeacherIdCard(teacher)
+      await downloadTeacherIdCard(teacher, settings)
     } catch (error) {
       setPdfError(error.message)
     } finally {

@@ -1,5 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
 import { useAuth } from './AuthContext'
+import { getMadrasaName } from '../utils/institution'
 import {
   assignTeacherClasses as assignTeacherClassesBackend,
   createClass as createClassBackend,
@@ -85,6 +86,10 @@ export function DataProvider({ children }) {
     // Runs once on mount; later session changes are handled by the teacher reload effect below.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  useEffect(() => {
+    document.title = getMadrasaName(settings)
+  }, [settings])
 
   // NID is only returned to admins, so reload teachers whenever the session changes.
   const previousToken = useRef(token)

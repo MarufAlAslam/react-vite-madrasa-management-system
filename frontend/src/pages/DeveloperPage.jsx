@@ -1,3 +1,6 @@
+import { useData } from '../context/DataContext'
+import { getMadrasaName } from '../utils/institution'
+
 const icons = {
   location: (
     <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2">
@@ -110,6 +113,8 @@ function DeveloperProfile({ photo, alt, eyebrow, title, role, location, children
 }
 
 function DeveloperPage() {
+  const { settings } = useData()
+
   return (
     <div className="page-stack">
       <DeveloperProfile
@@ -152,7 +157,7 @@ function DeveloperPage() {
         alt="Mizanur Rahman"
         eyebrow="Assistant Developer"
         title="Mizanur Rahman"
-        role="Lecturer, Moulovirhat H. Fazil Madrasah"
+        role={`Lecturer, ${getMadrasaName(settings)}`}
         education={assistantEducation}
       >
         <a className="developer-icon-btn" href="tel:+8801710744490" aria-label="Phone">

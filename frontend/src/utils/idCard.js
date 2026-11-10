@@ -1,7 +1,7 @@
 import jsPDF from 'jspdf'
+import { getMadrasaName } from './institution'
 import { THEME, imageUrlToCoverDataUrl } from './pdf'
 
-const MADRASA_NAME = 'Moulovirhat H. Fazil Madrasah'
 const MADRASA_PHONE = '+880 1771-656565'
 const CARD_WIDTH = 54
 const CARD_HEIGHT = 85.6
@@ -17,17 +17,17 @@ function drawBorder(doc) {
 }
 
 // Shrinks the madrasa name until it fits on one line of the card.
-function fitMadrasaName(doc, maxFontSize, maxWidth) {
+function fitMadrasaName(doc, madrasaName, maxFontSize, maxWidth) {
   let size = maxFontSize
   doc.setFontSize(size)
-  while (doc.getTextWidth(MADRASA_NAME) > maxWidth && size > 4) {
+  while (doc.getTextWidth(madrasaName) > maxWidth && size > 4) {
     size -= 0.25
     doc.setFontSize(size)
   }
 }
 
 // Common back side for every ID card.
-function drawBackPage(doc) {
+function drawBackPage(doc, madrasaName) {
   doc.addPage([CARD_WIDTH, CARD_HEIGHT], 'portrait')
 
   doc.setFillColor(...THEME.green)
@@ -45,7 +45,7 @@ function drawBackPage(doc) {
   doc.setTextColor(...THEME.green)
   doc.setFont('helvetica', 'bold')
   doc.setFontSize(9)
-  doc.text(doc.splitTextToSize(MADRASA_NAME, textWidth), centerX, 40, { align: 'center' })
+  doc.text(doc.splitTextToSize(madrasaName, textWidth), centerX, 40, { align: 'center' })
 
   doc.setTextColor(...THEME.ink)
   doc.setFontSize(7.5)
@@ -61,7 +61,7 @@ function drawBackPage(doc) {
   )
 }
 
-async function downloadIdCard({ cardTitle, name, photoUrl, details, filePrefix }) {
+async function downloadIdCard({ madrasaName, cardTitle, name, photoUrl, details, filePrefix }) {
   const doc = new jsPDF({ unit: 'mm', format: [CARD_WIDTH, CARD_HEIGHT], orientation: 'portrait' })
   const photo = await imageUrlToCoverDataUrl(photoUrl, 300, 360).catch(() => null)
   const centerX = CARD_WIDTH / 2
@@ -72,8 +72,8 @@ async function downloadIdCard({ cardTitle, name, photoUrl, details, filePrefix }
 
   doc.setTextColor(255)
   doc.setFont('helvetica', 'bold')
-  fitMadrasaName(doc, 7, CARD_WIDTH - MARGIN * 2)
-  doc.text(MADRASA_NAME, centerX, 5.5, { align: 'center' })
+  fitMadrasaName(doc, madrasaName, 7, CARD_WIDTH - MARGIN * 2)
+  doc.text(madrasaName, centerX, 5.5, { align: 'center' })
   doc.setFontSize(5)
   doc.text(cardTitle, centerX, 9, { align: 'center' })
 
@@ -97,14 +97,15 @@ async function downloadIdCard({ cardTitle, name, photoUrl, details, filePrefix }
     y += Math.max(lines.length, 1) * 3.2 + 2.2
   })
 
-  drawBackPage(doc)
+  drawBackPage(doc, madrasaName)
 
   doc.save(`${filePrefix}-${name.replace(/\s+/g, '-').toLowerCase()}.pdf`)
 }
 
-export function downloadStudentIdCard(student) {
+export function downloadStudentIdCard(student, settings) {
   return downloadIdCard(
     {
+      madrasaName: getMadrasaName(settings),
       cardTitle: 'STUDENT IDENTITY CARD',
       name: student.name,
       photoUrl: student.photoUrl,
@@ -120,9 +121,10 @@ export function downloadStudentIdCard(student) {
   )
 }
 
-export function downloadTeacherIdCard(teacher) {
+export function downloadTeacherIdCard(teacher, settings) {
   return downloadIdCard(
     {
+      madrasaName: getMadrasaName(settings),
       cardTitle: 'TEACHER IDENTITY CARD',
       name: teacher.name,
       photoUrl: teacher.photoUrl,

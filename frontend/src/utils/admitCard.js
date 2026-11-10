@@ -1,3 +1,4 @@
+import { getMadrasaName } from './institution'
 import { THEME, fitContain, imageUrlToCoverDataUrl, imageUrlToOpaqueDataUrl } from './pdf'
 
 const HEADER_HEIGHT = 30
@@ -86,7 +87,7 @@ export async function loadInstitutionAssets(settings) {
       : Promise.resolve(null),
     settings?.principalSignUrl ? imageUrlToOpaqueDataUrl(settings.principalSignUrl).catch(() => null) : Promise.resolve(null),
   ])
-  return { logo, examControllerSign, principalSign }
+  return { logo, examControllerSign, principalSign, madrasaName: getMadrasaName(settings) }
 }
 
 export async function loadStudentPhoto(student) {
@@ -125,7 +126,7 @@ export function drawAdmitCard(doc, { x, y, width, scale, assets, studentPhotoDat
   doc.setTextColor(...THEME.green)
   doc.setFontSize(s(15))
   doc.setFont('helvetica', 'bold')
-  doc.text('Moulovirhat H. Fazil Madrasah', textStartX, y + s(15))
+  doc.text(assets.madrasaName, textStartX, y + s(15))
   doc.setFont('helvetica', 'normal')
   doc.setTextColor(...THEME.ink)
   doc.setFontSize(s(8))

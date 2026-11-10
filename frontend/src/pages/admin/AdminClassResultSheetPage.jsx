@@ -2,11 +2,12 @@ import { useEffect, useMemo, useState } from 'react'
 import { useAuth } from '../../context/AuthContext'
 import { useData } from '../../context/DataContext'
 import { getAllResults } from '../../services/backendApi'
+import { getMadrasaName } from '../../utils/institution'
 import { buildClassResultPdf, buildClassResultRows, ordinal, subjectHeading } from '../../utils/classResultSheet'
 
 function AdminClassResultSheetPage() {
   const { token } = useAuth()
-  const { students, classes, backendError } = useData()
+  const { students, classes, settings, backendError } = useData()
 
   const [className, setClassName] = useState('')
   const [examName, setExamName] = useState('')
@@ -40,13 +41,13 @@ function AdminClassResultSheetPage() {
   }
 
   function download() {
-    buildClassResultPdf({ className, examName, subjects, rows }).save(
+    buildClassResultPdf({ madrasaName: getMadrasaName(settings), className, examName, subjects, rows }).save(
       `class-result-${className}-${examName}`.replace(/\s+/g, '-').toLowerCase() + '.pdf',
     )
   }
 
   function print() {
-    const doc = buildClassResultPdf({ className, examName, subjects, rows })
+    const doc = buildClassResultPdf({ madrasaName: getMadrasaName(settings), className, examName, subjects, rows })
     doc.autoPrint()
     window.open(doc.output('bloburl'), '_blank')
   }

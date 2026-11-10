@@ -197,7 +197,7 @@ function AdminStudentDetailPage() {
     setPdfError(null)
     setGenerating('idcard')
     try {
-      await downloadStudentIdCard(student)
+      await downloadStudentIdCard(student, settings)
     } catch (error) {
       setPdfError(error.message)
     } finally {

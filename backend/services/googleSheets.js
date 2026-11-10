@@ -56,7 +56,7 @@ const FINANCE_COLUMNS = ['id', 'type', 'title', 'amount', 'date']
 const PAYMENT_COLUMNS = ['id', 'studentId', 'title', 'amount', 'date', 'createdAt']
 const RESULT_COLUMNS = ['id', 'studentId', 'examName', 'subject', 'marks', 'grade', 'createdAt', 'updatedAt']
 const CLASS_COLUMNS = ['className', 'subjects', 'createdAt']
-const SETTINGS_COLUMNS = ['logoUrl', 'examControllerSignUrl', 'principalSignUrl', 'updatedAt']
+const SETTINGS_COLUMNS = ['logoUrl', 'examControllerSignUrl', 'principalSignUrl', 'updatedAt', 'madrasaName']
 const EXAM_COLUMNS = ['id', 'name', 'className', 'duration', 'venue', 'schedule', 'createdAt']
 const STAFF_COLUMNS = ['id', 'name', 'designation', 'phone', 'photoUrl', 'createdAt']
 
@@ -536,7 +536,7 @@ export async function deleteClass(className) {
 
 export async function getSettings() {
   const rows = await getRows(SETTINGS_SHEET, SETTINGS_COLUMNS)
-  return rows[0] || { logoUrl: '', examControllerSignUrl: '', principalSignUrl: '', updatedAt: '' }
+  return rows[0] || { logoUrl: '', examControllerSignUrl: '', principalSignUrl: '', updatedAt: '', madrasaName: '' }
 }
 
 export async function updateSettings(patch) {

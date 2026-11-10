@@ -37,7 +37,7 @@ export function subjectHeading(subject) {
   return subject.labelEn || subject.name
 }
 
-export function buildClassResultPdf({ className, examName, subjects, rows }) {
+export function buildClassResultPdf({ madrasaName, className, examName, subjects, rows }) {
   const doc = new jsPDF({ unit: 'mm', format: 'a4', orientation: 'landscape' })
   const pageWidth = doc.internal.pageSize.getWidth()
 
@@ -45,7 +45,7 @@ export function buildClassResultPdf({ className, examName, subjects, rows }) {
   doc.setFont('helvetica', 'bold')
   doc.setTextColor(...THEME.green)
   doc.setFontSize(16)
-  doc.text('Moulovirhat H. Fazil Madrasah', pageWidth / 2, 18, { align: 'center' })
+  doc.text(madrasaName, pageWidth / 2, 18, { align: 'center' })
   doc.setFontSize(11)
   doc.text(`Class Result Sheet — ${className} — ${examName}`, pageWidth / 2, 27, { align: 'center' })
 

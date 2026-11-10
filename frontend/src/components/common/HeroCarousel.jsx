@@ -1,13 +1,16 @@
 import { useEffect, useState } from 'react'
+import { useData } from '../../context/DataContext'
+import { getMadrasaName } from '../../utils/institution'
 
 const slides = [
-  { src: '/images/img-1.jpg', alt: 'Moulovirhat H. Fazil Madrasah campus life' },
-  { src: '/images/img-2.jpg', alt: 'Moulovirhat H. Fazil Madrasah students' },
-  { src: '/images/img-3.jpg', alt: 'Moulovirhat H. Fazil Madrasah learning environment' },
-  // { src: '/images/img-4.jpg', alt: 'Moulovirhat H. Fazil Madrasah community' },
+  { src: '/images/img-1.jpg', caption: 'campus life' },
+  { src: '/images/img-2.jpg', caption: 'students' },
+  { src: '/images/img-3.jpg', caption: 'learning environment' },
 ]
 
 function HeroCarousel() {
+  const { settings } = useData()
+  const madrasaName = getMadrasaName(settings)
   const [activeIndex, setActiveIndex] = useState(0)
 
   useEffect(() => {
@@ -24,7 +27,7 @@ function HeroCarousel() {
         <img
           key={slide.src}
           src={slide.src}
-          alt={slide.alt}
+          alt={`${madrasaName} ${slide.caption}`}
           className={`hero-carousel-slide ${index === activeIndex ? 'is-active' : ''}`}
         />
       ))}

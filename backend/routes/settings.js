@@ -41,8 +41,15 @@ router.post(
         patch[column] = url
       }
 
+      const madrasaName = typeof req.body?.madrasaName === 'string' ? req.body.madrasaName.trim() : ''
+      if (madrasaName.length > 120) {
+        res.status(400).json({ error: 'madrasaName must be 120 characters or fewer' })
+        return
+      }
+      if (madrasaName) patch.madrasaName = madrasaName
+
       if (Object.keys(patch).length === 0) {
-        res.status(400).json({ error: 'Provide at least one of: logo, examControllerSign, principalSign' })
+        res.status(400).json({ error: 'Provide at least one of: madrasaName, logo, examControllerSign, principalSign' })
         return
       }
 
